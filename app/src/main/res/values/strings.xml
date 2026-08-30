@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ShellGuard TOTP</string>
+    <string name="tagline">Store and generate 2FA verification codes on your device.</string>
+</resources>

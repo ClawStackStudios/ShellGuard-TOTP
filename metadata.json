@@ -1,0 +1,6 @@
+{
+  "name": "ShellGuard TOTP",
+  "description": "Store and generate 2FA verification codes on your device with hardware-backed encryption.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
