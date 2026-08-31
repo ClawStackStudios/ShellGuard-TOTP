@@ -1,0 +1,239 @@
+# Release Pipeline — the RELEASE-v*.md document is the single source of truth.
+#
+# Two trigger paths, one invariant:
+#   1. Tag push v*            → build, sign, publish that exact tag, body = RELEASE-<tag>.md
+#   2. Push to main with the --release vX.Y.Z.W flag in the HEAD commit message
+#
+# STRICT NOTES RESOLUTION: the job requires the exact RELEASE-<tag>.md in the
+# checkout at the release ref. No newest-file fallback. No auto-generated
+# notes. If the document is missing, the workflow FAILS — create it, commit,
+# push again.
+#
+# Mirror job: pushing changes to any RELEASE-v*.md on main (rolling the doc
+# upward, or editing notes after a release) automatically syncs the matching
+# GitHub Release body. No manual `gh release edit` needed.
+
+name: Release Pipeline 📦
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        description: 'Release version tag (e.g. v0.0.0.1)'
+        required: true
+        default: 'v0.0.0.1'
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  release:
+    name: Build, Sign & Publish Release 🚀
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code 🛡️
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect Release Trigger & Version 🔍
+        id: detect
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="${{ github.event.inputs.version_tag }}"
+            if [[ ! "$TAG" =~ ^v ]]; then
+              TAG="v$TAG"
+            fi
+            echo "Triggered manually via workflow_dispatch: $TAG"
+            echo "tag=$TAG" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            TAG="${{ github.ref_name }}"
+            echo "Triggered by tag push: $TAG"
+            echo "tag=$TAG" >> $GITHUB_OUTPUT
+          else
+            COMMIT_MSG=$(git log -1 --pretty=%B)
+            # Match patterns like "--release v0.0.0.1", "--release 0.0.0.1", "[--release v0.0.0.1]"
+            if echo "$COMMIT_MSG" | grep -iE -- '--release[ =]+v?[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?' > /dev/null; then
+              EXTRACTED_TAG=$(echo "$COMMIT_MSG" | grep -ioE -- '--release[ =]+v?[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?' | sed -E 's/--release[ =]+//i')
+              # Ensure leading 'v'
+              if [[ ! "$EXTRACTED_TAG" =~ ^v ]]; then
+                EXTRACTED_TAG="v$EXTRACTED_TAG"
+              fi
+              echo "Detected release flag in HEAD commit: $EXTRACTED_TAG"
+              echo "tag=$EXTRACTED_TAG" >> $GITHUB_OUTPUT
+
+              # Create the annotated tag on remote if it does not exist yet
+              if ! git rev-parse -q --verify "refs/tags/$EXTRACTED_TAG" >/dev/null; then
+                echo "Creating and pushing annotated tag $EXTRACTED_TAG"
+                git config user.name "github-actions[bot]"
+                git config user.email "github-actions[bot]@users.noreply.github.com"
+                git tag -a "$EXTRACTED_TAG" -m "Release $EXTRACTED_TAG"
+                git push origin "$EXTRACTED_TAG"
+              fi
+            else
+              echo "No tag push and no --release flag in the HEAD commit — release job skipped."
+              echo "skip=true" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Locate Release Notes (STRICT — exact version match) 📝
+        id: release_notes
+        if: steps.detect.outputs.tag != ''
+        run: |
+          TAG="${{ steps.detect.outputs.tag }}"
+          RELEASE_FILE="RELEASE-${TAG}.md"
+          if [ -f "$RELEASE_FILE" ]; then
+            echo "✅ Found the release notes document: $RELEASE_FILE (single source of truth)"
+            echo "path=$RELEASE_FILE" >> $GITHUB_OUTPUT
+          else
+            echo "::error::RELEASE-${TAG}.md is missing at the release ref."
+            echo "::error::The release notes document is the single source of truth for this release —"
+            echo "::error::no newest-file fallback and no auto-generated notes are permitted."
+            echo "::error::Create/rename the release document to RELEASE-${TAG}.md, commit it, and push again."
+            exit 1
+          fi
+
+      - name: ☕ Setup Java 17 (Zulu)
+        if: steps.detect.outputs.tag != ''
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: 🤖 Setup Android SDK
+        if: steps.detect.outputs.tag != ''
+        uses: android-actions/setup-android@v3
+
+      - name: ⚙️ Grant Execute Permission for Gradlew
+        if: steps.detect.outputs.tag != ''
+        run: chmod +x gradlew
+
+      - name: 🛡️ Pre-Flight Test Gate
+        if: steps.detect.outputs.tag != ''
+        run: ./gradlew testDebugUnitTest --no-daemon
+
+      - name: 📦 Build Release AAB (Google Play) & APK (FOSS Sideload)
+        if: steps.detect.outputs.tag != ''
+        run: ./gradlew bundleRelease assembleRelease --no-daemon
+
+      - name: 🔑 Sign Release AAB (Google Play Bundle)
+        id: sign_aab
+        if: steps.detect.outputs.tag != ''
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: app/build/outputs/bundle/release
+          signingKeyBase64: ${{ secrets.ANDROID_SIGNING_KEY }}
+          alias: ${{ secrets.ANDROID_KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+      - name: 🔑 Sign Release APK (Direct Install)
+        id: sign_apk
+        if: steps.detect.outputs.tag != ''
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.ANDROID_SIGNING_KEY }}
+          alias: ${{ secrets.ANDROID_KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+      - name: 📤 Upload Build Artifacts (Actions Dashboard)
+        if: steps.detect.outputs.tag != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: shellguard-totp-${{ steps.detect.outputs.tag }}
+          path: |
+            ${{ steps.sign_aab.outputs.signedReleaseFile }}
+            ${{ steps.sign_apk.outputs.signedReleaseFile }}
+          retention-days: 14
+
+      - name: Publish GitHub Release 🚀
+        if: steps.detect.outputs.tag != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.detect.outputs.tag }}
+          name: ShellGuard TOTP ${{ steps.detect.outputs.tag }}
+          body_path: ${{ steps.release_notes.outputs.path }}
+          draft: false
+          prerelease: false
+          files: |
+            ${{ steps.sign_aab.outputs.signedReleaseFile }}
+            ${{ steps.sign_apk.outputs.signedReleaseFile }}
+
+  mirror:
+    name: Mirror RELEASE Document into the GitHub Release 🪞
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Code 🛡️
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Skip when this push already triggers the release job 💬
+        id: gate
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          if echo "$COMMIT_MSG" | grep -iE -- '--release[ =]+v?[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?' > /dev/null; then
+            echo "Release flag present in the HEAD commit — the release job owns publication. Mirror skipped."
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "No release flag — mirror may sync changed release documents."
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Mirror Changed Release Documents 🪞
+        if: steps.gate.outputs.skip != 'true'
+        run: |
+          BEFORE="${{ github.event.before }}"
+          if [ -z "$BEFORE" ] || ! git cat-file -e "$BEFORE" 2>/dev/null; then
+            # Unknown parent (first push / force push): consider every existing document
+            CHANGED=$(ls -1 RELEASE-v*.md 2>/dev/null || true)
+          else
+            CHANGED=$(git diff --name-only "$BEFORE" "${{ github.sha }}" -- 'RELEASE-v*.md' || true)
+          fi
+          CHANGED=$(echo "$CHANGED" | grep -v '^$' || true)
+          if [ -z "$CHANGED" ]; then
+            echo "No release documents changed — nothing to mirror."
+            exit 0
+          fi
+
+          for FILE in $CHANGED; do
+            if [ ! -f "$FILE" ]; then
+              echo "↩︎ $FILE no longer exists (release document rolled upward) — skipping."
+              continue
+            fi
+
+            TAG=$(basename "$FILE" .md | sed 's/^RELEASE-//')
+            case "$TAG" in
+              v[0-9]*) ;;
+              *) echo "Skip $FILE — filename does not encode a vX.Y.Z.W tag."; continue ;;
+            esac
+
+            if ! git rev-parse -q --verify "refs/tags/$TAG" >/dev/null 2>&1; then
+              echo "ℹ️  $FILE has no tag $TAG on this repository yet — skipping."
+              echo "   It will be used automatically when the $TAG tag is pushed."
+              continue
+            fi
+
+            echo "🪞 Mirroring $FILE → GitHub Release $TAG"
+            if gh release view "$TAG" > /dev/null 2>&1; then
+              gh release edit "$TAG" --notes-file "$FILE"
+              echo "✅ Updated release notes for $TAG"
+            else
+              gh release create "$TAG" --verify-tag --title "ShellGuard TOTP $TAG" --notes-file "$FILE"
+              echo "✅ Created release $TAG from $FILE"
+            fi
+          done
