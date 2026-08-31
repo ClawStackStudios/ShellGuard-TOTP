@@ -48,7 +48,7 @@ Edit [`app/build.gradle.kts`](file:///config/Documents/workspace-lucas/projects/
 ```kotlin
 android {
     defaultConfig {
-        applicationId = "com.aistudio.shellguard.totp.auth"
+        applicationId = "com.clawstack.shellguard.totp"
         minSdk = 24
         targetSdk = 35
         versionCode = N + 1         // Increment monotonically (+1 integer for every upload: 1, 2, 3...)
@@ -152,7 +152,7 @@ bundletool build-apks \
 ## 🌐 Step 6: Google Play Console Release Upload
 
 1. Navigate to the **[Google Play Console](https://play.google.com/console)**.
-2. Select **ShellGuard TOTP** (`com.aistudio.shellguard.totp.auth`).
+2. Select **ShellGuard TOTP** (`com.clawstack.shellguard.totp`).
 3. In the left-hand sidebar, navigate to **Testing** → **Internal testing** (or **Closed testing**).
 4. Click **Create new release** (top right).
 5. **Upload Bundle**: Drag and drop `app-release.aab` into the upload zone.

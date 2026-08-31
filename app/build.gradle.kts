@@ -15,7 +15,7 @@ android {
   compileSdk { version = release(36) { minorApiLevel = 1 } }
 
   defaultConfig {
-    applicationId = "com.aistudio.shellguard.totp.auth"
+    applicationId = "com.clawstack.shellguard.totp"
     minSdk = 24
     targetSdk = 35
     versionCode = 2
