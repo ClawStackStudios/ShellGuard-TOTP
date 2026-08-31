@@ -41,7 +41,7 @@ Before building a release artifact, run the full verification gate to ensure zer
 
 ## 🔢 Step 2: Versioning Protocol
 
-Every release bundle uploaded to Google Play **MUST** have a strictly higher `versionCode` than the previous upload.
+Every release bundle uploaded to Google Play **MUST** have a strictly higher `versionCode` than any previously uploaded bundle.
 
 Edit [`app/build.gradle.kts`](file:///config/Documents/workspace-lucas/projects/Agents/ShellGuard-TOTP/app/build.gradle.kts):
 
@@ -51,13 +51,45 @@ android {
         applicationId = "com.aistudio.shellguard.totp.auth"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1          // Increment by +1 for every upload (1, 2, 3...)
-        versionName = "0.0.0.1"  // Release display version (0.0.0.1, 0.0.0.2, 1.0.0...)
+        versionCode = N + 1         // Increment monotonically (+1 integer for every upload: 1, 2, 3...)
+        versionName = "X.Y.Z.N"     // SemVer display version (e.g. "0.0.0.1", "0.0.0.2", "1.0.0.0"...)
     }
 }
 ```
 
-> [!NOTE]
+> [!TIP]
+> **Durable Conflict Resolution: Updating a Release Without Bumping Version Name**:
+> If you need to re-upload or hotfix a release under the same user-facing version name (e.g. `vX.Y.Z.N`), keep `versionName = "X.Y.Z.N"` unchanged and increment `versionCode` (e.g. `N` ➔ `N + 1`). In Google Play Console, it will appear as `X.Y.Z.N (Build N+1)`, and the app UI will seamlessly continue displaying `vX.Y.Z.N`.
+
+---
+
+## 📦 Step 3: Generate Signed Release Artifacts
+
+### 🚀 Recommended: Automated Cloud Build via GitHub Actions (Zero Local CPU Drain)
+To avoid local machine resource exhaustion, use the cloud release pipeline:
+
+1. **Trigger via Commit Flag or Git Tag**:
+   ```bash
+   # Method A: Commit flag
+   git commit -m "chore(release): release vX.Y.Z.N (Build N+1) --release vX.Y.Z.N"
+   git push origin main
+
+   # Method B: Git tag
+   git tag vX.Y.Z.N
+   git push origin vX.Y.Z.N
+   ```
+2. **Download Signed Artifacts**:
+   - Navigate to GitHub **Actions** or **Releases** on `ClawStackStudios/ShellGuard-TOTP`.
+   - Download the signed `app-release.aab` (for Google Play Console) and `app-release.apk` (for direct sideloading).
+
+### 💻 Alternative: Local Build (Requires Local Keystore)
+If building locally, run:
+```bash
+./gradlew bundleRelease assembleRelease
+```
+Artifacts output to:
+- `app/build/outputs/bundle/release/app-release.aab`
+- `app/build/outputs/apk/release/app-release.apk`
 > The release footer at the bottom of `SettingsScreen.kt` dynamically reads `BuildConfig.VERSION_NAME` and will automatically update to match `versionName`.
 
 ---

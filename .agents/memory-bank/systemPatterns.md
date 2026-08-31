@@ -50,4 +50,20 @@ UI (Jetpack Compose) → ViewModel (StateFlow/Intent) → UseCase/Repository →
 ## Dynamic Release Versioning Pattern
 1. **Single Source of Truth**: `versionCode` (strictly monotonic integer) and `versionName` in `app/build.gradle.kts` match Google Play Console tracks.
 2. **UI Dynamic Binding**: Settings footers read directly from `BuildConfig.VERSION_NAME` to automatically reflect version bumps.
+3. **Release Updates Invariant**: When re-releasing or updating a release version (e.g. `0.0.0.1`), increment `versionCode` (+1 integer, e.g. `2`) while keeping `versionName = "0.0.0.1"` for human visibility.
+
+## Unified CI/CD Release Pipeline Pattern
+1. **Dual Binary Artifact Distribution**:
+   - Release workflows produce both signed `app-release.aab` (Google Play Console) and `app-release.apk` (Direct FOSS install).
+2. **Strict Release Notes Resolution**:
+   - Releases mandate `RELEASE-vX.Y.Z.N.md` in repository root as the single source of truth for release notes.
+3. **Trigger Flexibility**:
+   - Supports both `--release vX.Y.Z.N` commit message flags and `v*` git tag pushes, with auto-tagging on commit flags.
+4. **Release Notes Mirroring**:
+   - Edits to `RELEASE-v*.md` files on `main` automatically sync to GitHub Release descriptions via a lightweight mirror job.
+
+## Headless CI Gradle Provisioning Pattern
+1. **Setup Action**: Use `gradle/actions/setup-gradle@v4` to provide Gradle in `PATH` and configure dependency caching.
+2. **Auto-Wrapper Fallback**: Ensure the wrapper exists and is executable (`if [ ! -f "gradlew" ]; then gradle wrapper --gradle-version X.Y.Z; fi; chmod +x gradlew`) before running Gradle tasks.
+
 
