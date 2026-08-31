@@ -2,6 +2,36 @@
 
 All notable changes to the ShellGuard TOTP project will be documented in this file.
 
+## [0.0.0.1] - 2026-08-31
+### Added
+- **Dynamic Release Version Synchronization**:
+  - Unified `versionCode = 1` and `versionName = "0.0.0.1"` in `app/build.gradle.kts` to establish exact 1:1 parity with the Google Play Console initial release track.
+  - Connected `SettingsScreen` release footer dynamically to `BuildConfig.VERSION_NAME` to automatically reflect future version bumps.
+### Changed
+- **Default Brand Pink Theme Enforcement & Dynamic Color Migration**:
+  - Replaced legacy hardcoded cyan references across `HatchVaultScreen`, `LoginScreen`, `GatewayScreen`, `QrScannerScreen`, and `SpotlightOverlay` with dynamic `MaterialTheme.colorScheme` tokens.
+  - Renamed `ThemeAccent.REEF_DEFAULT` display name to `"Reef Pink"` with signature vibrant pink `BrandLobsterRed` (`#E4048A`) as default primary accent.
+  - Enhanced `ThemeAccent.MONOCHROME` in Light Mode to adaptively use Slate `#0F172A` with crisp contrast preventing white-on-white rendering.
+- **Settings Persistence Hardening**:
+  - Connected `isAutoClearClipboard` preference to `AuthRepository` SharedPreferences storage and verified toggle behavior in `TotpViewModel.copyToClipboard`.
+  - Audited full persistence stack for all Settings menu options across cold application restarts (Theme Mode, Accent Palettes, Biometrics, Vault Protection PIN/Password, Auto-Scrub Clipboard, Guided Tour, and Session credentials).
+  - Added unit test `testUserSettingsPersistenceAcrossRestarts` verifying 100% settings fidelity after simulated process recreation.
+- **UI Contrast & System Theme Compatibility**:
+  - Verified and aligned container, background, surface, text, and border token hierarchy across Abyssal Dark, Ocean Mist Light, and System Default appearance modes.
+
+## [1.9.2] - 2026-08-30
+### Changed
+- **16 KB Memory Page Size Compatibility**:
+  - Upgraded SQLCipher for Android to `4.6.1`, the official 16 KB page-aligned drop-in release.
+  - Configured `jniLibs.useLegacyPackaging = false` in `build.gradle.kts` to ensure native libraries are stored uncompressed and page-aligned (required for Android 15+ 16 KB kernel devices).
+### Fixed
+- **Robolectric Main Looper Deadlocks in UI Tests**:
+  - Refactored `LocalModeUnlockAndVaultTest.kt` to scope `runBlocking` strictly around asynchronous repository/database operations.
+  - Resolved "component not displayed" assertion failures by ensuring the main looper is free to pump Compose recompositions and `LaunchedEffect` animation delays during UI tests.
+  - Implemented `waitUntil` and explicit clock advancement in tests to handle staggered entrance animations and async `StateFlow` emissions.
+- **Repository-State Infrastructure**:
+  - Generated standard Android `debug.keystore` at repository root for consistent signing across local and automated build environments.
+
 ## [1.9.1] - 2026-08-30
 ### Fixed
 - **Android KeyStore Caller-Provided IV Exception in EncryptedDeviceVault**:

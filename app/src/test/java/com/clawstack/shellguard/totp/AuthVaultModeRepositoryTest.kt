@@ -70,6 +70,8 @@ class AuthVaultModeRepositoryTest {
     @Test
     fun testThemeAccentSwitching() {
         assertEquals(ThemeAccent.REEF_DEFAULT, authRepository.themeAccent.value)
+        assertEquals("Reef Pink", ThemeAccent.REEF_DEFAULT.displayName)
+        assertEquals(com.clawstack.shellguard.totp.ui.theme.BrandLobsterRed, ThemeAccent.REEF_DEFAULT.primaryColor)
 
         authRepository.setThemeAccent(ThemeAccent.CYAN_VENT)
         assertEquals(ThemeAccent.CYAN_VENT, authRepository.themeAccent.value)
@@ -85,5 +87,42 @@ class AuthVaultModeRepositoryTest {
 
         authRepository.setThemeAccent(ThemeAccent.MONOCHROME)
         assertEquals(ThemeAccent.MONOCHROME, authRepository.themeAccent.value)
+    }
+
+    @Test
+    fun testAutoClearClipboardSwitching() {
+        assertTrue(authRepository.isAutoClearClipboard.value)
+
+        authRepository.setAutoClearClipboard(false)
+        assertFalse(authRepository.isAutoClearClipboard.value)
+
+        authRepository.setAutoClearClipboard(true)
+        assertTrue(authRepository.isAutoClearClipboard.value)
+    }
+
+    @Test
+    fun testUserSettingsPersistenceAcrossRestarts() {
+        // 1. User customizes settings in Settings menu
+        authRepository.setThemeMode(AppThemeMode.LIGHT)
+        authRepository.setThemeAccent(ThemeAccent.EMERALD_TRENCH)
+        authRepository.setBiometricEnabled(true)
+        authRepository.updateVaultSecret("987654", isPin = true)
+        authRepository.setAutoClearClipboard(false)
+        authRepository.setGuidedTourCompleted(true)
+        authRepository.setBackupPromptDismissed(true)
+
+        // 2. Simulate complete application cold restart by recreating AuthRepository
+        val restartedRepo = AuthRepository(context)
+
+        // 3. Verify all settings survived restart intact
+        assertEquals(AppThemeMode.LIGHT, restartedRepo.themeMode.value)
+        assertEquals(ThemeAccent.EMERALD_TRENCH, restartedRepo.themeAccent.value)
+        assertTrue(restartedRepo.isBiometricEnabled.value)
+        assertEquals(VaultProtectionMode.PIN, restartedRepo.vaultMode.value)
+        assertTrue(restartedRepo.unlockWithSecret("987654"))
+        assertFalse(restartedRepo.unlockWithSecret("wrong_pin"))
+        assertFalse(restartedRepo.isAutoClearClipboard.value)
+        assertTrue(restartedRepo.hasCompletedGuidedTour.value)
+        assertTrue(restartedRepo.isBackupPromptDismissed.value)
     }
 }

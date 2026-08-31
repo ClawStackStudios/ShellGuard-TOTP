@@ -9,6 +9,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -36,6 +37,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -56,12 +58,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.clawstack.shellguard.totp.ui.theme.AbyssalDeep
-import com.clawstack.shellguard.totp.ui.theme.ClawCyan
-import com.clawstack.shellguard.totp.ui.theme.ShellBorder
-import com.clawstack.shellguard.totp.ui.theme.ShellSurfaceElevated
-import com.clawstack.shellguard.totp.ui.theme.TextMuted
-import com.clawstack.shellguard.totp.ui.theme.TextPearl
 
 @Composable
 fun SpotlightOverlay(
@@ -73,6 +69,7 @@ fun SpotlightOverlay(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val primaryColor = MaterialTheme.colorScheme.primary
     val infiniteTransition = rememberInfiniteTransition(label = "halo_pulse")
     val pulseScale by infiniteTransition.animateFloat(
         initialValue = 1.0f,
@@ -130,13 +127,13 @@ fun SpotlightOverlay(
                     )
                     // Draw outer glowing pulsing rings
                     drawCircle(
-                        color = ClawCyan.copy(alpha = pulseAlpha),
+                        color = primaryColor.copy(alpha = pulseAlpha),
                         radius = targetRadius * pulseScale,
                         center = targetCenter,
                         style = Stroke(width = 2.dp.toPx())
                     )
                     drawCircle(
-                        color = ClawCyan,
+                        color = primaryColor,
                         radius = targetRadius,
                         center = targetCenter,
                         style = Stroke(width = 2.dp.toPx())
@@ -155,8 +152,8 @@ fun SpotlightOverlay(
                 // Tooltip Card
                 Card(
                     shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = ShellSurfaceElevated),
-                    border = androidx.compose.foundation.BorderStroke(1.5.dp, ClawCyan),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                    border = BorderStroke(1.5.dp, primaryColor),
                     elevation = CardDefaults.cardElevation(defaultElevation = 12.dp),
                     modifier = Modifier
                         .fillMaxWidth(0.92f)
@@ -171,14 +168,14 @@ fun SpotlightOverlay(
                             modifier = Modifier
                                 .size(48.dp)
                                 .clip(CircleShape)
-                                .background(ClawCyan.copy(alpha = 0.15f))
-                                .border(1.dp, ClawCyan.copy(alpha = 0.5f), CircleShape),
+                                .background(primaryColor.copy(alpha = 0.15f))
+                                .border(1.dp, primaryColor.copy(alpha = 0.5f), CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = if (step == 1) Icons.Default.Settings else Icons.Default.Sync,
                                 contentDescription = null,
-                                tint = ClawCyan,
+                                tint = primaryColor,
                                 modifier = Modifier.size(26.dp)
                             )
                         }
@@ -187,7 +184,7 @@ fun SpotlightOverlay(
 
                         Text(
                             text = if (step == 1) "Server Gateway Setup" else "Connect Self-Hosted Server",
-                            color = TextPearl,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.Bold,
                             fontSize = 17.sp,
                             textAlign = TextAlign.Center
@@ -201,7 +198,7 @@ fun SpotlightOverlay(
                             } else {
                                 "Tap 'Connect to Server' to authenticate and sync your 2FA codes with your self-hosted ShellGuard instance."
                             },
-                            color = TextMuted,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 14.sp,
                             lineHeight = 20.sp,
                             textAlign = TextAlign.Center
@@ -218,24 +215,28 @@ fun SpotlightOverlay(
                             OutlinedButton(
                                 onClick = onDismiss,
                                 shape = RoundedCornerShape(10.dp),
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                                 modifier = Modifier
                                     .weight(1f)
                                     .testTag("spotlight_skip_button")
                             ) {
-                                Text("Skip Tutorial", color = TextMuted, fontSize = 13.sp)
+                                Text("Skip Tutorial", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
                             }
 
                             Button(
                                 onClick = onNext,
                                 shape = RoundedCornerShape(10.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = ClawCyan),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = primaryColor,
+                                    contentColor = MaterialTheme.colorScheme.onPrimary
+                                ),
                                 modifier = Modifier
                                     .weight(1f)
                                     .testTag("spotlight_next_button")
                             ) {
                                 Text(
                                     text = if (step == 1) "Open Settings" else "Got It!",
-                                    color = AbyssalDeep,
+                                    color = MaterialTheme.colorScheme.onPrimary,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 13.sp
                                 )

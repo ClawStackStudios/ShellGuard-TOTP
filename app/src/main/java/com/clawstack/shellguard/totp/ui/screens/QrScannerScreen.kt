@@ -12,6 +12,7 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -30,7 +31,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.FlashOff
 import androidx.compose.material.icons.filled.FlashOn
@@ -41,6 +42,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -67,13 +69,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.clawstack.shellguard.totp.ui.scanner.QrCodeAnalyzer
-import com.clawstack.shellguard.totp.ui.theme.AbyssalDeep
-import com.clawstack.shellguard.totp.ui.theme.ClawCyan
-import com.clawstack.shellguard.totp.ui.theme.ShellBorder
-import com.clawstack.shellguard.totp.ui.theme.ShellSurface
-import com.clawstack.shellguard.totp.ui.theme.ShellSurfaceElevated
-import com.clawstack.shellguard.totp.ui.theme.TextMuted
-import com.clawstack.shellguard.totp.ui.theme.TextPearl
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.Executors
@@ -150,7 +145,7 @@ fun QrScannerScreen(
                 title = {
                     Text(
                         text = "Scan 2FA QR Code",
-                        color = TextPearl,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
                     )
@@ -158,9 +153,9 @@ fun QrScannerScreen(
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = TextPearl
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 },
@@ -177,15 +172,15 @@ fun QrScannerScreen(
                             Icon(
                                 imageVector = if (isTorchEnabled) Icons.Default.FlashOn else Icons.Default.FlashOff,
                                 contentDescription = if (isTorchEnabled) "Turn Torch Off" else "Turn Torch On",
-                                tint = if (isTorchEnabled) ClawCyan else TextMuted
+                                tint = if (isTorchEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = AbyssalDeep)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
             )
         },
-        containerColor = AbyssalDeep,
+        containerColor = MaterialTheme.colorScheme.background,
         modifier = modifier.fillMaxSize()
     ) { padding ->
         Column(
@@ -203,8 +198,8 @@ fun QrScannerScreen(
                 modifier = Modifier
                     .size(280.dp)
                     .clip(RoundedCornerShape(24.dp))
-                    .background(ShellSurfaceElevated)
-                    .border(2.dp, ClawCyan, RoundedCornerShape(24.dp)),
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(24.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 if (hasCameraPermission) {
@@ -257,7 +252,7 @@ fun QrScannerScreen(
                     Box(
                         modifier = Modifier
                             .size(200.dp)
-                            .border(2.dp, ClawCyan.copy(alpha = 0.8f), RoundedCornerShape(16.dp))
+                            .border(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.8f), RoundedCornerShape(16.dp))
                     )
                 } else {
                     Column(
@@ -267,13 +262,13 @@ fun QrScannerScreen(
                         Icon(
                             imageVector = Icons.Default.CameraAlt,
                             contentDescription = "Camera Permission Required",
-                            tint = ClawCyan,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(56.dp)
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
                             text = "Camera Permission Required",
-                            color = TextPearl,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp,
                             textAlign = TextAlign.Center
@@ -281,17 +276,20 @@ fun QrScannerScreen(
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = "Grant camera access to scan 2FA QR codes instantly.",
-                            color = TextMuted,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 12.sp,
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(
                             onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) },
-                            colors = ButtonDefaults.buttonColors(containerColor = ClawCyan),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            ),
                             shape = RoundedCornerShape(10.dp)
                         ) {
-                            Text("Grant Permission", color = AbyssalDeep, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                            Text("Grant Permission", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold, fontSize = 13.sp)
                         }
                     }
                 }
@@ -303,7 +301,7 @@ fun QrScannerScreen(
             OutlinedButton(
                 onClick = { galleryLauncher.launch("image/*") },
                 shape = RoundedCornerShape(12.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, ClawCyan),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp)
@@ -312,13 +310,13 @@ fun QrScannerScreen(
                 Icon(
                     imageVector = Icons.Default.Image,
                     contentDescription = null,
-                    tint = ClawCyan,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = if (isAnalyzingImage) "Scanning Image..." else "Scan from Image / Gallery",
-                    color = ClawCyan,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 14.sp
                 )
@@ -328,7 +326,7 @@ fun QrScannerScreen(
 
             Text(
                 text = "Point camera at 2FA QR code or paste otpauth:// URI",
-                color = TextMuted,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 13.sp,
                 textAlign = TextAlign.Center
             )
@@ -339,22 +337,22 @@ fun QrScannerScreen(
             OutlinedTextField(
                 value = rawInput,
                 onValueChange = { rawInput = it },
-                label = { Text("Or Paste URI / Secret", color = TextMuted) },
-                placeholder = { Text("otpauth://totp/... or JBSWY3D...", color = TextMuted.copy(alpha = 0.5f)) },
+                label = { Text("Or Paste URI / Secret", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                placeholder = { Text("otpauth://totp/... or JBSWY3D...", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)) },
                 singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("qr_uri_input"),
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = ShellSurface,
-                    unfocusedContainerColor = ShellSurface,
-                    focusedBorderColor = ClawCyan,
-                    unfocusedBorderColor = ShellBorder,
-                    focusedTextColor = TextPearl,
-                    unfocusedTextColor = TextPearl,
-                    focusedLabelColor = ClawCyan,
-                    unfocusedLabelColor = TextMuted
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    focusedLabelColor = MaterialTheme.colorScheme.primary,
+                    unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             )
 
@@ -372,16 +370,19 @@ fun QrScannerScreen(
                     .height(52.dp)
                     .testTag("import_uri_button"),
                 shape = RoundedCornerShape(14.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = ClawCyan)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                )
             ) {
                 Icon(
                     imageVector = Icons.Default.QrCodeScanner,
                     contentDescription = null,
-                    tint = AbyssalDeep,
+                    tint = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Import Code", color = AbyssalDeep, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                Text("Import Code", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold, fontSize = 15.sp)
             }
 
             Spacer(modifier = Modifier.height(24.dp))

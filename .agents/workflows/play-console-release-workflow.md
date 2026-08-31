@@ -1,0 +1,166 @@
+# 🚀 Google Play Console Release & Deployment Workflow
+
+> **Standard Operating Procedure for ShellGuard-TOTP Releases**  
+> *Engineered for Android App Bundle (`.aab`) Generation, Keystore Signing, 16 KB Alignment Verification, and Play Console Distribution.*
+
+---
+
+## 📋 Workflow Overview
+
+```mermaid
+flowchart TD
+    PreFlight["1. 🧪 Pre-Flight Gate<br/>(Unit Tests & 16 KB Alignment Check)"]
+    Version["2. 🔢 Version Bump<br/>(versionCode + 1, versionName SemVer)"]
+    Bundle["3. 📦 Generate AAB Bundle<br/>(./gradlew bundleRelease)"]
+    Validate["4. 🔍 Inspect Bundle<br/>(bundletool / APK Analyzer)"]
+    Upload["5. 🌐 Upload to Play Console<br/>(Internal / Closed Testing Track)"]
+    Rollout["6. 👥 Tester Distribution<br/>(Share Opt-in Link)"]
+    Tag["7. 🏷️ Git Tag & Memory Bank<br/>(git tag vX.Y.Z.W & changelog.md)"]
+
+    PreFlight --> Version --> Bundle --> Validate --> Upload --> Rollout --> Tag
+```
+
+---
+
+## 🛠️ Step 1: Pre-Flight Verification Gate
+
+Before building a release artifact, run the full verification gate to ensure zero regressions:
+
+```bash
+# Clean build cache and execute all unit and UI tests
+./gradlew clean testDebugUnitTest
+```
+
+### Invariants to Verify:
+- [ ] **Tests Passing**: 100% pass rate across all Robolectric and unit tests (46+ passing).
+- [ ] **16 KB Alignment**: `gradle/libs.versions.toml` specifies `sqlcipher = "4.6.1"` and `app/build.gradle.kts` specifies `jniLibs.useLegacyPackaging = false`.
+- [ ] **Security Boundaries**: `FLAG_SECURE` active for production builds (`!BuildConfig.DEBUG` in `MainActivity.kt`).
+- [ ] **Network Security**: Cleartext permitted strictly for local LAN / VPN origins in `res/xml/network_security_config.xml`.
+
+---
+
+## 🔢 Step 2: Versioning Protocol
+
+Every release bundle uploaded to Google Play **MUST** have a strictly higher `versionCode` than the previous upload.
+
+Edit [`app/build.gradle.kts`](file:///config/Documents/workspace-lucas/projects/Agents/ShellGuard-TOTP/app/build.gradle.kts):
+
+```kotlin
+android {
+    defaultConfig {
+        applicationId = "com.aistudio.shellguard.totp.auth"
+        minSdk = 24
+        targetSdk = 35
+        versionCode = 1          // Increment by +1 for every upload (1, 2, 3...)
+        versionName = "0.0.0.1"  // Release display version (0.0.0.1, 0.0.0.2, 1.0.0...)
+    }
+}
+```
+
+> [!NOTE]
+> The release footer at the bottom of `SettingsScreen.kt` dynamically reads `BuildConfig.VERSION_NAME` and will automatically update to match `versionName`.
+
+---
+
+## 🔑 Step 3: Keystore & Signing Configuration
+
+Google Play uses **Play App Signing**. You sign the bundle with your **Upload Key**, and Google signs the final APK delivered to user devices with the App Signing Key.
+
+### Environment Variable Setup (CI / Automated Shell):
+```bash
+export KEYSTORE_PATH="/path/to/my-upload-key.jks"
+export STORE_PASSWORD="your_keystore_password"
+export KEY_PASSWORD="your_key_password"
+```
+
+### Or GUI Signing in Android Studio:
+1. Top Menu: **Build** → **Generate Signed Bundle / APK...**
+2. Select **Android App Bundle (.aab)** → **Next**.
+3. Choose your Keystore file, enter passwords, and select key alias `upload`.
+4. Choose build variant **release**.
+5. Click **Create**.
+
+---
+
+## 📦 Step 4: Generate the Release Android App Bundle (`.aab`)
+
+Run the Gradle release bundle task:
+
+```bash
+./gradlew bundleRelease
+```
+
+### Output Location:
+📁 `app/build/outputs/bundle/release/app-release.aab`
+
+---
+
+## 🔍 Step 5: Bundle Validation & 16 KB Page-Size Check
+
+Before uploading to Play Console, inspect the generated `.aab`:
+
+### Method A: Android Studio APK/AAB Analyzer
+1. In Android Studio, go to **Build** → **Analyze APK...**
+2. Select `app/build/outputs/bundle/release/app-release.aab`.
+3. Open `base/lib/arm64-v8a/` and inspect `libsqlcipher.so` and `libbarhopper_v3.so`.
+4. Confirm native libraries indicate 16 KB segment alignment.
+
+### Method B: bundletool Universal APK Test (Optional)
+```bash
+bundletool build-apks \
+  --bundle=app/build/outputs/bundle/release/app-release.aab \
+  --output=app-universal.apks \
+  --mode=universal \
+  --ks=my-upload-key.jks \
+  --ks-pass=pass:your_keystore_password
+```
+
+---
+
+## 🌐 Step 6: Google Play Console Release Upload
+
+1. Navigate to the **[Google Play Console](https://play.google.com/console)**.
+2. Select **ShellGuard TOTP** (`com.aistudio.shellguard.totp.auth`).
+3. In the left-hand sidebar, navigate to **Testing** → **Internal testing** (or **Closed testing**).
+4. Click **Create new release** (top right).
+5. **Upload Bundle**: Drag and drop `app-release.aab` into the upload zone.
+6. **Release Name**: Play Console will automatically populate `0.0.0.1 (1)` matching your Gradle config.
+7. **Release Notes**: Provide notes for your testers:
+   ```markdown
+   <en-US>
+   • Initial release of ShellGuard-TOTP Authenticator.
+   • Privacy-first 2FA companion with hardware KeyStore AES-256 encryption.
+   • Full offline zero-knowledge TOTP generation & self-hosted server delta sync.
+   • Reef Pink bioluminescent modernist design with 6 custom theme accents.
+   • 16 KB memory page size compatibility for Android 15+.
+   </en-US>
+   ```
+8. Click **Next** → **Save** → **Review release** → **Start rollout to Internal testing**.
+
+---
+
+## 👥 Step 7: Manage & Distribute to Testers
+
+1. In Play Console under **Internal testing**, open the **Testers** tab.
+2. Create an **Email list** (e.g. `ShellGuard Alpha Testers`) and add your testers' Google account emails.
+3. Scroll down to **How testers join your test** and copy the **"Join on Android"** link or **"Join on the web"** link.
+4. Share the link with your testers:
+   - Testers tap the link on their Android device.
+   - Tap **Accept Invite**.
+   - Download/update the app directly from the Google Play Store!
+
+---
+
+## 🏷️ Step 8: Post-Release Tagging & Memory Bank Sync
+
+After rollout, tag the repository and update project history:
+
+```bash
+# Tag the git commit matching the release version
+git tag -a v0.0.0.1 -m "Release v0.0.0.1 (Build 1) to Google Play Internal Testing"
+git push origin v0.0.0.1
+```
+
+### Update Memory Bank:
+1. Append details to [`.agents/memory-bank/changelog.md`](file:///config/Documents/workspace-lucas/projects/Agents/ShellGuard-TOTP/.agents/memory-bank/changelog.md).
+2. Record the rollout event in [`.agents/memory-bank/activeContext.md`](file:///config/Documents/workspace-lucas/projects/Agents/ShellGuard-TOTP/.agents/memory-bank/activeContext.md).

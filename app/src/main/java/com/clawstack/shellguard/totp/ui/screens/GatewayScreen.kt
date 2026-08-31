@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -200,8 +201,9 @@ fun GatewayScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(AbyssalDeep)
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
+            .imePadding()
             .padding(horizontal = 24.dp, vertical = 16.dp)
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -219,14 +221,14 @@ fun GatewayScreen(
                 modifier = Modifier
                     .size(44.dp)
                     .clip(CircleShape)
-                    .background(ShellSurfaceElevated)
-                    .border(1.dp, ShellBorder, CircleShape)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .border(1.dp, MaterialTheme.colorScheme.outline, CircleShape)
                     .testTag("gateway_back_button")
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
-                    tint = TextPearl,
+                    tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(22.dp)
                 )
             }
@@ -239,7 +241,7 @@ fun GatewayScreen(
             modifier = Modifier
                 .size(72.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(LobsterRed),
+                .background(MaterialTheme.colorScheme.primary),
             contentAlignment = Alignment.Center
         ) {
             Text(text = "🐚", fontSize = 36.sp)
@@ -250,9 +252,9 @@ fun GatewayScreen(
         // Brand Title
         Text(
             text = buildAnnotatedString {
-                withStyle(style = SpanStyle(color = LobsterRed)) { append("Shell") }
-                withStyle(style = SpanStyle(color = ClawCyan)) { append("Guard") }
-                withStyle(style = SpanStyle(color = TextMuted, fontSize = 12.sp)) { append(" ©™") }
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) { append("Shell") }
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.secondary)) { append("Guard") }
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)) { append(" ©™") }
             },
             fontWeight = FontWeight.Bold,
             fontSize = 22.sp
@@ -262,7 +264,7 @@ fun GatewayScreen(
 
         Text(
             text = "Authenticator Gateway",
-            color = TextPearl,
+            color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.Bold,
             fontSize = 24.sp
         )
@@ -271,7 +273,7 @@ fun GatewayScreen(
 
         Text(
             text = "Login with your ShellKey©™ identity",
-            color = TextMuted,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 14.sp
         )
 
@@ -296,7 +298,7 @@ fun GatewayScreen(
                         .clip(RoundedCornerShape(12.dp))
                         .border(
                             width = if (isHostFocused || isPortFocused || !isUrlValid) 1.5.dp else 1.dp,
-                            color = if (!isUrlValid) LobsterRed else if (isPortFocused) LobsterRed else if (isHostFocused) ClawCyan else ShellBorder,
+                            color = if (!isUrlValid) MaterialTheme.colorScheme.error else if (isPortFocused || isHostFocused) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                             shape = RoundedCornerShape(12.dp)
                         ),
                     verticalAlignment = Alignment.CenterVertically
@@ -306,13 +308,13 @@ fun GatewayScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxHeight()
-                            .background(if (!isUrlValid) LobsterRed else ClawCyan)
+                            .background(if (!isUrlValid) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary)
                             .clickable { isProtocolDropdownExpanded = !isProtocolDropdownExpanded }
                             .padding(horizontal = 14.dp)
                     ) {
                         Text(
                             text = if (protocol == "https") "https://" else "http://",
-                            color = AbyssalDeep,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp
                         )
@@ -320,7 +322,7 @@ fun GatewayScreen(
                         Icon(
                             imageVector = if (isProtocolDropdownExpanded) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
                             contentDescription = "Select protocol",
-                            tint = AbyssalDeep,
+                            tint = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier.size(16.dp)
                         )
                     }
@@ -339,7 +341,7 @@ fun GatewayScreen(
                             if (serverHost.isEmpty()) {
                                 Text(
                                     text = "vault.example.com",
-                                    color = TextMuted.copy(alpha = 0.5f),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                                     fontSize = 14.sp
                                 )
                             }
@@ -350,11 +352,11 @@ fun GatewayScreen(
                                     isUrlValid = true
                                 },
                                 textStyle = TextStyle(
-                                    color = TextPearl,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Medium
                                 ),
-                                cursorBrush = SolidColor(if (isHostFocused) ClawCyan else TextPearl),
+                                cursorBrush = SolidColor(if (isHostFocused) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                                 keyboardActions = KeyboardActions(onNext = { focusManager.clearFocus() }),
@@ -371,7 +373,7 @@ fun GatewayScreen(
                         modifier = Modifier
                             .width(1.dp)
                             .height(24.dp)
-                            .background(if (!isUrlValid) LobsterRed else if (isPortFocused) LobsterRed else ShellBorder)
+                            .background(if (!isUrlValid) MaterialTheme.colorScheme.error else if (isPortFocused) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline)
                     )
 
                     // Port Section
@@ -379,7 +381,7 @@ fun GatewayScreen(
                         modifier = Modifier
                             .width(animatedPortWidth)
                             .height(56.dp)
-                            .background(if (!isUrlValid) LobsterRed.copy(alpha = 0.12f) else if (isPortFocused) LobsterRed.copy(alpha = 0.12f) else Color.Transparent)
+                            .background(if (!isUrlValid) MaterialTheme.colorScheme.error.copy(alpha = 0.12f) else if (isPortFocused) MaterialTheme.colorScheme.primary.copy(alpha = 0.12f) else Color.Transparent)
                     ) {
                         Row(
                             modifier = Modifier
@@ -394,7 +396,7 @@ fun GatewayScreen(
                                 if (serverPort.isEmpty()) {
                                     Text(
                                         text = "Port",
-                                        color = if (!isUrlValid) LobsterRed else if (isPortFocused) LobsterRed.copy(alpha = 0.6f) else TextMuted.copy(alpha = 0.5f),
+                                        color = if (!isUrlValid) MaterialTheme.colorScheme.error else if (isPortFocused) MaterialTheme.colorScheme.primary.copy(alpha = 0.6f) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                                         fontSize = 14.sp
                                     )
                                 }
@@ -405,11 +407,11 @@ fun GatewayScreen(
                                         isUrlValid = true
                                     },
                                     textStyle = TextStyle(
-                                        color = if (!isUrlValid) LobsterRed else if (isPortFocused) LobsterRed else TextPearl,
+                                        color = if (!isUrlValid) MaterialTheme.colorScheme.error else if (isPortFocused) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Bold
                                     ),
-                                    cursorBrush = SolidColor(if (isPortFocused) LobsterRed else TextPearl),
+                                    cursorBrush = SolidColor(if (isPortFocused) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface),
                                     singleLine = true,
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                                     keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
@@ -426,7 +428,7 @@ fun GatewayScreen(
                 if (!isUrlValid) {
                     Text(
                         text = urlErrorMessage,
-                        color = LobsterRed,
+                        color = MaterialTheme.colorScheme.error,
                         fontSize = 12.sp,
                         modifier = Modifier.padding(start = 16.dp, top = 4.dp)
                     )
@@ -444,8 +446,8 @@ fun GatewayScreen(
             ) {
                 Card(
                     shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = ShellSurfaceElevated),
-                    border = BorderStroke(1.dp, ClawCyan.copy(alpha = 0.5f)),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)),
                     modifier = Modifier.width(110.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
                 ) {
@@ -458,19 +460,19 @@ fun GatewayScreen(
                                     isProtocolDropdownExpanded = false
                                     isUrlValid = true
                                 }
-                                .background(if (protocol == "http") ClawCyan.copy(alpha = 0.12f) else Color.Transparent)
+                                .background(if (protocol == "http") MaterialTheme.colorScheme.primary.copy(alpha = 0.12f) else Color.Transparent)
                                 .padding(horizontal = 16.dp, vertical = 10.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
                                 text = "http://",
-                                color = if (protocol == "http") ClawCyan else TextPearl,
+                                color = if (protocol == "http") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                                 fontWeight = if (protocol == "http") FontWeight.Bold else FontWeight.Medium,
                                 fontSize = 14.sp
                             )
                         }
                         HorizontalDivider(
-                            color = ShellBorder,
+                            color = MaterialTheme.colorScheme.outline,
                             modifier = Modifier.padding(horizontal = 4.dp)
                         )
                         Row(
@@ -481,13 +483,13 @@ fun GatewayScreen(
                                     isProtocolDropdownExpanded = false
                                     isUrlValid = true
                                 }
-                                .background(if (protocol == "https") ClawCyan.copy(alpha = 0.12f) else Color.Transparent)
+                                .background(if (protocol == "https") MaterialTheme.colorScheme.primary.copy(alpha = 0.12f) else Color.Transparent)
                                 .padding(horizontal = 16.dp, vertical = 10.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
                                 text = "https://",
-                                color = if (protocol == "https") ClawCyan else TextPearl,
+                                color = if (protocol == "https") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                                 fontWeight = if (protocol == "https") FontWeight.Bold else FontWeight.Medium,
                                 fontSize = 14.sp
                             )
@@ -504,14 +506,14 @@ fun GatewayScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
-                .background(ShellSurfaceElevated.copy(alpha = 0.5f))
-                .border(1.dp, ShellBorder, RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surface)
+                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
         ) {
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .clip(RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp))
-                    .background(if (isUploadMode) ClawCyan else Color.Transparent)
+                    .background(if (isUploadMode) MaterialTheme.colorScheme.primary else Color.Transparent)
                     .clickable { isUploadMode = true }
                     .padding(vertical = 12.dp),
                 contentAlignment = Alignment.Center
@@ -519,14 +521,14 @@ fun GatewayScreen(
                 Text(
                     text = "Upload File",
                     fontWeight = FontWeight.SemiBold,
-                    color = if (isUploadMode) AbyssalDeep else TextMuted
+                    color = if (isUploadMode) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .clip(RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp))
-                    .background(if (!isUploadMode) ClawCyan else Color.Transparent)
+                    .background(if (!isUploadMode) MaterialTheme.colorScheme.primary else Color.Transparent)
                     .clickable { isUploadMode = false }
                     .padding(vertical = 12.dp),
                 contentAlignment = Alignment.Center
@@ -534,7 +536,7 @@ fun GatewayScreen(
                 Text(
                     text = "Paste ShellKey©™",
                     fontWeight = FontWeight.SemiBold,
-                    color = if (!isUploadMode) AbyssalDeep else TextMuted
+                    color = if (!isUploadMode) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -566,7 +568,7 @@ fun GatewayScreen(
             Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = (uiState as GatewayUiState.Error).message,
-                color = LobsterRed,
+                color = MaterialTheme.colorScheme.error,
                 fontSize = 13.sp,
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                 modifier = Modifier.padding(horizontal = 8.dp)
@@ -603,12 +605,15 @@ fun GatewayScreen(
                 .height(54.dp)
                 .testTag("gateway_login_button"),
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = ClawCyan)
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            )
         ) {
             if (uiState is GatewayUiState.Loading) {
-                CircularProgressIndicator(color = AbyssalDeep, modifier = Modifier.size(24.dp))
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(24.dp))
             } else {
-                Text("Login with Identity", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = AbyssalDeep)
+                Text("Login with Identity", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
             }
         }
 
@@ -629,28 +634,28 @@ fun UploadFileView(
                 .height(110.dp)
                 .border(
                     width = 1.dp,
-                    color = if (uploadedFileName != null) ClawCyan else ShellBorder,
+                    color = if (uploadedFileName != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                     shape = RoundedCornerShape(12.dp)
                 )
                 .clip(RoundedCornerShape(12.dp))
-                .background(if (uploadedFileName != null) ClawCyan.copy(alpha = 0.05f) else ShellSurfaceElevated.copy(alpha = 0.3f))
+                .background(if (uploadedFileName != null) MaterialTheme.colorScheme.primary.copy(alpha = 0.08f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
                 .clickable { onTap() }
                 .testTag("gateway_file_dropzone"),
             contentAlignment = Alignment.Center
         ) {
             if (uploadedFileName != null) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(16.dp)) {
-                    Text(text = "🐚 Identity Loaded Successfully!", color = ClawCyan, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                    Text(text = "🐚 Identity Loaded Successfully!", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 15.sp)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = "File: $uploadedFileName", color = TextPearl, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                    Text(text = "File: $uploadedFileName", color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp, fontWeight = FontWeight.Medium)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = "Tap to change file", color = TextMuted, fontSize = 11.sp)
+                    Text(text = "Tap to change file", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
                 }
             } else {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = "Tap to upload your identity file", color = TextPearl, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+                    Text(text = "Tap to upload your identity file", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
                     Spacer(modifier = Modifier.height(2.dp))
-                    Text(text = ".json files only", color = TextMuted, fontSize = 13.sp)
+                    Text(text = ".json files only", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
                 }
             }
         }
@@ -660,10 +665,10 @@ fun UploadFileView(
             Button(
                 onClick = onClear,
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = ShellSurfaceElevated),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Text("Remove File", color = TextMuted)
+                Text("Remove File", color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
 
@@ -688,7 +693,7 @@ fun PasteKeyView(
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag("gateway_key_input"),
-            placeholder = { Text("Paste your hu- or lb- key here...", color = TextMuted) },
+            placeholder = { Text("Paste your hu- or lb- key here...", color = MaterialTheme.colorScheme.onSurfaceVariant) },
             shape = RoundedCornerShape(12.dp),
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
@@ -696,15 +701,17 @@ fun PasteKeyView(
                     Icon(
                         imageVector = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                         contentDescription = if (passwordVisible) "Hide key" else "Show key",
-                        tint = TextMuted
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = ClawCyan,
-                unfocusedBorderColor = ShellBorder,
-                focusedTextColor = TextPearl,
-                unfocusedTextColor = TextPearl
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface
             )
         )
 
@@ -713,10 +720,10 @@ fun PasteKeyView(
             Button(
                 onClick = onClearSavedKey,
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = ShellSurfaceElevated),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Text("Clear Saved Key", color = TextMuted)
+                Text("Clear Saved Key", color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
 
@@ -748,7 +755,7 @@ fun WarningBox() {
                     "Your identity file or hu- key is the only way to access your vault. If lost, vault secrets cannot be recovered.",
                     color = WarningText.copy(alpha = 0.85f),
                     fontSize = 12.sp,
-                    lineHeight = 18.sp
+                    lineHeight = 17.sp
                 )
             }
         }

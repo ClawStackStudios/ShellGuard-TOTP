@@ -217,7 +217,7 @@ fun TotpListScreen(
                                         .size(7.dp)
                                         .clip(CircleShape)
                                         .background(
-                                            if (!isServerConnected) Color(0xFF38BDF8)
+                                            if (!isServerConnected) MaterialTheme.colorScheme.primary
                                             else if (isOnlineSynced) Color(0xFF10B981)
                                             else Color(0xFFF59E0B)
                                         )

@@ -12,13 +12,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Fingerprint
@@ -29,6 +32,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -53,14 +57,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.clawstack.shellguard.totp.ui.theme.AbyssalDeep
-import com.clawstack.shellguard.totp.ui.theme.ClawCyan
-import com.clawstack.shellguard.totp.ui.theme.LobsterRed
-import com.clawstack.shellguard.totp.ui.theme.ShellBorder
-import com.clawstack.shellguard.totp.ui.theme.ShellSurface
-import com.clawstack.shellguard.totp.ui.theme.ShellSurfaceElevated
-import com.clawstack.shellguard.totp.ui.theme.TextMuted
-import com.clawstack.shellguard.totp.ui.theme.TextPearl
 import com.clawstack.shellguard.totp.ui.viewmodels.AuthState
 import com.clawstack.shellguard.totp.ui.viewmodels.AuthViewModel
 
@@ -94,7 +90,7 @@ fun LoginScreen(
     }
 
     Scaffold(
-        containerColor = AbyssalDeep,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             Row(
                 modifier = Modifier
@@ -109,14 +105,14 @@ fun LoginScreen(
                     modifier = Modifier
                         .size(44.dp)
                         .clip(CircleShape)
-                        .background(ShellSurfaceElevated)
-                        .border(1.dp, ShellBorder, CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .border(1.dp, MaterialTheme.colorScheme.outline, CircleShape)
                         .testTag("login_back_button")
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
-                        tint = TextPearl,
+                        tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(22.dp)
                     )
                 }
@@ -128,7 +124,9 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(24.dp),
+                .imePadding()
+                .padding(24.dp)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -137,8 +135,8 @@ fun LoginScreen(
                 modifier = Modifier
                     .size(110.dp)
                     .clip(RoundedCornerShape(24.dp))
-                    .background(ShellSurfaceElevated)
-                    .border(2.dp, ClawCyan.copy(alpha = 0.6f), RoundedCornerShape(24.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .border(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.6f), RoundedCornerShape(24.dp))
                     .clickable {
                         if (activity != null) viewModel.promptBiometrics(activity)
                     }
@@ -148,7 +146,7 @@ fun LoginScreen(
                 Icon(
                     imageVector = Icons.Default.Fingerprint,
                     contentDescription = "Trigger Biometric Unlock",
-                    tint = ClawCyan,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(56.dp)
                 )
             }
@@ -157,7 +155,7 @@ fun LoginScreen(
 
             Text(
                 text = "ShellGuard Authenticator",
-                color = TextPearl,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp
             )
@@ -166,7 +164,7 @@ fun LoginScreen(
 
             Text(
                 text = "Tap fingerprint or enter master key/PIN to unlock",
-                color = TextMuted,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center
             )
@@ -175,7 +173,7 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = (authState as AuthState.Error).message,
-                    color = LobsterRed,
+                    color = MaterialTheme.colorScheme.error,
                     fontSize = 13.sp,
                     textAlign = TextAlign.Center
                 )
@@ -192,18 +190,18 @@ fun LoginScreen(
                         .height(52.dp)
                         .testTag("login_biometric_button"),
                     shape = RoundedCornerShape(14.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = ClawCyan)
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Fingerprint,
                         contentDescription = null,
-                        tint = AbyssalDeep,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Unlock with Biometrics",
-                        color = AbyssalDeep,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         fontWeight = FontWeight.Bold,
                         fontSize = 15.sp
                     )
@@ -213,7 +211,7 @@ fun LoginScreen(
 
                 Text(
                     text = "— OR ENTER KEY / PIN —",
-                    color = TextMuted.copy(alpha = 0.6f),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -235,7 +233,7 @@ fun LoginScreen(
                         Icon(
                             imageVector = if (isKeyVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                             contentDescription = "Toggle key visibility",
-                            tint = TextMuted
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 },
@@ -244,14 +242,14 @@ fun LoginScreen(
                     .testTag("login_key_input"),
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = ClawCyan,
-                    unfocusedBorderColor = ShellBorder,
-                    focusedLabelColor = ClawCyan,
-                    unfocusedLabelColor = TextMuted,
-                    focusedTextColor = TextPearl,
-                    unfocusedTextColor = TextPearl,
-                    focusedContainerColor = ShellSurface,
-                    unfocusedContainerColor = ShellSurface
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    focusedLabelColor = MaterialTheme.colorScheme.primary,
+                    unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
                 )
             )
 
@@ -265,13 +263,20 @@ fun LoginScreen(
                     .height(50.dp)
                     .testTag("login_submit_button"),
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = ShellSurfaceElevated),
-                border = BorderStroke(1.dp, if (masterKeyInput.isNotBlank()) ClawCyan else ShellBorder)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (masterKeyInput.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
+                ),
+                border = BorderStroke(1.dp, if (masterKeyInput.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline)
             ) {
                 if (authState is AuthState.Loading) {
-                    CircularProgressIndicator(color = ClawCyan, modifier = Modifier.size(20.dp))
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(20.dp))
                 } else {
-                    Text("Unlock Vault", color = TextPearl, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                    Text(
+                        text = "Unlock Vault",
+                        color = if (masterKeyInput.isNotBlank()) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 14.sp
+                    )
                 }
             }
         }

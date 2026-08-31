@@ -306,23 +306,23 @@ Verify that camera scanning detects 2FA codes immediately, gallery QR import wor
 
 ---
 
-## 🌐 Stage 6: Phase 5 Prompt — Self-Hosted Server Gateway & Bidirectional Delta Sync
+## 🌐 Stage 6: Phase 5 Prompt — Self-Hosted Server Gateway, Dynamic Theme & Settings Persistence
 
 > **📖 Required Reference Files for Phase 5**:  
 > 1. [`routes-and-contracts.md`](./routes-and-contracts.md) — Section 1 (ShellResponse), Section 2 (DTOs), Section 3 (ShellGuardTotpClient), Section 4 (ApiClient), Section 5 (Two-Way Sync), Section 6 (Cleartext/VPN Transport), Section 7 (TotpSyncWorker).  
 > 2. [`ui-ux-design-system.md`](./ui-ux-design-system.md) — Section 3 (GatewayScreen.kt 1:1 ClawStack Port), Section 4.E (SpotlightOverlay.kt).  
-> 3. [`DESIGN.md`](./DESIGN.md) — Section 9 (SettingsScreen.kt), Section 11 (SpotlightOverlay.kt), Section 12 (Self-Hosted Transport).  
+> 3. [`DESIGN.md`](./DESIGN.md) — Section 2 (Theme Tokens), Section 9 (SettingsScreen.kt), Section 11 (SpotlightOverlay.kt), Section 12 (Self-Hosted Transport).  
 
 Copy and paste this prompt to execute **Phase 5 (Tasks 09 & 10)**:
 
 ```markdown
-# PHASE 5 EXECUTION: Self-Hosted Server Gateway & Bidirectional Delta Sync
+# PHASE 5 EXECUTION: Self-Hosted Server Gateway, Dynamic Theme Engine & Settings Persistence
 
 ## 📖 Reference Documentation
 Before writing code, inspect:
 - `routes-and-contracts.md`: Section 3 (ShellGuardTotpClient.kt), Section 4 (ApiClient.kt), Section 5 (TotpRepository.kt Two-Way Sync), Section 6 (Cleartext/VPN), Section 7 (TotpSyncWorker.kt).
 - `ui-ux-design-system.md`: Section 3 (GatewayScreen.kt), Section 4 (SpotlightOverlay.kt).
-- `DESIGN.md`: Section 9 (SettingsScreen.kt), Section 11 (SpotlightOverlay.kt), Section 12 (Network Architecture).
+- `DESIGN.md`: Section 2 (Dynamic Tokens), Section 9 (SettingsScreen.kt), Section 11 (SpotlightOverlay.kt), Section 12 (Network Architecture).
 
 Execute Phase 5 adhering to the Functionality + UI Component pairing:
 
@@ -343,8 +343,11 @@ Execute Phase 5 adhering to the Functionality + UI Component pairing:
   - Subclass `CoroutineWorker` scheduled via `PeriodicWorkRequestBuilder<TotpSyncWorker>(15, TimeUnit.MINUTES)`.
   - Enforce `Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()`.
   - Respect `AuthRepository` `withSyncLock` mutex to prevent concurrent sync races with UI operations.
+- Implement Local Standalone vs Server Connected Mode Segregation:
+  - Dynamically hide `[☁️ Synced]` / `[📱 Local Only]` filter chips on Dashboard when disconnected.
+  - Display `🔒 Local Mode` indicator when offline and `🟢 Synced` when connected.
 
-### Task 10: [UI Component] Interactive Spotlight Guided Tour, Server Gateway & Settings
+### Task 10: [UI Component] Interactive Spotlight Guided Tour, Server Gateway, Settings & Theme Customization
 - Implement `ui/components/SpotlightOverlay.kt` (**Interactive Spotlight Guided Tour**):
   - Dims and blurs the screen background (`#E6030712`), blocking all background touches.
   - Punches a circular spotlight cutout around the **Settings Icon** in the top bar using `BlendMode.Clear`.
@@ -353,10 +356,11 @@ Execute Phase 5 adhering to the Functionality + UI Component pairing:
   - When Settings opens during the tour, spotlights the **"Connect to Server"** button: *"Tap 'Connect to Server' to authenticate and sync your 2FA codes with your self-hosted ShellGuard instance."*
 - Implement `ui/screens/GatewayScreen.kt` & `GatewayViewModel.kt`:
   - Faithful 1:1 port of ClawStack Gateway: protocol/host/port segment bar, animated port width, key file dropzone + paste ShellKey view, and warning card.
-- Implement `ui/screens/SettingsScreen.kt`:
+  - Full dynamic `MaterialTheme.colorScheme` binding honoring active theme accent.
+- Implement `ui/screens/SettingsScreen.kt` & Full Settings Persistence:
   - **Appearance & Theme Accents Card**:
-    - Mode toggle selector: `[ System | Dark | Light ]`.
-    - Horizontal gradient swatch picker for the 6 curated ShellGuard accent palettes (`REEF_DEFAULT`, `CYAN_VENT`, `PURPLE_SHELL`, `EMERALD_TRENCH`, `AMBER_FLARE`, `MONOCHROME`) with active selection checkmark and instant Compose preview.
+    - Mode toggle selector: `[ System | Dark | Light ]` (persisted in SharedPreferences as `pref_theme_mode`).
+    - Curated accent palettes: `REEF_DEFAULT` (Reef Pink `#E4048A` - Default), `CYAN_VENT`, `PURPLE_SHELL`, `EMERALD_TRENCH`, `AMBER_FLARE`, `MONOCHROME` (persisted in `pref_theme_accent`).
   - **Server Synchronization Card**:
     - Disconnected mode: Shows "Standalone Offline Vault" with a prominent "[ Connect to Server ]" button that navigates to Gateway.
     - Connected mode: Displays `Server: [IP]`, `User: [Name]`, `Last Synced`, "[ Sync Now ]", and "[ Disconnect ]".
@@ -364,42 +368,55 @@ Execute Phase 5 adhering to the Functionality + UI Component pairing:
     - Displays total offline codes stored on device.
     - "[ Display Offline Codes on Dashboard ]" button that sets the category filter to local codes.
   - **Encrypted Backup & Restore**: "Export JSON" and "Import JSON" file pickers.
-  - **Biometric Unlock Switch**: Toggle cold-start hardware biometric prompt (optional).
+  - **Biometric Quick Unlock Switch**: Hardware KeyStore biometric prompt toggle (persisted in `pref_biometric_enabled`).
+  - **Vault Protection Method**: Update PIN / Master Password dialog (persisted in `pref_vault_mode` and `EncryptedDeviceVault`).
+  - **Auto-Scrub Clipboard**: 30-second clipboard purge toggle (persisted in `pref_auto_clear_clipboard` and observed by `TotpViewModel.copyToClipboard`).
 
-Verify that local 2FA tokens push to the server and appear in the Web UI under Passwords, remote tokens sync down, the theme accent picker dynamically changes app colors, and the Spotlight Tour navigates seamlessly.
+Verify that local 2FA tokens push to the server and appear in the Web UI under Passwords, remote tokens sync down, the theme accent picker dynamically updates app colors to Reef Pink by default, settings persist across cold restarts, and the Spotlight Tour navigates seamlessly.
 ```
 
 ---
 
-## 🎨 Stage 7: Phase 6 Prompt — Adaptive App Icon, Splash Screen & Release Hardening
+## 🎨 Stage 7: Phase 6 Prompt — Adaptive App Icon, Splash Screen, 16 KB Alignment & Release Hardening
 
 > **📖 Required Reference Files for Phase 6**:  
 > 1. [`app-icon-and-splash.md`](./app-icon-and-splash.md) — Vector Drawables for Adaptive Icon and Android 12+ SplashScreen Setup.  
+> 2. [`16kb-page-size-alignment-guide.md`](./16kb-page-size-alignment-guide.md) — Android 15+ 16 KB memory page size alignment requirements and SQLCipher 4.6.1.  
 
 Copy and paste this prompt to execute **Phase 6 (Tasks 11 & 12)**:
 
 ```markdown
-# PHASE 6 EXECUTION: Adaptive Launcher Icon, Splash Screen & Release Hardening
+# PHASE 6 EXECUTION: Adaptive Launcher Icon, Splash Screen, 16 KB Page Alignment & Release Hardening
 
 ## 📖 Reference Documentation
 Before writing code, inspect:
 - `app-icon-and-splash.md`: Section 2 (Vector Drawables), Section 3 (Android 12+ Core Splash Screen).
+- `16kb-page-size-alignment-guide.md`: Section 1 (Root Causes), Section 2 (Resolution Plan), Section 3 (Invariants).
 
 Execute Phase 6 adhering to the Functionality + UI Component pairing:
 
-### Task 11: [Functionality] ProGuard/R8 Hardening, Backup Rules & Release Configuration
-- Create `proguard-rules.pro` with keep rules for SQLCipher, Ktor OkHttp, Kotlinx Serialization, and Room entities.
-- Configure `res/xml/backup_rules.xml` and `data_extraction_rules.xml` to exclude encrypted Room databases and KeyStore preferences from unencrypted Android Cloud backup.
+### Task 11: [Functionality] 16 KB Page Size Compatibility, ProGuard/R8 Hardening & Cloud Backup Rules
+- **16 KB Memory Page-Size Alignment**:
+  - Upgrade SQLCipher for Android to `net.zetetic:sqlcipher-android:4.6.1` in `gradle/libs.versions.toml`.
+  - Configure `jniLibs.useLegacyPackaging = false` in `app/build.gradle.kts` to store native shared libraries (`.so`) uncompressed and page-aligned on 16 KB boundaries for Android 15+ devices.
+- **ProGuard & R8 Hardening**:
+  - Create `app/proguard-rules.pro` with keep rules for SQLCipher, Ktor OkHttp, Kotlinx Serialization, Room entities, and WorkManager.
+- **Cloud Backup Exclusion Rules**:
+  - Configure `res/xml/backup_rules.xml` and `data_extraction_rules.xml` to exclude encrypted Room databases (`shellguard_totp.db*`) and KeyStore preferences from unencrypted Android Cloud backups.
 - Set release versioning and signing configuration in `build.gradle.kts`.
 
 ### Task 12: [UI Component] Adaptive Launcher Icon, Android 12+ Splash Screen & Edge-to-Edge Polish
-- Create `res/drawable/ic_launcher_background.xml` (solid `#030712` canvas vector drawable).
-- Create `res/drawable/ic_launcher_foreground.xml` (ShellGuard shield vector with `#E4048A` → `#EC4899` → `#06B6D4` gradient and clam pearl within 72dp safe zone).
-- Create `res/mipmap-anydpi-v26/ic_launcher.xml` and `res/mipmap-anydpi-v26/ic_launcher_round.xml` referencing the adaptive icon layers.
-- Add `androidx.core:core-splashscreen:1.0.1` and configure `Theme.App.Starting` in `res/values/styles.xml` / `themes.xml`.
-- Update `MainActivity.kt` calling `installSplashScreen()` prior to `super.onCreate(savedInstanceState)`.
+- **Adaptive Launcher Icon**:
+  - Create `res/drawable/ic_launcher_background.xml` (solid `#030712` canvas vector drawable).
+  - Create `res/drawable/ic_launcher_foreground.xml` (ShellGuard shield vector with `#E4048A` → `#EC4899` → `#06B6D4` gradient and clam pearl within 72dp safe zone).
+  - Create `res/mipmap-anydpi-v26/ic_launcher.xml` and `res/mipmap-anydpi-v26/ic_launcher_round.xml` referencing the adaptive icon layers.
+- **Android 12+ Splash Screen**:
+  - Add `androidx.core:core-splashscreen:1.0.1` and configure `Theme.App.Starting` in `res/values/themes.xml`.
+  - Create static vector drawable `res/drawable/ic_splash_icon.xml` avoiding inline AAPT gradient inflation exceptions on API <31.
+  - Update `MainActivity.kt` calling `installSplashScreen()` prior to `super.onCreate(savedInstanceState)`.
 - Configure edge-to-edge transparent system navigation and status bar styling.
+- Comprehensive Test Oracle Verification: Run full verification gate (`./gradlew clean testDebugUnitTest assembleDebug`) verifying 100% test pass rate.
 
-Verify release compilation, build the APK, and verify launcher icon appearance and splash transition on the device!
+Verify release compilation, build the APK, and verify launcher icon appearance, splash transition, and 16 KB alignment!
 ```
 

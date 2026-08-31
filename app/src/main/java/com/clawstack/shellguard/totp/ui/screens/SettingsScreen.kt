@@ -2,6 +2,7 @@ package com.clawstack.shellguard.totp.ui.screens
 
 import android.net.Uri
 import android.widget.Toast
+import com.clawstack.shellguard.totp.BuildConfig
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -114,6 +115,7 @@ fun SettingsScreen(
     val themeAccent by authRepo.themeAccent.collectAsStateWithLifecycle()
     val vaultMode by authRepo.vaultMode.collectAsStateWithLifecycle()
     val tourStep by authRepo.tourStep.collectAsStateWithLifecycle()
+    val isAutoClearClipboard by authRepo.isAutoClearClipboard.collectAsStateWithLifecycle()
 
     val offlineCodesCount = totpViewModel?.offlineCodesCount?.collectAsStateWithLifecycle()?.value ?: 0
     val syncedCodesCount = totpViewModel?.syncedCodesCount?.collectAsStateWithLifecycle()?.value ?: 0
@@ -122,7 +124,6 @@ fun SettingsScreen(
     var isSyncing by remember { mutableStateOf(false) }
     var showLogoutDialog by remember { mutableStateOf(false) }
     var showChangeProtectionDialog by remember { mutableStateOf(false) }
-    var isAutoClearClipboard by remember { mutableStateOf(true) }
 
     var selectedNewMode by remember { mutableStateOf(VaultProtectionMode.PIN) }
     var newSecretInput by remember { mutableStateOf("") }
@@ -608,11 +609,12 @@ fun SettingsScreen(
                         }
                         Switch(
                             checked = isAutoClearClipboard,
-                            onCheckedChange = { isAutoClearClipboard = it },
+                            onCheckedChange = { authRepo.setAutoClearClipboard(it) },
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = MaterialTheme.colorScheme.background,
                                 checkedTrackColor = MaterialTheme.colorScheme.primary
-                            )
+                            ),
+                            modifier = Modifier.testTag("auto_clear_clipboard_switch")
                         )
                     }
                 }
@@ -682,6 +684,29 @@ fun SettingsScreen(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Disconnect Vault", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // ── Release & Integrity Footer ──────────────────────────
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "ShellGuard Authenticator • v${BuildConfig.VERSION_NAME}",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Zero-Knowledge • Hardware KeyStore AES-256-GCM",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                    fontSize = 11.sp
+                )
             }
         }
     }

@@ -15,9 +15,9 @@ enum class ThemeAccent(
     val primaryColor: Color,
     val secondaryColor: Color
 ) {
-    REEF_DEFAULT("Reef Bioluminescent", BrandLobsterRed, BrandClawCyan),
+    REEF_DEFAULT("Reef Pink", BrandLobsterRed, BrandClawCyan),
     CYAN_VENT("Electric Cyan", BrandClawCyan, BrandLobsterRed),
-    PURPLE_SHELL("Imperial Shell", Color(0xFFA855F7), BrandClawCyan),
+    PURPLE_SHELL("Imperial Purple", Color(0xFFA855F7), BrandClawCyan),
     EMERALD_TRENCH("Emerald Bio-Flora", BrandEmerald, BrandClawCyan),
     AMBER_FLARE("Solar Vent", Color(0xFFF59E0B), BrandLobsterRed),
     MONOCHROME("Minimalist Pearl", Color(0xFFF8FAFC), Color(0xFF879298))
@@ -43,8 +43,10 @@ data class ShellGuardCustomColors(
     val primaryAccent: Color,
     val secondaryAccent: Color,
     val warning: Color = BrandCoralOrange,
-    val danger: Color = BrandLobsterRed
+    val danger: BrandLobsterRedColor = BrandLobsterRed
 )
+
+typealias BrandLobsterRedColor = Color
 
 val LocalShellGuardColors = staticCompositionLocalOf {
     ShellGuardCustomColors(
@@ -88,6 +90,8 @@ fun ShellGuardTheme(
             danger = BrandLobsterRed
         )
     } else {
+        val lightPrimary = if (themeAccent == ThemeAccent.MONOCHROME) Color(0xFF0F172A) else themeAccent.primaryColor
+        val lightSecondary = if (themeAccent == ThemeAccent.MONOCHROME) Color(0xFF64748B) else themeAccent.secondaryColor
         ShellGuardCustomColors(
             bgBase = LightBgBase,
             bgSurface = LightBgSurface,
@@ -95,8 +99,8 @@ fun ShellGuardTheme(
             textMain = LightTextMain,
             textMuted = LightTextMuted,
             borderSubtle = LightBorderSubtle,
-            primaryAccent = themeAccent.primaryColor,
-            secondaryAccent = themeAccent.secondaryColor,
+            primaryAccent = lightPrimary,
+            secondaryAccent = lightSecondary,
             warning = BrandCoralOrange,
             danger = BrandLobsterRed
         )
@@ -123,12 +127,14 @@ fun ShellGuardTheme(
             onError = Color.White
         )
     } else {
+        val lightPrimary = if (themeAccent == ThemeAccent.MONOCHROME) Color(0xFF0F172A) else themeAccent.primaryColor
+        val lightSecondary = if (themeAccent == ThemeAccent.MONOCHROME) Color(0xFF64748B) else themeAccent.secondaryColor
         lightColorScheme(
-            primary = themeAccent.primaryColor,
+            primary = lightPrimary,
             onPrimary = Color.White,
-            primaryContainer = themeAccent.primaryColor.copy(alpha = 0.15f),
-            onPrimaryContainer = themeAccent.primaryColor,
-            secondary = themeAccent.secondaryColor,
+            primaryContainer = lightPrimary.copy(alpha = 0.15f),
+            onPrimaryContainer = lightPrimary,
+            secondary = lightSecondary,
             onSecondary = Color.White,
             tertiary = BrandCoralOrange,
             background = LightBgBase,
@@ -138,7 +144,7 @@ fun ShellGuardTheme(
             surfaceVariant = LightBgElevated,
             onSurfaceVariant = LightTextMuted,
             outline = LightBorderSubtle,
-            outlineVariant = themeAccent.primaryColor,
+            outlineVariant = lightPrimary,
             error = BrandLobsterRed,
             onError = Color.White
         )

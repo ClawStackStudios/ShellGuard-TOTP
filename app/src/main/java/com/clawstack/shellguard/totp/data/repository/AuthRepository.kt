@@ -77,6 +77,9 @@ class AuthRepository(
     private val _isBackupPromptDismissed = MutableStateFlow(prefs.getBoolean("pref_backup_prompt_dismissed", false))
     val isBackupPromptDismissed: StateFlow<Boolean> = _isBackupPromptDismissed.asStateFlow()
 
+    private val _isAutoClearClipboard = MutableStateFlow(prefs.getBoolean("pref_auto_clear_clipboard", true))
+    val isAutoClearClipboard: StateFlow<Boolean> = _isAutoClearClipboard.asStateFlow()
+
     private val _tourStep = MutableStateFlow(if (prefs.getBoolean("pref_guided_tour_completed", false)) 0 else 1)
     val tourStep: StateFlow<Int> = _tourStep.asStateFlow()
 
@@ -264,6 +267,11 @@ class AuthRepository(
     fun setBackupPromptDismissed(dismissed: Boolean) {
         _isBackupPromptDismissed.value = dismissed
         prefs.edit().putBoolean("pref_backup_prompt_dismissed", dismissed).apply()
+    }
+
+    fun setAutoClearClipboard(enabled: Boolean) {
+        _isAutoClearClipboard.value = enabled
+        prefs.edit().putBoolean("pref_auto_clear_clipboard", enabled).apply()
     }
 
     fun setThemeMode(mode: AppThemeMode) {

@@ -18,8 +18,8 @@ android {
     applicationId = "com.aistudio.shellguard.totp.auth"
     minSdk = 24
     targetSdk = 35
-    versionCode = 2
-    versionName = "2.0"
+    versionCode = 1
+    versionName = "0.0.0.1"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -61,6 +61,13 @@ android {
   dependenciesInfo {
     includeInApk = false
     includeInBundle = true
+  }
+  packaging {
+    jniLibs {
+      // Store native libraries uncompressed & page-aligned inside the APK/AAB
+      // (required for Android 15+ 16 KB page-size device compatibility).
+      useLegacyPackaging = false
+    }
   }
 }
 

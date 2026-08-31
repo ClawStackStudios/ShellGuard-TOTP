@@ -156,10 +156,11 @@ class TotpViewModel(application: Application) : AndroidViewModel(application) {
         val clip = ClipData.newPlainText("ShellGuard 2FA Code", code)
         clipboard.setPrimaryClip(clip)
 
+        val isAutoClear = authRepository.isAutoClearClipboard.value
         val formattedCode = if (code.length == 6) "${code.substring(0, 3)} ${code.substring(3)}" else code
         clipboardFeedback.value = ClipboardFeedbackState(
             isVisible = true,
-            message = "Copied $formattedCode (auto-clears in 30s)",
+            message = if (isAutoClear) "Copied $formattedCode (auto-clears in 30s)" else "Copied $formattedCode",
             copiedCode = code
         )
 
@@ -170,16 +171,18 @@ class TotpViewModel(application: Application) : AndroidViewModel(application) {
             clipboardFeedback.value = clipboardFeedback.value.copy(isVisible = false)
         }
 
-        // Scrub actual clipboard after 30s for security
+        // Scrub actual clipboard after 30s for security if enabled
         clipboardClearJob?.cancel()
-        clipboardClearJob = viewModelScope.launch {
-            delay(30_000)
-            try {
-                // If clipboard still holds this specific code, clear it
-                if (clipboard.primaryClip?.getItemAt(0)?.text?.toString() == code) {
-                    clipboard.setPrimaryClip(ClipData.newPlainText("", ""))
-                }
-            } catch (ignored: Exception) {}
+        if (isAutoClear) {
+            clipboardClearJob = viewModelScope.launch {
+                delay(30_000)
+                try {
+                    // If clipboard still holds this specific code, clear it
+                    if (clipboard.primaryClip?.getItemAt(0)?.text?.toString() == code) {
+                        clipboard.setPrimaryClip(ClipData.newPlainText("", ""))
+                    }
+                } catch (ignored: Exception) {}
+            }
         }
     }
 

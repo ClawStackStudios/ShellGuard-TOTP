@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -34,7 +36,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34], application = ShellGuardTotpApp::class)
+@Config(sdk = [34], application = ShellGuardTotpApp::class, qualifiers = "w1000dp-h2000dp")
 class LocalModeUnlockAndVaultTest {
 
     @get:Rule
@@ -56,6 +58,8 @@ class LocalModeUnlockAndVaultTest {
         totpRepository = app.totpRepository
         authViewModel = AuthViewModel(app)
         totpViewModel = TotpViewModel(app)
+        // Dismiss spotlight guided tour so it does not obscure underlying screen elements in UI tests
+        authRepository.setGuidedTourCompleted(true)
     }
 
     @After
@@ -64,17 +68,19 @@ class LocalModeUnlockAndVaultTest {
     }
 
     @Test
-    fun testLocalModeHatchWithPinUnlockAndRenderVaultEmptyState() = runBlocking {
-        // 1. Hatch vault in PIN mode with secret "5678"
-        authViewModel.hatchVault("5678", isPin = true, enableBiometrics = false)
-        assertTrue(authViewModel.isVaultHatched.first())
-        assertEquals(VaultProtectionMode.PIN, authViewModel.vaultMode.first())
+    fun testLocalModeHatchWithPinUnlock() {
+        // 1. Hatch vault in PIN mode with secret "5678" in short runBlocking
+        runBlocking {
+            authViewModel.hatchVault("5678", isPin = true, enableBiometrics = false)
+            assertTrue(authViewModel.isVaultHatched.first())
+            assertEquals(VaultProtectionMode.PIN, authViewModel.vaultMode.first())
 
-        // 2. Lock vault
-        authRepository.lockVault()
-        assertTrue(authRepository.isLocked.first())
+            // Lock vault
+            authRepository.lockVault()
+            assertTrue(authRepository.isLocked.first())
+        }
 
-        // 3. Render LockScreen and unlock with PIN
+        // 2. Render LockScreen and unlock with PIN (looper is free to pump)
         var unlocked = false
         composeTestRule.setContent {
             LockScreen(
@@ -86,7 +92,7 @@ class LocalModeUnlockAndVaultTest {
                     success
                 },
                 onUnlockSuccess = {},
-                onNavigateToGateway = {}
+                onNavigateToGateway = {},
             )
         }
 
@@ -94,9 +100,20 @@ class LocalModeUnlockAndVaultTest {
         composeTestRule.onNodeWithTag("unlock_pin_submit").performScrollTo().performClick()
 
         assertTrue("Unlock with PIN should succeed", unlocked)
-        assertFalse("Vault should no longer be locked", authRepository.isLocked.first())
+        runBlocking {
+            assertFalse("Vault should no longer be locked", authRepository.isLocked.first())
+        }
+    }
 
-        // 4. Render TotpListScreen (Vault Landing)
+    @Test
+    fun testLocalModeVaultLandingRendersEmptyStateAfterHatch() {
+        // 1. Hatch vault in short runBlocking
+        runBlocking {
+            authViewModel.hatchVault("5678", isPin = true, enableBiometrics = false)
+            assertTrue(authViewModel.isVaultHatched.first())
+        }
+
+        // 2. Render TotpListScreen (looper is free to pump)
         composeTestRule.setContent {
             TotpListScreen(
                 viewModel = totpViewModel,
@@ -106,42 +123,48 @@ class LocalModeUnlockAndVaultTest {
             )
         }
 
-        // Verify Empty state renders without crash
+        // 3. Verify Empty state renders and animations settle
+        composeTestRule.waitUntil(5000) {
+            composeTestRule.onAllNodesWithTag("totp_empty_state").fetchSemanticsNodes().isNotEmpty()
+        }
+        composeTestRule.mainClock.advanceTimeBy(1000)
+
         composeTestRule.onNodeWithTag("totp_empty_state").assertIsDisplayed()
         composeTestRule.onNodeWithText("No 2FA Codes Yet").assertIsDisplayed()
         composeTestRule.onNodeWithTag("scan_qr_fab").assertIsDisplayed()
     }
 
     @Test
-    fun testLocalModeVaultWithLocalItemsRendersAndFiltersWithoutCrash() = runBlocking {
-        // Hatch vault
-        authViewModel.hatchVault("1122", isPin = true, enableBiometrics = false)
+    fun testLocalModeVaultWithLocalItemsRendersAndFiltersWithoutCrash() {
+        // 1. Hatch vault and insert items in short runBlocking
+        runBlocking {
+            authViewModel.hatchVault("1122", isPin = true, enableBiometrics = false)
 
-        // Insert local-only items (no server)
-        val item1 = TotpItemEntity(
-            id = "local-uuid-1",
-            ownerUuid = "local",
-            title = "GitHub Personal",
-            username = "octocat",
-            category = "DevOps",
-            secret = "JBSWY3DPEHPK3PXP",
-            isLocalOnly = true,
-            syncState = "LOCAL"
-        )
-        val item2 = TotpItemEntity(
-            id = "local-uuid-2",
-            ownerUuid = "local",
-            title = "ProtonMail",
-            username = "sec@proton.me",
-            category = "Email",
-            secret = "HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ",
-            isLocalOnly = true,
-            syncState = "LOCAL"
-        )
-        database.totpItemDao().upsertItem(item1)
-        database.totpItemDao().upsertItem(item2)
+            val item1 = TotpItemEntity(
+                id = "local-uuid-1",
+                ownerUuid = "local",
+                title = "GitHub Personal",
+                username = "octocat",
+                category = "DevOps",
+                secret = "JBSWY3DPEHPK3PXP",
+                isLocalOnly = true,
+                syncState = "LOCAL"
+            )
+            val item2 = TotpItemEntity(
+                id = "local-uuid-2",
+                ownerUuid = "local",
+                title = "ProtonMail",
+                username = "sec@proton.me",
+                category = "Email",
+                secret = "HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ",
+                isLocalOnly = true,
+                syncState = "LOCAL"
+            )
+            database.totpItemDao().upsertItem(item1)
+            database.totpItemDao().upsertItem(item2)
+        }
 
-        // Render TotpListScreen
+        // 2. Render TotpListScreen (looper is free to pump)
         composeTestRule.setContent {
             TotpListScreen(
                 viewModel = totpViewModel,
@@ -151,7 +174,12 @@ class LocalModeUnlockAndVaultTest {
             )
         }
 
-        // Verify items display
+        // 3. Verify items display and animations settle
+        composeTestRule.waitUntil(5000) {
+            composeTestRule.onAllNodesWithText("GitHub Personal").fetchSemanticsNodes().isNotEmpty()
+        }
+        composeTestRule.mainClock.advanceTimeBy(1000)
+
         composeTestRule.onNodeWithText("GitHub Personal").assertIsDisplayed()
         composeTestRule.onNodeWithText("ProtonMail").assertIsDisplayed()
         composeTestRule.onNodeWithTag("filter_chip_all").assertIsDisplayed()

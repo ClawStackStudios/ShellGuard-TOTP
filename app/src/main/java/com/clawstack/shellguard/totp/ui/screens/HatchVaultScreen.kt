@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -41,6 +42,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -66,15 +68,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.clawstack.shellguard.totp.data.repository.VaultProtectionMode
-import com.clawstack.shellguard.totp.ui.theme.AbyssalDeep
-import com.clawstack.shellguard.totp.ui.theme.ClawCyan
-import com.clawstack.shellguard.totp.ui.theme.ClawCyanGlow
-import com.clawstack.shellguard.totp.ui.theme.LobsterRed
-import com.clawstack.shellguard.totp.ui.theme.ShellBorder
-import com.clawstack.shellguard.totp.ui.theme.ShellSurface
-import com.clawstack.shellguard.totp.ui.theme.ShellSurfaceElevated
-import com.clawstack.shellguard.totp.ui.theme.TextMuted
-import com.clawstack.shellguard.totp.ui.theme.TextPearl
 
 @Composable
 fun HatchVaultScreen(
@@ -89,13 +82,14 @@ fun HatchVaultScreen(
     var isSecretVisible by remember { mutableStateOf(false) }
 
     Scaffold(
-        containerColor = AbyssalDeep,
+        containerColor = MaterialTheme.colorScheme.background,
         modifier = modifier.fillMaxSize()
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .imePadding()
                 .padding(24.dp)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -108,21 +102,21 @@ fun HatchVaultScreen(
                         modifier = Modifier
                             .size(110.dp)
                             .clip(RoundedCornerShape(28.dp))
-                            .background(ShellSurfaceElevated)
-                            .border(2.dp, ClawCyan.copy(alpha = 0.6f), RoundedCornerShape(28.dp)),
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                            .border(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.6f), RoundedCornerShape(28.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         Box(
                             modifier = Modifier
                                 .size(72.dp)
                                 .clip(CircleShape)
-                                .background(ClawCyanGlow),
+                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Shield,
                                 contentDescription = "Hatch Vault Shield",
-                                tint = ClawCyan,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(42.dp)
                             )
                         }
@@ -132,7 +126,7 @@ fun HatchVaultScreen(
 
                     Text(
                         text = "Hatch Your 2FA Vault",
-                        color = TextPearl,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontWeight = FontWeight.Bold,
                         fontSize = 26.sp,
                         textAlign = TextAlign.Center
@@ -142,7 +136,7 @@ fun HatchVaultScreen(
 
                     Text(
                         text = "Welcome to ShellGuard TOTP. Initialize your offline-first, encrypted vault. Choose how you'd like to protect your tokens on this device.",
-                        color = TextMuted,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 14.sp,
                         lineHeight = 22.sp,
                         textAlign = TextAlign.Center,
@@ -156,14 +150,14 @@ fun HatchVaultScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(14.dp))
-                            .background(ShellSurface)
-                            .border(1.dp, ShellBorder, RoundedCornerShape(14.dp))
+                            .background(MaterialTheme.colorScheme.surface)
+                            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(14.dp))
                     ) {
                         Box(
                             modifier = Modifier
                                 .weight(1f)
                                 .clip(RoundedCornerShape(topStart = 14.dp, bottomStart = 14.dp))
-                                .background(if (protectionMode == VaultProtectionMode.PIN) ClawCyan else Color.Transparent)
+                                .background(if (protectionMode == VaultProtectionMode.PIN) MaterialTheme.colorScheme.primary else Color.Transparent)
                                 .clickable { protectionMode = VaultProtectionMode.PIN }
                                 .padding(vertical = 14.dp)
                                 .testTag("select_pin_mode"),
@@ -171,7 +165,7 @@ fun HatchVaultScreen(
                         ) {
                             Text(
                                 text = "PIN (4–8 digits)",
-                                color = if (protectionMode == VaultProtectionMode.PIN) AbyssalDeep else TextPearl,
+                                color = if (protectionMode == VaultProtectionMode.PIN) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 13.sp
                             )
@@ -180,7 +174,7 @@ fun HatchVaultScreen(
                             modifier = Modifier
                                 .weight(1f)
                                 .clip(RoundedCornerShape(topEnd = 14.dp, bottomEnd = 14.dp))
-                                .background(if (protectionMode == VaultProtectionMode.PASSWORD) ClawCyan else Color.Transparent)
+                                .background(if (protectionMode == VaultProtectionMode.PASSWORD) MaterialTheme.colorScheme.primary else Color.Transparent)
                                 .clickable { protectionMode = VaultProtectionMode.PASSWORD }
                                 .padding(vertical = 14.dp)
                                 .testTag("select_password_mode"),
@@ -188,7 +182,7 @@ fun HatchVaultScreen(
                         ) {
                             Text(
                                 text = "Master Password",
-                                color = if (protectionMode == VaultProtectionMode.PASSWORD) AbyssalDeep else TextPearl,
+                                color = if (protectionMode == VaultProtectionMode.PASSWORD) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 13.sp
                             )
@@ -204,11 +198,11 @@ fun HatchVaultScreen(
                             .height(52.dp)
                             .testTag("continue_to_setup_button"),
                         shape = RoundedCornerShape(14.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = ClawCyan)
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {
                         Text(
                             text = "Continue to Protection Setup",
-                            color = AbyssalDeep,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp
                         )
@@ -216,7 +210,7 @@ fun HatchVaultScreen(
                         Icon(
                             imageVector = Icons.Default.ArrowForward,
                             contentDescription = null,
-                            tint = AbyssalDeep,
+                            tint = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier.size(18.dp)
                         )
                     }
@@ -226,7 +220,7 @@ fun HatchVaultScreen(
                     // ── Step 2: Enter PIN / Password & Biometrics Option ────
                     Text(
                         text = if (protectionMode == VaultProtectionMode.PIN) "Set Your Vault PIN" else "Set Master Password",
-                        color = TextPearl,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontWeight = FontWeight.Bold,
                         fontSize = 24.sp,
                         textAlign = TextAlign.Center
@@ -239,7 +233,7 @@ fun HatchVaultScreen(
                             "Enter a 4 to 8 digit numeric PIN code to unlock your vault."
                         else
                             "Enter a strong master passphrase to secure your vault secrets.",
-                        color = TextMuted,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 14.sp,
                         textAlign = TextAlign.Center
                     )
@@ -266,7 +260,7 @@ fun HatchVaultScreen(
                                 Icon(
                                     imageVector = if (isSecretVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                                     contentDescription = "Toggle Secret Visibility",
-                                    tint = TextMuted
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         },
@@ -275,12 +269,14 @@ fun HatchVaultScreen(
                             .testTag("vault_secret_input"),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = ClawCyan,
-                            unfocusedBorderColor = ShellBorder,
-                            focusedLabelColor = ClawCyan,
-                            unfocusedLabelColor = TextMuted,
-                            focusedTextColor = TextPearl,
-                            unfocusedTextColor = TextPearl
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                            focusedLabelColor = MaterialTheme.colorScheme.primary,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface
                         )
                     )
 
@@ -308,12 +304,14 @@ fun HatchVaultScreen(
                             .testTag("vault_confirm_secret_input"),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = if (isMismatch) LobsterRed else ClawCyan,
-                            unfocusedBorderColor = ShellBorder,
-                            focusedLabelColor = if (isMismatch) LobsterRed else ClawCyan,
-                            unfocusedLabelColor = TextMuted,
-                            focusedTextColor = TextPearl,
-                            unfocusedTextColor = TextPearl
+                            focusedBorderColor = if (isMismatch) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                            focusedLabelColor = if (isMismatch) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface
                         )
                     )
 
@@ -321,7 +319,7 @@ fun HatchVaultScreen(
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
                             text = "Secrets do not match",
-                            color = LobsterRed,
+                            color = MaterialTheme.colorScheme.error,
                             fontSize = 12.sp,
                             modifier = Modifier.align(Alignment.Start)
                         )
@@ -332,8 +330,8 @@ fun HatchVaultScreen(
                     // Optional Biometric Switch Card
                     Card(
                         shape = RoundedCornerShape(14.dp),
-                        colors = CardDefaults.cardColors(containerColor = ShellSurface),
-                        border = BorderStroke(1.dp, ShellBorder),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Row(
@@ -350,20 +348,20 @@ fun HatchVaultScreen(
                                 Icon(
                                     imageVector = Icons.Default.Fingerprint,
                                     contentDescription = null,
-                                    tint = ClawCyan,
+                                    tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(24.dp)
                                 )
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Column {
                                     Text(
                                         text = "Enable Biometric Unlock",
-                                        color = TextPearl,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         fontWeight = FontWeight.SemiBold,
                                         fontSize = 14.sp
                                     )
                                     Text(
                                         text = "Unlock with fingerprint or face on cold boot",
-                                        color = TextMuted,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         fontSize = 12.sp
                                     )
                                 }
@@ -372,8 +370,8 @@ fun HatchVaultScreen(
                                 checked = enableBiometrics,
                                 onCheckedChange = { enableBiometrics = it },
                                 colors = SwitchDefaults.colors(
-                                    checkedThumbColor = ClawCyan,
-                                    checkedTrackColor = ClawCyanGlow
+                                    checkedThumbColor = MaterialTheme.colorScheme.background,
+                                    checkedTrackColor = MaterialTheme.colorScheme.primary
                                 ),
                                 modifier = Modifier.testTag("biometric_toggle_switch")
                             )
@@ -396,11 +394,11 @@ fun HatchVaultScreen(
                             .height(52.dp)
                             .testTag("hatch_vault_button"),
                         shape = RoundedCornerShape(14.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = ClawCyan)
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {
                         Text(
                             text = "Hatch My Vault",
-                            color = AbyssalDeep,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp
                         )
@@ -412,7 +410,7 @@ fun HatchVaultScreen(
                     Icon(
                         imageVector = Icons.Default.CheckCircle,
                         contentDescription = "Success",
-                        tint = ClawCyan,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(68.dp)
                     )
 
@@ -420,7 +418,7 @@ fun HatchVaultScreen(
 
                     Text(
                         text = "Vault Hatched Successfully!",
-                        color = TextPearl,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontWeight = FontWeight.Bold,
                         fontSize = 24.sp,
                         textAlign = TextAlign.Center
@@ -430,7 +428,7 @@ fun HatchVaultScreen(
 
                     Text(
                         text = "Your offline-first cryptographic vault is active and secured. Here is how to get started:",
-                        color = TextMuted,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 14.sp,
                         lineHeight = 20.sp,
                         textAlign = TextAlign.Center
@@ -440,8 +438,8 @@ fun HatchVaultScreen(
 
                     Card(
                         shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = ShellSurface),
-                        border = BorderStroke(1.dp, ShellBorder),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Column(modifier = Modifier.padding(18.dp)) {
@@ -449,21 +447,21 @@ fun HatchVaultScreen(
                                 Icon(
                                     imageVector = Icons.Default.QrCodeScanner,
                                     contentDescription = null,
-                                    tint = ClawCyan,
+                                    tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(24.dp)
                                 )
                                 Spacer(modifier = Modifier.width(14.dp))
                                 Column {
                                     Text(
                                         text = "1. Add or Scan 2FA Codes",
-                                        color = TextPearl,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         fontWeight = FontWeight.SemiBold,
                                         fontSize = 14.sp
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
                                         text = "Scan QR codes using your camera or enter Base32 keys manually with customizable digit and timer periods.",
-                                        color = TextMuted,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         fontSize = 13.sp,
                                         lineHeight = 18.sp
                                     )
@@ -471,28 +469,28 @@ fun HatchVaultScreen(
                             }
 
                             Spacer(modifier = Modifier.height(16.dp))
-                            HorizontalDivider(color = ShellBorder)
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
                             Spacer(modifier = Modifier.height(16.dp))
 
                             Row(verticalAlignment = Alignment.Top) {
                                 Icon(
                                     imageVector = Icons.Default.CloudSync,
                                     contentDescription = null,
-                                    tint = ClawCyan,
+                                    tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(24.dp)
                                 )
                                 Spacer(modifier = Modifier.width(14.dp))
                                 Column {
                                     Text(
                                         text = "2. Connect to Server (Optional)",
-                                        color = TextPearl,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         fontWeight = FontWeight.SemiBold,
                                         fontSize = 14.sp
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
                                         text = "Tap the Settings icon in the top right whenever you want to connect and synchronize with a self-hosted ShellGuard server.",
-                                        color = TextMuted,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         fontSize = 13.sp,
                                         lineHeight = 18.sp
                                     )
@@ -516,11 +514,11 @@ fun HatchVaultScreen(
                             .height(52.dp)
                             .testTag("enter_vault_button"),
                         shape = RoundedCornerShape(14.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = ClawCyan)
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {
                         Text(
                             text = "Enter My Vault",
-                            color = AbyssalDeep,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp
                         )
