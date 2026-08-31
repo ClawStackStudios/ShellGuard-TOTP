@@ -131,8 +131,10 @@ jobs:
 
       - name: 🔑 Decode Release Keystore
         if: steps.detect.outputs.tag != ''
+        env:
+          SIGNING_KEY: ${{ secrets.ANDROID_SIGNING_KEY }}
         run: |
-          echo "${{ secrets.ANDROID_SIGNING_KEY }}" | base64 --decode > my-upload-key.jks
+          python3 -c "import os, base64; open('my-upload-key.jks', 'wb').write(base64.b64decode(os.environ['SIGNING_KEY'].strip()))"
 
       - name: 📦 Build & Sign Release AAB (Google Play) & APK (FOSS Sideload)
         if: steps.detect.outputs.tag != ''
