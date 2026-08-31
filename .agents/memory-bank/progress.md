@@ -22,3 +22,5 @@
 - ✅ **Zero-Knowledge Wire & Transport Security**: End-to-end payload encryption via `ShellCryptionEngine` (HKDF-SHA256 and AES-GCM-256 authenticated encryption with strict AAD binding), SHA-256 key hashing for authentication, and secure bearer token management.
 - ✅ **Automated Unit & Robolectric Tests**: 100% test pass rate across 46 test cases covering crypto, EncryptedDeviceVault, TOTP engine, Room, dynamic lock screen, backup, and complete `MainActivityLaunchTest` launch lifecycle verification.
 - ✅ **16 KB Memory Page Size Support**: SQLCipher 4.6.1 integration and uncompressed JNI packaging (`useLegacyPackaging = false`) for Android 15+ compatibility.
+- ✅ **Automated Cloud CI/CD Release Pipeline**: Unified `.github/workflows/release.yml` with dual triggers (`--release vX.Y.Z.N` commit flag and `v*` tag push), strict `RELEASE-vX.Y.Z.N.md` notes resolution, dual-artifact compilation & signing (`app-release.aab` + `app-release.apk`), and automated GitHub Release publishing.
+

@@ -129,31 +129,22 @@ jobs:
         if: steps.detect.outputs.tag != ''
         run: ./gradlew testDebugUnitTest --no-daemon
 
-      - name: 📦 Build Release AAB (Google Play) & APK (FOSS Sideload)
+      - name: 🔑 Decode Release Keystore
         if: steps.detect.outputs.tag != ''
+        run: |
+          echo "${{ secrets.ANDROID_SIGNING_KEY }}" | base64 --decode > my-upload-key.jks
+
+      - name: 📦 Build & Sign Release AAB (Google Play) & APK (FOSS Sideload)
+        if: steps.detect.outputs.tag != ''
+        env:
+          STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: ./gradlew bundleRelease assembleRelease --no-daemon
 
-      - name: 🔑 Sign Release AAB (Google Play Bundle)
-        id: sign_aab
-        if: steps.detect.outputs.tag != ''
-        uses: r0adkll/sign-android-release@v1
-        with:
-          releaseDirectory: app/build/outputs/bundle/release
-          signingKeyBase64: ${{ secrets.ANDROID_SIGNING_KEY }}
-          alias: ${{ secrets.ANDROID_KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
-
-      - name: 🔑 Sign Release APK (Direct Install)
-        id: sign_apk
-        if: steps.detect.outputs.tag != ''
-        uses: r0adkll/sign-android-release@v1
-        with:
-          releaseDirectory: app/build/outputs/apk/release
-          signingKeyBase64: ${{ secrets.ANDROID_SIGNING_KEY }}
-          alias: ${{ secrets.ANDROID_KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
+      - name: 🧹 Clean Keystore from Runner
+        if: always() && steps.detect.outputs.tag != ''
+        run: rm -f my-upload-key.jks
 
       - name: 📤 Upload Build Artifacts (Actions Dashboard)
         if: steps.detect.outputs.tag != ''
@@ -161,8 +152,8 @@ jobs:
         with:
           name: shellguard-totp-${{ steps.detect.outputs.tag }}
           path: |
-            ${{ steps.sign_aab.outputs.signedReleaseFile }}
-            ${{ steps.sign_apk.outputs.signedReleaseFile }}
+            app/build/outputs/bundle/release/app-release.aab
+            app/build/outputs/apk/release/app-release.apk
           retention-days: 14
 
       - name: Publish GitHub Release 🚀
@@ -175,8 +166,8 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            ${{ steps.sign_aab.outputs.signedReleaseFile }}
-            ${{ steps.sign_apk.outputs.signedReleaseFile }}
+            app/build/outputs/bundle/release/app-release.aab
+            app/build/outputs/apk/release/app-release.apk
 
   mirror:
     name: Mirror RELEASE Document into the GitHub Release 🪞

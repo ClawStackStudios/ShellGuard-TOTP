@@ -66,4 +66,10 @@ UI (Jetpack Compose) → ViewModel (StateFlow/Intent) → UseCase/Repository →
 1. **Setup Action**: Use `gradle/actions/setup-gradle@v4` to provide Gradle in `PATH` and configure dependency caching.
 2. **Auto-Wrapper Fallback**: Ensure the wrapper exists and is executable (`if [ ! -f "gradlew" ]; then gradle wrapper --gradle-version X.Y.Z; fi; chmod +x gradlew`) before running Gradle tasks.
 
+## Adaptive Signing Configuration Pattern
+1. **Conditional Keystore Binding**: In `app/build.gradle.kts`, check `releaseKeystoreFile.exists()` before configuring `signingConfigs.create("release")` and attaching it to `buildTypes.release`.
+2. **Headless CI vs Local Synergy**:
+   - **Local Workstation**: Signs automatically if physical keystore file exists on disk.
+   - **Headless Cloud CI**: Produces unsigned release package without failing on missing physical file, allowing downstream GitHub Actions signing step (`r0adkll/sign-android-release@v1`) to sign securely with repository secrets.
+
 
