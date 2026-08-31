@@ -1,18 +1,35 @@
+# Built binaries and packaging outputs
+*.apk
+*.aab
+*.apks
+*.obb
+*.dex
+*.class
+build/
+**/build/
+
+# Gradle and Kotlin cache
+.gradle/
+.kotlin/
 *.iml
-.gradle
-.kotlin
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+
+# Local machine configs & environment variables
 local.properties
+/local.properties
 .env
+*.env.local
+
+# Signing keys & Keystores (CRITICAL: Never commit private release keys)
+*.jks
+*.keystore
+*.p12
+my-upload-key.jks
 debug.keystore
+
+# Android Studio & IDE
+.idea/
+.DS_Store
+captures/
+.externalNativeBuild/
+.cxx/
+
