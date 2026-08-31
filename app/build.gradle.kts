@@ -29,10 +29,14 @@ android {
     val releaseKeystoreFile = file(releaseKeystorePath)
     if (releaseKeystoreFile.exists()) {
       create("release") {
+        val sPassword = System.getenv("STORE_PASSWORD")
+        val kPassword = System.getenv("KEY_PASSWORD")?.takeIf { it.isNotBlank() } ?: sPassword
+        val kAlias = System.getenv("KEY_ALIAS")?.takeIf { it.isNotBlank() } ?: "upload"
+
         storeFile = releaseKeystoreFile
-        storePassword = System.getenv("STORE_PASSWORD")
-        keyAlias = System.getenv("KEY_ALIAS") ?: "upload"
-        keyPassword = System.getenv("KEY_PASSWORD")
+        storePassword = sPassword
+        keyAlias = kAlias
+        keyPassword = kPassword
       }
     }
     create("debugConfig") {

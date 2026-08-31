@@ -68,8 +68,8 @@ UI (Jetpack Compose) → ViewModel (StateFlow/Intent) → UseCase/Repository →
 
 ## Adaptive Signing Configuration Pattern
 1. **Conditional Keystore Binding**: In `app/build.gradle.kts`, check `releaseKeystoreFile.exists()` before configuring `signingConfigs.create("release")` and attaching it to `buildTypes.release`.
-2. **Headless CI vs Local Synergy**:
-   - **Local Workstation**: Signs automatically if physical keystore file exists on disk.
-   - **Headless Cloud CI**: Produces unsigned release package without failing on missing physical file, allowing downstream GitHub Actions signing step (`r0adkll/sign-android-release@v1`) to sign securely with repository secrets.
+2. **Headless Keystore Decoding**: In cloud CI, pass the base64 secret through environment variables (`SIGNING_KEY`) and decode via Python 3 (`base64.b64decode(os.environ['SIGNING_KEY'].strip())`) to ensure whitespace and newline resilience without GNU `base64: invalid input` errors.
+3. **In-Engine AGP Signing**: Gradle natively compiles and cryptographically signs both `.aab` and `.apk` using Android Gradle Plugin's built-in `apksigner` and `bundletool` engines, eliminating deprecated third-party signing actions.
+4. **Automated Ephemeral Key Cleanup**: A step with `if: always()` immediately removes `my-upload-key.jks` after compilation to ensure zero lingering private key exposure on runner disks.
 
 
