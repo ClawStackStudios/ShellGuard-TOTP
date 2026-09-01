@@ -123,3 +123,25 @@ Prevent unencrypted OS cloud backups from uploading encrypted SQLite databases o
     </device-transfer>
 </data-extraction-rules>
 ```
+
+---
+
+## 🤖 4. Robolectric & Coroutines CI Testing Pitfalls
+
+When running Robolectric tests in CI environments (like headless Linux runners), beware of two specific coroutine integration traps:
+
+### 1. The `JobCancellationException` DB Crash
+**The Trap:** If a `ViewModel` uses `stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ...)` to collect a Room `Flow`, the subscription remains active. If you call `database.close()` in your `@After tearDown()`, Room forcefully severs the connection, throwing a `JobCancellationException`. Because this happens asynchronously, Robolectric intercepts it as an unhandled exception and crashes the entire test.
+**The Fix:** For in-memory `Room.inMemoryDatabaseBuilder` databases, **do not call `database.close()`**. Allow the test to finish and the database to naturally garbage collect. Attempting to explicitly `clear()` the ViewModel to stop the scope will trigger the exact same cancellation crash.
+
+### 2. The Headless `composeTestRule.waitUntil` Timeout
+**The Trap:** In a test that evaluates `ViewModel` state without rendering UI, using `composeTestRule.waitUntil(5000) { condition }` to await a `Dispatchers.IO` coroutine will fail with a `ComposeTimeoutException`. If `composeTestRule.setContent {}` is never called, the compose clock is never initialized in the test tree, causing `waitUntil` to stall without actually pumping the main looper.
+**The Fix:** Avoid `waitUntil` if there is no UI. Instead, use a manual polling loop to pump the looper directly:
+```kotlin
+var retries = 0
+while (!completed && retries < 50) {
+    Thread.sleep(100)
+    org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle()
+    retries++
+}
+```
