@@ -33,3 +33,7 @@ captures/
 .externalNativeBuild/
 .cxx/
 
+# Agent internal design assets & scratchpad
+.agents/internal/
+
+

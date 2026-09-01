@@ -20,6 +20,20 @@ I am building and maintaining Lobsterized sovereign software. I prioritize user 
 
 ---
 
+## 📥 Zero-Knowledge Ingestion & Third-Party Migration Directives
+
+1. **Strict In-Memory Sanitization:**
+   - When importing third-party archives (Bitwarden, Aegis, 2FAS, Google Authenticator), extract TOTP credentials and immediately purge passwords, notes, credit card data, and identity fields in volatile memory.
+   - Non-TOTP credentials must NEVER touch persistent databases, logs, or disk caches.
+2. **Deterministic Duplicate Resolution:**
+   - Always require explicit conflict handling (`SKIP_DUPLICATES`, `OVERWRITE_EXISTING`, `KEEP_BOTH`) to prevent silent overwrites or state corruption.
+3. **Dual-Route Sovereignty:**
+   - Route imported items deterministically to either Local SQLCipher (`is_local_only = 1`) or Remote Gateway (`ShellCryptionEngine` HKDF + AES-GCM with AAD binding).
+4. **Immutable Audit Hook:**
+   - Record every batch migration in `security_audit_logs` and trigger automated backup snapshots if enabled.
+
+---
+
 ## 🛡️ Backend & Data Directives
 
 1. **Tenant Isolation:** Every SQLite query MUST include `WHERE user_uuid = ?` (or parameterized equivalent). Multi-tenant leakage is a catastrophic security failure.

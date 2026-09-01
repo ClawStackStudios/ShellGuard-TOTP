@@ -11,13 +11,14 @@ description: A workflow for updating ShellGuard application and documentation ve
 
 ## 🎯 Step 1: Determine the Target Version
 
-Follow the Semantic Versioning logic:
-1. **User Explicit Input:** Highest priority (e.g. user specifies `v0.0.1.2`, `v0.0.2`, `v0.1.0`).
-2. **Inference from `CHANGELOG.md`:**
-   - **Breaking Change / Removed:** `MAJOR` increment (`X+1.0.0`)
-   - **New Features (`### Added`):** `MINOR` increment (`X.Y+1.0`)
-   - **Bug Fixes / Security (`### Fixed` / `### Security`):** `PATCH` increment (`X.Y.Z+1`)
-   - **Deployment Hotfixes & Iterations:** `HOTFIX` 4th digit increment (`X.Y.Z.N+1`, e.g., `0.0.1.2` ➔ `0.0.1.3`)
+Follow work-driven 4-digit Semantic Versioning (`MAJOR.MINOR.PATCH.REVISION` / `X.Y.Z.N`):
+1. **User Explicit Input:** Highest priority (e.g. user specifies `v0.0.0.4`, `v0.0.1.0`, `v0.1.0.0`).
+2. **Inference from Implemented Work & `CHANGELOG.md`:**
+   - **Breaking Change / Overhaul:** `MAJOR` increment (`X+1.0.0.0`)
+   - **Substantial New Subsystem (`### Added`):** `MINOR` increment (`X.Y+1.0.0`)
+   - **Phase Deliverable / Discrete Feature (`### Fixed` / `### Added`):** `PATCH` increment (`X.Y.Z+1.0`, e.g. `0.0.0.1` ➔ `0.0.1.0`)
+   - **Iterative Tweak / Hotfix / Task Increment:** `REVISION` increment (`X.Y.Z.N+1`, e.g. `0.0.0.1` ➔ `0.0.0.2`)
+   - **Google Play Invariant:** Every release bundle upload MUST increment `versionCode` (`N + 1` monotonic integer).
 
 ---
 

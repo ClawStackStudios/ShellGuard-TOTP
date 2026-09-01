@@ -402,3 +402,62 @@ class BackupManager(
     }
 }
 ```
+
+---
+
+## 7. Security Audit Log Entity & Conflict Management
+
+### A. `AuditLogEntity`
+Records immutable cryptographic, access, and import events.
+
+```kotlin
+package com.clawstack.shellguard.totp.data.local.entities
+
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "security_audit_logs")
+data class AuditLogEntity(
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    val id: Long = 0,
+
+    @ColumnInfo(name = "timestamp")
+    val timestamp: Long = System.currentTimeMillis(),
+
+    @ColumnInfo(name = "event_type")
+    val eventType: String, // "VAULT_UNLOCKED", "BIOMETRIC_FAIL", "IMPORT_SUCCESS", "EXPORT_VAULT", "PANIC_PURGE"
+
+    @ColumnInfo(name = "description")
+    val description: String,
+
+    @ColumnInfo(name = "severity")
+    val severity: String = "INFO" // "INFO", "WARN", "CRITICAL"
+)
+```
+
+### B. `AuditLogDao`
+
+```kotlin
+package com.clawstack.shellguard.totp.data.local.dao
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import com.clawstack.shellguard.totp.data.local.entities.AuditLogEntity
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface AuditLogDao {
+    @Query("SELECT * FROM security_audit_logs ORDER BY timestamp DESC")
+    fun observeAllLogs(): Flow<List<AuditLogEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertLog(log: AuditLogEntity): Long
+
+    @Query("DELETE FROM security_audit_logs")
+    suspend fun clearAllLogs()
+}
+```

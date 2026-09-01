@@ -7,33 +7,31 @@ description: When Updating the project/application versioning
 
 This rule defines an automated, multi-step process for releasing a new version of the project. I MUST follow this logic precisely to ensure a correct and consistent release version incrementation methodology.
 
-### Step 1: Determine New Version (Automated Logic)
+### Step 1: Determine New Version (Work-Driven 4-Digit Logic)
 
-My primary task is to calculate the new version number. I MUST follow this decision tree in order:
+My primary task is to calculate the new version number following the `MAJOR.MINOR.PATCH.REVISION` (`X.Y.Z.N`) convention. **We do not force artificial target versions**; the nature and magnitude of the actual completed work dictates which tier increments:
 
 1.  **Check for Explicit User Input:**
-    - First, check if the user has provided an explicit version type (e.g., `major`, `minor`, `patch`, `fix`).
+    - First, check if the user has provided an explicit version type or number (e.g., `major`, `minor`, `patch`, `revision`, `v0.0.0.4`, `v0.0.1.0`).
     - If yes, this is the highest priority. Proceed to calculate the new version based on this input.
 
-2.  **Infer from `CHANGELOG.md`:**
-    - If no explicit type is given, I MUST infer it by analyzing the content under the `[Unreleased]` section of `CHANGELOG.md`.
-    - Apply the following Semantic Versioning logic:
-        - If I find `BREAKING CHANGE:` text or a `### Removed` section, it MUST be a **MAJOR** increment (`X+1.0.0.0`).
-        - If I find a `### Added` section, it MUST be a **MINOR** increment (`X.Y+1.0.0`).
-        - If I only find `### Fixed`, `### Security`, or other minor sections, it MUST be a **PATCH** increment (`X.Y.Z+1.0`).
-        - If I find iterative release candidate updates or hotfixes, it is a **4th digit increment** (`X.Y.Z.N+1`).
+2.  **Infer from Implemented Work & `CHANGELOG.md`:**
+    - If no explicit type is given, infer by analyzing the scope of work in `CHANGELOG.md` under `[Unreleased]`:
+        - **MAJOR (`X+1.0.0.0`)**: Fundamental structural overhauls, database breaking migrations, or full public production milestones.
+        - **MINOR (`X.Y+1.0.0`)**: Significant new subsystems or large cohesive feature groups (e.g., entire Glance widget framework, multi-tier modular settings hub).
+        - **PATCH (`X.Y.Z+1.0`)**: Discrete feature additions, completed 2-task phase deliverables, or targeted bug fixes (e.g. `0.0.0.1` ➔ `0.0.1.0`).
+        - **REVISION (`X.Y.Z.N+1`)**: Small patches, hotfixes, CI pipeline tweaks, minor UI polish, or iterative task increments (e.g., `0.0.0.1` ➔ `0.0.0.2`).
         - **Android Play Console Invariant**: Every release upload MUST increment `versionCode` (`N + 1` strictly monotonic integer) in `app/build.gradle.kts`, even when maintaining `versionName` display parity.
 
 3.  **Ask User on Ambiguity (Fallback):**
-    - ⚠️ **If my inference is ambiguous** (e.g., only a `### Changed` section exists), I **MUST NOT GUESS**.
-    - Instead, I MUST ask the user for clarification. Present my analysis and provide clear choices.
-    - **✅ Use this template for asking:**
-      > "I have analyzed the changes in `[Unreleased]` and the version increment is ambiguous. Based on the changes, I suggest the following options:
-      > - **MINOR (`vX.Y+1.0.0`):** Choose this for new, backward-compatible features.
-      > - **PATCH (`vX.Y.Z+1.0`):** Choose this for backward-compatible bug fixes.
-      > - **RE-RELEASE / HOTFIX (`vX.Y.Z.N (Build N+1)`):** Keep display version, increment `versionCode`.
+    - ⚠️ **If my inference is ambiguous**, I **MUST NOT GUESS**.
+    - Instead, I MUST ask the user for clarification. Present my analysis and provide clear choices:
+      > "I have analyzed the changes in `[Unreleased]` and the version increment tier is ambiguous. Based on the work completed:
+      > - **PATCH (`vX.Y.Z+1.0`):** For completed feature phases or substantial bug fixes.
+      > - **REVISION (`vX.Y.Z.N+1`):** For small adjustments, iterative tweaks, or hotfixes.
+      > - **RE-RELEASE (`vX.Y.Z.N (Build N+1)`):** Keep display version, increment `versionCode` only.
       >
-      > Please specify which version is correct."
+      > Which version increment should we apply?"
 
 ### Step 2: Pre-flight Check & Confirmation
 

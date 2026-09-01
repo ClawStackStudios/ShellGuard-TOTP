@@ -80,5 +80,23 @@ UI (Jetpack Compose) → ViewModel (StateFlow/Intent) → UseCase/Repository →
 1. **Branded Artifact Staging**: CI pipelines copy and stage release binaries under explicit project names (`shellguard-totp-${TAG}.aab` and `shellguard-totp-${TAG}.apk`).
 2. **Dual Distribution**: Attach both Google Play Store App Bundles (`.aab`) and standalone direct-install APKs (`.apk`) to every GitHub Release.
 
+## Synergistic 2-Task Phase Architecture (The Rule of 2)
+1. **The Rule of 2**: Every development phase strictly consists of Task A (Core Functionality / Crypto / Backend Engine) paired with Task B (UI Component / State / Interactions).
+2. **Meta-Prompt 1:1 Cross-Referencing**: All execution prompts in `project/meta-prompt-ai-studio.md` explicitly reference the corresponding `ROADMAP.md` Phase and Task IDs for deterministic execution.
+
+## User-First Intake & Spotlight Invariants
+1. **Brand Hero & Dual-Track Intake**: First launch presents app launcher shield branding, instant SAF "Import Habitat" pre-validation, and smooth bottom-right forward navigation for fresh security setup.
+2. **Spacious Spotlight Geometry**: Target cutouts enforce +16dp to +20dp radial offset beyond view bounds to ensure clear visual focus during onboarding before landing on `TotpEmptyState`.
+
+## Zero-Knowledge Bitwarden Migration & Dual-Routing Patterns
+1. **Zero-Knowledge Sanitization**: Ingests Bitwarden Password Manager and Authenticator JSON, immediately extracting `login.totp` and mapping `folders[]` to Pod categories while purging passwords, secure notes, card numbers, and custom fields entirely in RAM.
+2. **Steam Guard 2FA Generation**: Uses Steam's 26-char custom alphanumeric alphabet (`23456789BCDFGHJKMNPQRTVWXY`) for 5-char code generation.
+3. **Conflict Resolution Policy**: Supports `SKIP_DUPLICATES`, `OVERWRITE_EXISTING`, and `KEEP_BOTH` policies during batch imports.
+4. **Dual-Pathway Persistence Routing**:
+   - *Local Pathway*: Directly writes to Room SQLCipher with `is_local_only = 1`.
+   - *Remote Gateway Pathway*: Encrypts via `ShellCryptionEngine` (`huKey` + `userUuid` + AAD `vault_pearls_totp:{id}`) and pushes upstream via `POST /api/vault`.
+5. **Post-Commit Hooks**: Automatically appends `IMPORT_SUCCESS` events to `AuditLogEntity` and triggers encrypted auto-backups via `BackupManager`.
+
+
 
 

@@ -7,7 +7,7 @@
 
 ## 📋 Multi-Stage Execution Strategy
 
-To ensure optimal token economy and avoid context degradation in **Google AI Studio**:
+To ensure optimal token economy and avoid context degradation in **Google AI Studio**, development proceeds in deterministic 2-task stages mapped 1:1 to the **[`ROADMAP.md`](../ROADMAP.md)**:
 
 ```mermaid
 flowchart TD
@@ -19,6 +19,13 @@ flowchart TD
     Phase4["📷 Stage 5: Phase 4 — CameraX QR Scanner & Backup Engine<br/>(Task 07: UriParser & BackupManager · Task 08: Live Scanner & Manual Add)"]
     Phase5["🌐 Stage 6: Phase 5 — Self-Hosted Server Gateway & Bidirectional Sync<br/>(Task 09: Two-Way Delta Sync & WorkManager · Task 10: Spotlight Tour, Settings & Theme Picker)"]
     Phase6["🎨 Stage 7: Phase 6 — Adaptive Launcher Icon & Release Hardening<br/>(Task 11: ProGuard/R8 & Backup Rules · Task 12: Adaptive Icon, Splash & System Polish)"]
+    Phase7["📥 Stage 8: Phase 7 — Welcoming First-Run Wizard & 'Import Habitat'<br/>(Task 13: Habitat Pre-Validator · Task 14: Brand Hero Screen & SAF Import)"]
+    Phase8["💡 Stage 9: Phase 8 — Vault Security Education & Enlarged Spotlight Tour<br/>(Task 15: Protection Orchestrator · Task 16: Security Orientation & Spacious Spotlight)"]
+    Phase9["⚡ Stage 10: Phase 9 — Expandable Floating Actions Speed Dial<br/>(Task 17: Image QR Decoder · Task 18: Animated Speed Dial FAB & Pills)"]
+    Phase10["⚙️ Stage 11: Phase 10 — Categorized Settings Hub & Appearance/Behavior<br/>(Task 19: Preferences Store · Task 20: SettingsMetaScreen & Sub-screens)"]
+    Phase11["🛡️ Stage 12: Phase 11 — Security Suite, Panic Purge & Audit Logging<br/>(Task 21: Panic Trigger & Audit DAO · Task 22: Security Sub-screen & Audit Log)"]
+    Phase12["📦 Stage 13: Phase 12 — Advanced Import/Export & Google Auth Multi-QR<br/>(Task 23: MultiFormat Migration · Task 24: Import/Export Hub & QR Viewer)"]
+    Phase13["📱 Stage 14: Phase 13 — Home Screen Interactive Glance Widgets & Icon Packs<br/>(Task 25: Glance Widget Engine & Icon Store · Task 26: 2x2/4x2 Widgets & Icon Manager)"]
 
     Step0 --> UploadContext
     UploadContext --> Phase1
@@ -27,6 +34,13 @@ flowchart TD
     Phase3 --> Phase4
     Phase4 --> Phase5
     Phase5 --> Phase6
+    Phase6 --> Phase7
+    Phase7 --> Phase8
+    Phase8 --> Phase9
+    Phase9 --> Phase10
+    Phase10 --> Phase11
+    Phase11 --> Phase12
+    Phase12 --> Phase13
 ```
 
 ---
@@ -112,7 +126,8 @@ Once the AI Studio agent finishes the First Build scaffold:
 
 ## ⚡ Stage 2: Phase 1 Prompt — Cryptographic Engine & Live Display
 
-> **📖 Required Reference Files for Phase 1**:  
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-1-cryptographic-engine--live-countdown-display) for complete specifications on **Task 01** and **Task 02**.  
+> **📖 Required Context Files for Phase 1**:  
 > 1. [`totp-engine-spec.md`](project/totp-engine-spec.md) — Section 1 (RFC 6238 TotpEngine), Section 2 (Base32Decoder), Section 3 (TotpTicker with Kotlin Time).  
 > 2. [`crypto-and-keystore.md`](project/crypto-and-keystore.md) — Section 1 (HKDF Parity), Section 2 (Envelope Schema), Section 3 (ShellCryptionEngine with AAD `vault_pearls_totp:{id}`).  
 > 3. [`DESIGN.md`](DESIGN.md) — Section 2 (Theme Tokens), Section 4 (TotpCard with Spring Bounce), Section 5 (TotpCountdownRing Canvas Arc).  
@@ -161,7 +176,8 @@ Verify all unit tests pass and the countdown ring renders smoothly at 60fps.
 
 ## 🗄️ Stage 3: Phase 2 Prompt — Encrypted Persistence & Authenticator Screen
 
-> **📖 Required Reference Files for Phase 2**:  
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-2-encrypted-local-persistence--authenticator-dashboard) for complete specifications on **Task 03** and **Task 04**.  
+> **📖 Required Context Files for Phase 2**:  
 > 1. [`room-storage-schema.md`](project/room-storage-schema.md) — Section 2 (Entities: TotpItemEntity, SyncMetadataEntity), Section 3 (DAOs), Section 4 (ShellGuardTotpDatabase SQLCipher Builder).  
 > 2. [`DESIGN.md`](DESIGN.md) — Section 4 (TotpCard), Section 6 (PodFilterChips), Section 7 (ClipboardToastPill), Section 8 (TotpEmptyState).  
 > 3. [`ui-ux-design-system.md`](project/ui-ux-design-system.md) — Section 2 & 4 (MVI TotpViewModel).  
@@ -212,11 +228,10 @@ Verify that searching filters items instantly, swipe-to-delete removes items, lo
 
 ---
 
----
-
 ## 🔐 Stage 4: Phase 3 Prompt — Vault Onboarding & Biometric Security Lifecycle
 
-> **📖 Required Reference Files for Phase 3**:  
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-3-vault-onboarding--biometric-security-lifecycle) for complete specifications on **Task 05** and **Task 06**.  
+> **📖 Required Context Files for Phase 3**:  
 > 1. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — Section 4 (AndroidKeyStoreHelper.kt Biometrics), Section 5 (ClawCrypto.kt).  
 > 2. [`ui-ux-design-system.md`](./ui-ux-design-system.md) — Section 4.B (HatchVaultScreen.kt), Section 4.A (TotpNavHost.kt), Section 4.C (LoginScreen.kt / LockScreen.kt).  
 > 3. [`DESIGN.md`](./DESIGN.md) — Section 10 (HatchVaultScreen Layout).  
@@ -264,7 +279,8 @@ Verify first install launches into Hatch Vault, allows skipping biometrics, and 
 
 ## 📷 Stage 5: Phase 4 Prompt — CameraX QR Scanner & Multi-Format Backup Engine
 
-> **📖 Required Reference Files for Phase 4**:  
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-4-camerax-qr-scanner--multi-format-backup-engine) for complete specifications on **Task 07** and **Task 08**.  
+> **📖 Required Context Files for Phase 4**:  
 > 1. [`totp-engine-spec.md`](./totp-engine-spec.md) — Section 4 (TotpUriParser.kt), Section 5 (QrCodeAnalyzer.kt CameraX Pipeline).  
 > 2. [`room-storage-schema.md`](./room-storage-schema.md) — Section 6 (BackupManager.kt Encrypted JSON Export/Import).  
 > 3. [`ui-ux-design-system.md`](./ui-ux-design-system.md) — Section 4.C (AddSecretScreen.kt).  
@@ -308,7 +324,8 @@ Verify that camera scanning detects 2FA codes immediately, gallery QR import wor
 
 ## 🌐 Stage 6: Phase 5 Prompt — Self-Hosted Server Gateway, Dynamic Theme & Settings Persistence
 
-> **📖 Required Reference Files for Phase 5**:  
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-5-self-hosted-server-gateway--bidirectional-delta-sync) for complete specifications on **Task 09** and **Task 10**.  
+> **📖 Required Context Files for Phase 5**:  
 > 1. [`routes-and-contracts.md`](./routes-and-contracts.md) — Section 1 (ShellResponse), Section 2 (DTOs), Section 3 (ShellGuardTotpClient), Section 4 (ApiClient), Section 5 (Two-Way Sync), Section 6 (Cleartext/VPN Transport), Section 7 (TotpSyncWorker).  
 > 2. [`ui-ux-design-system.md`](./ui-ux-design-system.md) — Section 3 (GatewayScreen.kt 1:1 ClawStack Port), Section 4.E (SpotlightOverlay.kt).  
 > 3. [`DESIGN.md`](./DESIGN.md) — Section 2 (Theme Tokens), Section 9 (SettingsScreen.kt), Section 11 (SpotlightOverlay.kt), Section 12 (Self-Hosted Transport).  
@@ -379,7 +396,8 @@ Verify that local 2FA tokens push to the server and appear in the Web UI under P
 
 ## 🎨 Stage 7: Phase 6 Prompt — Adaptive App Icon, Splash Screen, 16 KB Alignment & Release Hardening
 
-> **📖 Required Reference Files for Phase 6**:  
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-6-final-polish--adaptive-app-icon-splash-screen--release-hardening) for complete specifications on **Task 11** and **Task 12**.  
+> **📖 Required Context Files for Phase 6**:  
 > 1. [`app-icon-and-splash.md`](./app-icon-and-splash.md) — Vector Drawables for Adaptive Icon and Android 12+ SplashScreen Setup.  
 > 2. [`16kb-page-size-alignment-guide.md`](./16kb-page-size-alignment-guide.md) — Android 15+ 16 KB memory page size alignment requirements and SQLCipher 4.6.1.  
 
@@ -419,4 +437,283 @@ Execute Phase 6 adhering to the Functionality + UI Component pairing:
 
 Verify release compilation, build the APK, and verify launcher icon appearance, splash transition, and 16 KB alignment!
 ```
+
+---
+
+## 📥 Stage 8: Phase 7 Prompt — Welcoming First-Run Wizard & "Import Habitat" Intake Flow [v0.0.0.2 (Build 4)]
+
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-7-welcoming-first-run-wizard--import-habitat-intake-flow-v0002-build-4) for complete specifications on **Task 13** and **Task 14**.  
+> **📖 Required Context Files for Phase 7**:  
+> 1. [`room-storage-schema.md`](./room-storage-schema.md) — BackupManager.kt & JSON schema.  
+> 2. [`DESIGN.md`](./DESIGN.md) — Section 10 (Onboarding & Hero Theme Tokens).  
+
+Copy and paste this prompt to execute **Phase 7 (Tasks 13 & 14)**:
+
+```markdown
+# PHASE 7 EXECUTION: Welcoming First-Run Wizard & "Import Habitat" Intake Flow [v0.0.0.2 (Build 4)]
+
+## 📖 Reference Documentation & Roadmap
+Before writing code, inspect:
+- `ROADMAP.md`: Phase 7 (Task 13: Intake Engine & SAF Validator · Task 14: IntakeWelcomeScreen).
+- `room-storage-schema.md`: Section 6 (BackupManager.kt).
+- `DESIGN.md`: Section 10 (First-Run Intake Experience).
+
+Execute Phase 7 adhering to the Functionality + UI Component pairing:
+
+### Task 13: [Functionality] First-Run Intake Engine, Multi-Vault Backup Pre-Validator & Dynamic Route State
+- Implement the intake state machine in `com.clawstack.shellguard.totp.ui.onboarding.IntakeState`:
+  - States: `WELCOME`, `IMPORTING_HABITAT`, `SECURITY_SETUP`, `COMPLETED`.
+- Integrate Android Storage Access Framework (SAF) `OpenDocument` parser:
+  - Validates selected backup files supporting ShellGuard Habitat (`shellguard-totp-backup-v1`), Bitwarden Vault (`items[].login.totp`), Bitwarden Authenticator, and Aegis.
+  - Prepares decryption cipher state for encrypted files and zero-knowledge sanitizer for third-party imports.
+
+### Task 14: [UI Component] Brand Hero Welcome Screen & "Import Habitat" File Picker Launcher
+- Implement `ui/screens/onboarding/IntakeWelcomeScreen.kt`:
+  - **Brand Hero Header**: High-resolution ShellGuard launcher shield vector (`ic_launcher_foreground`) with glowing ambient backdrop.
+  - **Introduction**: Minimalist title and tagline introducing ShellGuard-TOTP.
+  - **Import Habitat Button**: `[ 📥 Import Habitat / Vault ]` primary button launching native file picker (`rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument())`).
+  - **Decryption / Migration Prompt**: Modal bottom sheet for PIN or Master Password if encrypted, or summary sheet for Bitwarden imports.
+  - **Fresh Vault Forward Arrow**: Floating action icon button (`Icons.AutoMirrored.Filled.ArrowForward`) in bottom right corner with smooth breathing pulse, navigating fresh users to Vault Security setup.
+
+Verify file picker imports valid habitats and Bitwarden vaults, presents password/summary sheets, and transitions fresh users forward!
+```
+
+---
+
+## 💡 Stage 9: Phase 8 Prompt — Vault Security Education, Enlarged Spotlight Tour & Empty Vault Landing [v0.0.1.0 (Build 5) — Milestone 1]
+
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-8-vault-security-education-enlarged-spotlight-tour--empty-vault-landing-v0010-build-5--milestone-1) for complete specifications on **Task 15** and **Task 16**.  
+> **📖 Required Context Files for Phase 8**:  
+> 1. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — KeyStore Protection Orchestration.  
+> 2. [`DESIGN.md`](./DESIGN.md) — Section 11 (Spotlight Geometry & Spacious Cutouts).  
+
+Copy and paste this prompt to execute **Phase 8 (Tasks 15 & 16)**:
+
+```markdown
+# PHASE 8 EXECUTION: Vault Security Education, Enlarged Spotlight Tour & Empty Vault Landing [v0.0.1.0 (Build 5)]
+
+## 📖 Reference Documentation & Roadmap
+Before writing code, inspect:
+- `ROADMAP.md`: Phase 8 (Task 15: Protection Orchestrator · Task 16: VaultSecurityScreen & Spacious SpotlightOverlay).
+- `crypto-and-keystore.md`: Section 4 & 5 (KeyStore Biometric Binding).
+- `DESIGN.md`: Section 11 (Spotlight Geometry & Tooltips).
+
+Execute Phase 8 adhering to the Functionality + UI Component pairing:
+
+### Task 15: [Functionality] Android KeyStore Protection Orchestrator & Spotlight Geometry Engine
+- Implement protection orchestrator managing PIN, Master Password, and Biometric initialization in Android KeyStore AES-256-GCM hardware envelopes.
+- Upgrade `SpotlightOverlay.kt` geometry engine:
+  - Add configurable breathing radial padding (+16dp to +20dp offset beyond target bounds) so spotlight cutouts comfortably frame icons without crowding.
+
+### Task 16: [UI Component] Vault Security Orientation Screen & Enhanced Spotlight Overlay
+- Implement `ui/screens/onboarding/VaultSecurityScreen.kt`:
+  - Educational cards explaining zero-knowledge offline encryption.
+  - Interactive mode selector: `[ 🔢 PIN Code (4–8 digits) ]` vs `[ 🔑 Master Password ]`.
+  - Biometric quick toggle switch card.
+- Update `SpotlightOverlay.kt`:
+  - Render enlarged, spacious circular cutouts with pulsating cyan glow rings and centered tooltips.
+  - Complete tutorial transitions directly into pristine empty local vault (`TotpEmptyState`).
+
+Verify security setup binds to KeyStore, spotlight cutouts are spacious and clear, and users land cleanly in the empty vault!
+```
+
+---
+
+## ⚡ Stage 10: Phase 9 Prompt — Expandable Floating Actions Speed Dial (QR, Image & Manual) [v0.0.1.1 (Build 6)]
+
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-9-expandable-floating-actions-speed-dial-qr-image--manual-v0011-build-6) for complete specifications on **Task 17** and **Task 18**.  
+> **📖 Required Context Files for Phase 9**:  
+> 1. [`totp-engine-spec.md`](./totp-engine-spec.md) — ML Kit QrCodeAnalyzer.kt.  
+> 2. [`DESIGN.md`](./DESIGN.md) — Section 6 (ScannerFab & Speed Dial tokens).  
+
+Copy and paste this prompt to execute **Phase 9 (Tasks 17 & 18)**:
+
+```markdown
+# PHASE 9 EXECUTION: Expandable Floating Actions Speed Dial (QR, Image & Manual) [v0.0.1.1 (Build 6)]
+
+## 📖 Reference Documentation & Roadmap
+Before writing code, inspect:
+- `ROADMAP.md`: Phase 9 (Task 17: Image QR Decoder · Task 18: ExpandableSpeedDialFab).
+- `totp-engine-spec.md`: Section 5 (QrCodeAnalyzer.kt & Image URI decoder).
+- `DESIGN.md`: Section 6 (Floating Actions & Scrim Tokens).
+
+Execute Phase 9 adhering to the Functionality + UI Component pairing:
+
+### Task 17: [Functionality] Image QR Decoder Pipeline & Expandable FAB Interaction Controller
+- Implement `ImageQrDecoder` using Google ML Kit Barcode Scanning (`InputImage.fromFilePath` / `fromBitmap`) on URI streams.
+- Implement `SpeedDialState` controller managing expand/collapse transitions, back-handler interception, outside touch scrim dismissals, and permission requests.
+
+### Task 18: [UI Component] Animated Speed Dial FAB & Elevated Action Pills
+- Implement `ExpandableSpeedDialFab.kt` on `TotpListScreen.kt`:
+  - **Main FAB**: Smooth 45-degree rotation morphing from `+` to `✕`.
+  - **Background Scrim**: Subtle dark alpha dimming dismissible by tapping anywhere outside.
+  - **Elevated Action Pills** (staggered slide-and-fade entrance from bottom to top):
+    1. `[ 📷 Scan QR code ]` (Navigates to live CameraX preview scanner)
+    2. `[ 🖼️ Scan image ]` (Launches SAF image gallery picker to decode screenshot QR)
+    3. `[ ✏️ Enter manually ]` (Navigates to manual secret entry form)
+
+Verify FAB rotates smoothly, scrim dims background, tapping outside closes menu, and all three pill actions navigate correctly!
+```
+
+---
+
+## ⚙️ Stage 11: Phase 10 Prompt — Categorized Settings Hub & Appearance/Behavior Customization [v0.0.2.0 (Build 7) — Milestone 2]
+
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-10-categorized-settings-hub--appearancebehavior-customization-v0020-build-7--milestone-2) for complete specifications on **Task 19** and **Task 20**.  
+> **📖 Required Context Files for Phase 10**:  
+> 1. [`DESIGN.md`](./DESIGN.md) — Section 2 (Theme Tokens) & Section 9 (Settings Navigation).  
+> 2. [`ui-ux-design-system.md`](./ui-ux-design-system.md) — Section 4 (Settings Architecture).  
+
+Copy and paste this prompt to execute **Phase 10 (Tasks 19 & 20)**:
+
+```markdown
+# PHASE 10 EXECUTION: Categorized Settings Hub & Appearance/Behavior Customization [v0.0.2.0 (Build 7)]
+
+## 📖 Reference Documentation & Roadmap
+Before writing code, inspect:
+- `ROADMAP.md`: Phase 10 (Task 19: Preferences Store · Task 20: SettingsMetaScreen, Appearance & Behavior Screens).
+- `DESIGN.md`: Section 9 (Settings List Design).
+
+Execute Phase 10 adhering to the Functionality + UI Component pairing:
+
+### Task 19: [Functionality] Preferences Store Architecture & Entry Formatting Engine
+- Expand `AuthRepository` and `DataStore` / `SharedPreferences` to manage structured preferences:
+  - `AppearancePreferences` (view mode, show icons, show next code, expire blink indicator, digit grouping, issuer/account display rules, group manager).
+  - `BehaviorPreferences` (search focus on start, search scope, minimize on copy, haptic feedback, multiselect categories, highlight tokens on tap, freeze tokens on tap).
+
+### Task 20: [UI Component] Categorized Settings Hub (`SettingsMetaScreen`), Appearance & Behavior Sub-screens
+- Implement `SettingsMetaScreen.kt` with master category list and descriptive subtitles:
+  - 🎨 **Appearance** (`Adjust theme, language, and other appearance settings`)
+  - ⚡ **Behavior** (`Customize behavior when interacting with entry list`)
+  - 📦 **Icon packs** (`Manage and import icon packs`)
+  - 🔐 **Security** (`Configure encryption, biometric unlock, auto lock`)
+  - ☁️ **Backups** (`Automatic backups & Android cloud backup system`)
+  - 🛠️ **Import & Export** (`Import from Aegis/Bitwarden/Google, export vault`)
+  - 📈 **Audit log** (`Security event audit trail`)
+- Implement `SettingsAppearanceScreen.kt` (theme modes, dynamic colors, view mode, expiration indicators, grouping, account name display rules).
+- Implement `SettingsBehaviorScreen.kt` (focus search on start, minimize on copy, token tap highlights, freeze on tap).
+
+Verify category navigation transitions smoothly and settings updates reflect immediately in the UI!
+```
+
+---
+
+## 🛡️ Stage 12: Phase 11 Prompt — Security Suite, Panic Purge & Security Audit Logging [v0.0.2.1 (Build 8)]
+
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-11-security-suite-panic-purge--security-audit-logging-v0021-build-8) for complete specifications on **Task 21** and **Task 22**.  
+> **📖 Required Context Files for Phase 11**:  
+> 1. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — KeyStore & Panic Purge.  
+> 2. [`room-storage-schema.md`](./room-storage-schema.md) — Audit Log Room Schema.  
+
+Copy and paste this prompt to execute **Phase 11 (Tasks 21 & 22)**:
+
+```markdown
+# PHASE 11 EXECUTION: Security Suite, Panic Purge & Security Audit Logging [v0.0.2.1 (Build 8)]
+
+## 📖 Reference Documentation & Roadmap
+Before writing code, inspect:
+- `ROADMAP.md`: Phase 11 (Task 21: Panic Trigger & Audit DAO · Task 22: SecurityScreen & AuditLogScreen).
+- `crypto-and-keystore.md`: Section 4 (Security Lifecycle).
+- `room-storage-schema.md`: Section 2 (Room Entities).
+
+Execute Phase 11 adhering to the Functionality + UI Component pairing:
+
+### Task 21: [Functionality] Security Preference Controller, Panic Trigger Handler & Room Audit Log DAO
+- Implement `AuditLogDao` and `AuditLogEntity` in Room recording chronological security events (vault unlocked, biometric failed, backup created, secret added, panic triggered).
+- Implement `PanicTriggerReceiver` (supporting broadcast/intent triggers to wipe encryption keys and purge Room DB on emergency).
+- Implement configurable Tap-to-Reveal timeout timer (default 30s).
+
+### Task 22: [UI Component] Security Sub-screen (Tap-to-Reveal, Screen Security, Panic Purge) & Audit Log Screen
+- Implement `SettingsSecurityScreen.kt`:
+  - Encryption status tile, Screen security toggle (`FLAG_SECURE`), Tap to reveal codes toggle with configurable timeout duration, Delete vault on panic trigger toggle.
+- Implement `SettingsAuditLogScreen.kt`:
+  - Chronological event list with status chips (Unlock, Export, Failed Attempt, Sync), search filter, export audit log action, and empty state illustration (`No reported events`).
+
+Verify security toggles enforce immediate runtime protection and audit log records events accurately!
+```
+
+---
+
+## 📦 Stage 13: Phase 12 Prompt — Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 9) — Milestone 3]
+
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-12-advanced-importexport-bitwarden-migration--google-authenticator-multi-qr-v0030-build-9--milestone-3) for complete specifications on **Task 23** and **Task 24**.  
+> **📖 Required Context Files for Phase 12**:  
+> 1. [`bitwarden-and-migration-spec.md`](./bitwarden-and-migration-spec.md) — Master Ingestion Pipeline, Schemas, Steam Guard & Dual Router.  
+> 2. [`room-storage-schema.md`](./room-storage-schema.md) — Section 6 (BackupManager.kt) & Section 7 (AuditLogDao).  
+> 3. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — Section 3 (ShellCryptionEngine AAD binding).  
+
+Copy and paste this prompt to execute **Phase 12 (Tasks 23 & 24)**:
+
+```markdown
+# PHASE 12 EXECUTION: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 9)]
+
+## 📖 Reference Documentation & Roadmap
+Before writing code, inspect:
+- `ROADMAP.md`: Phase 12 (Task 23: Bitwarden & MultiFormat Migration · Task 24: Bitwarden Migration Wizard & Backups Screen).
+- `bitwarden-and-migration-spec.md`: Complete parsing schemas, Steam Guard 2FA, conflict policies, and dual persistence router.
+- `room-storage-schema.md`: Section 6 (BackupManager.kt) & Section 7 (AuditLogDao).
+- `crypto-and-keystore.md`: Section 3 (ShellCryptionEngine AAD binding).
+
+Execute Phase 12 adhering to the Functionality + UI Component pairing:
+
+### Task 23: [Functionality] Multi-Format Import Engine (Bitwarden Vault/Auth, Aegis, 2FAS) & Dual Vault Persister
+- Implement `MultiFormatMigrationEngine` in `data/migration`:
+  - **Bitwarden Vault Parser**: Extracts TOTP keys from Bitwarden Password Manager exports (`items[].login.totp` containing `otpauth://totp/...` or raw Base32 seeds; maps `folders[]` ➔ ShellGuard Pod categories; uncategorized items default to `"General"`).
+  - **Bitwarden Authenticator Parser**: Parses standalone Bitwarden Authenticator JSON (`issuer`, `name`, `key`, `algorithm`, `digits`, `period`).
+  - **Password-Protected Encrypted Bitwarden JSON**: Detects `encrypted: true` and derives AES-256-CBC decryption key with PBKDF2 from user's export password.
+  - **Steam Guard 2FA Support**: Decodes `steam://` URIs and uses Steam's 26-char alphanumeric alphabet (`23456789BCDFGHJKMNPQRTVWXY`) for 5-char code generation.
+  - **Zero-Knowledge Sanitizer**: Strictly purges passwords (`login.password`), credit cards, secure notes, and personal data from RAM.
+  - **Conflict Resolution Engine**: Evaluates `ConflictPolicy` (`SKIP_DUPLICATES`, `OVERWRITE_EXISTING`, `KEEP_BOTH`).
+  - **Dual Vault Persistence Router**:
+    - *Local Pathway*: Directly inserts sanitized TOTP entities into Room SQLCipher with `is_local_only = 1`.
+    - *Remote Synchronized Pathway*: Converts tokens to ShellGuard Pearl DTOs, encrypts via `ShellCryptionEngine` (`huKey` + `userUuid` + AAD `vault_pearls_totp:{id}`), and pushes upstream via `POST /api/vault`.
+  - **Post-Commit Hooks**: Emits `IMPORT_SUCCESS` event to `AuditLogDao` and triggers `BackupManager.triggerAutomaticBackupIfEnabled()`.
+  - **Google Authenticator Protobuf Exporter**: Generates standard `otpauth-migration://offline?data=...` Protobuf envelopes.
+
+### Task 24: [UI Component] Import & Export Screen, Bitwarden Migration Preview Wizard & Multi-QR Viewer
+- Implement `SettingsImportExportScreen.kt`:
+  - Category tiles for "Import Bitwarden Vault", "Import ShellGuard Habitat", "Import Aegis / 2FAS", "Export Encrypted Vault", and "Export for Google Authenticator".
+- Implement `BitwardenImportPreviewDialog.kt`:
+  - Interactive migration wizard showing summary (*"Found 14 2FA tokens across 3 categories. Passwords and notes have been securely excluded"*), category mapping previews, conflict strategy radio buttons (`Skip`, `Overwrite`, `Keep Both`), and destination toggle: `[ 📱 Save to Local Vault Only ]` vs `[ ☁️ Save & Sync with Remote Gateway ]`.
+- Implement `GoogleAuthExportViewerDialog.kt`: Paged QR code carousel for multi-account migrations with account count badges and brightness boost.
+- Implement `SettingsBackupsScreen.kt`: Automatic backups toggle, Backup reminder toggle, and Android cloud backups toggle.
+
+Verify Bitwarden JSON exports parse accurately, zero passwords/notes leak into storage, destination routing functions properly, and Google Auth QR codes scan!
+```
+
+---
+
+## 📱 Stage 14: Phase 13 Prompt — Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 10) — Open Beta Candidate]
+
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-13-home-screen-interactive-glance-widgets--icon-pack-manager-v0100-build-10--open-beta-candidate) for complete specifications on **Task 25** and **Task 26**.  
+> **📖 Required Context Files for Phase 13**:  
+> 1. [`totp-engine-spec.md`](./totp-engine-spec.md) — Background TOTP calculation.  
+> 2. [`DESIGN.md`](./DESIGN.md) — Section 4 (Widget Modernist Layout).  
+
+Copy and paste this prompt to execute **Phase 13 (Tasks 25 & 26)**:
+
+```markdown
+# PHASE 13 EXECUTION: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 10)]
+
+## 📖 Reference Documentation & Roadmap
+Before writing code, inspect:
+- `ROADMAP.md`: Phase 13 (Task 25: Glance Widget Engine & Icon Store · Task 26: Glance Widgets & Icon Manager).
+- `totp-engine-spec.md`: Section 1 (TotpEngine.kt).
+- `DESIGN.md`: Section 4 (TotpCard & Widget Tokens).
+
+Execute Phase 13 adhering to the Functionality + UI Component pairing:
+
+### Task 25: [Functionality] AndroidX Glance AppWidget Engine & Custom Issuer Icon Pack Store
+- Integrate `androidx.glance:glance-appwidget` and `androidx.glance:glance-material3`.
+- Implement `TotpGlanceReceiver` and `TotpGlanceWidgetService`.
+- Implement `IconPackManager` supporting loading, parsing, and caching vector/PNG icon packs for popular web services (GitHub, Google, AWS, Microsoft, Discord).
+
+### Task 26: [UI Component] Modernist Glance 2FA Widgets (2x2 & 4x2) & Icon Pack Manager Screen
+- Implement Glance 2FA Widgets: Compact 2x2 single-token and expanded 4x2 multi-account list with live countdown progress bars, split digits (`123 456`), and one-tap copy actions.
+- Implement `SettingsIconPacksScreen.kt`: Icon pack browser, import custom icon pack `.zip`, enable/disable icon packs, and icon preview grid.
+
+Verify widgets update reliably on home screens with tap-to-copy responsiveness, and icon packs render custom brand glyphs!
+```
+
+
 

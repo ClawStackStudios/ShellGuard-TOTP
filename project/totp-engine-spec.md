@@ -306,3 +306,51 @@ class QrCodeAnalyzer(
     }
 }
 ```
+
+---
+
+## 6. Steam Guard 5-Character Alphanumeric Generator
+
+Steam Guard 2FA utilizes standard HMAC-SHA1 over 30-second intervals but formats output codes using a custom 26-character alphanumeric translation table (`23456789BCDFGHJKMNPQRTVWXY`).
+
+```kotlin
+object SteamTotpGenerator {
+    private val STEAM_CHARS = "23456789BCDFGHJKMNPQRTVWXY".toCharArray()
+
+    /**
+     * Computes the current 5-character Steam Guard authentication code.
+     */
+    fun generateSteamGuardCode(
+        secretBase32: String,
+        timestampMillis: Long = System.currentTimeMillis()
+    ): String {
+        val cleanSecret = secretBase32.replace(" ", "").replace("-", "").uppercase()
+        if (cleanSecret.isBlank()) return "-----"
+
+        return try {
+            val keyBytes = Base32Decoder.decode(cleanSecret)
+            val timeWindow = (timestampMillis / 1000L) / 30L
+            val counterBytes = java.nio.ByteBuffer.allocate(8).putLong(timeWindow).array()
+
+            val mac = javax.crypto.Mac.getInstance("HmacSHA1")
+            mac.init(javax.crypto.spec.SecretKeySpec(keyBytes, "HmacSHA1"))
+            val hash = mac.doFinal(counterBytes)
+
+            val offset = hash[hash.size - 1].toInt() and 0x0F
+            var fullCode = ((hash[offset].toInt() and 0x7F) shl 24) or
+                    ((hash[offset + 1].toInt() and 0xFF) shl 16) or
+                    ((hash[offset + 2].toInt() and 0xFF) shl 8) or
+                    (hash[offset + 3].toInt() and 0xFF)
+
+            val codeBuilder = StringBuilder(5)
+            for (i in 0 until 5) {
+                codeBuilder.append(STEAM_CHARS[fullCode % STEAM_CHARS.size])
+                fullCode /= STEAM_CHARS.size
+            }
+            codeBuilder.toString()
+        } catch (e: Exception) {
+            "-----"
+        }
+    }
+}
+```
