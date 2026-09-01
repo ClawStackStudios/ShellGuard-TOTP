@@ -72,4 +72,13 @@ UI (Jetpack Compose) → ViewModel (StateFlow/Intent) → UseCase/Repository →
 3. **In-Engine AGP Signing**: Gradle natively compiles and cryptographically signs both `.aab` and `.apk` using Android Gradle Plugin's built-in `apksigner` and `bundletool` engines, eliminating deprecated third-party signing actions.
 4. **Automated Ephemeral Key Cleanup**: A step with `if: always()` immediately removes `my-upload-key.jks` after compilation to ensure zero lingering private key exposure on runner disks.
 
+## Dedicated Google Play Release Notes Pattern
+1. **500-Character Constraint**: Maintain `RELEASE-PLAY.md` at repository root with `<en-US>` tags strictly under 500 characters for direct copy-paste into Google Play Console.
+2. **Dual Notes Synchronization**: Every release bump updates both `RELEASE-vX.Y.Z.N.md` (detailed GitHub changelog) and `RELEASE-PLAY.md` (concise mobile store highlights).
+
+## Branded Binary Packaging Pattern
+1. **Branded Artifact Staging**: CI pipelines copy and stage release binaries under explicit project names (`shellguard-totp-${TAG}.aab` and `shellguard-totp-${TAG}.apk`).
+2. **Dual Distribution**: Attach both Google Play Store App Bundles (`.aab`) and standalone direct-install APKs (`.apk`) to every GitHub Release.
+
+
 

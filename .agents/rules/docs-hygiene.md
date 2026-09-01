@@ -23,6 +23,7 @@ Documentation updates should not be isolated to a separate "chore: update docs" 
 ## 5. Release Documentation & Template Protocol
 When preparing a version increment or release:
 - **Use Official Release Template:** Draft `RELEASE-vX.Y.Z.N.md` in the repository root adhering strictly to `.agents/templates/release-template.md`.
-- **Synchronize Central Anchors:** In the same release preparation commit, synchronize `app/build.gradle.kts` (`versionCode` + `versionName`), `README.md` (version badge), and `.agents/memory-bank/changelog.md` (`## [X.Y.Z.N] - YYYY-MM-DD`).
-- **Automated Publication Trigger:** Pushing with `--release vX.Y.Z.N` in the commit message or pushing tag `vX.Y.Z.N` automatically executes `.github/workflows/release.yml` to build, sign, and publish the release with the markdown notes and signed binaries.
+- **Google Play Store Notes:** Prepend concise (<500-char) `<en-US>` release notes to `RELEASE-PLAY.md` for direct mobile store deployment.
+- **Synchronize Central Anchors:** In the same release preparation commit, synchronize `app/build.gradle.kts` (`versionCode` + `versionName`), `README.md` (version badge), `RELEASE-PLAY.md`, and `.agents/memory-bank/changelog.md` (`## [X.Y.Z.N] - YYYY-MM-DD`).
+- **Automated Publication Trigger:** Pushing with `--release vX.Y.Z.N` in the commit message or pushing tag `vX.Y.Z.N` automatically executes `.github/workflows/release.yml` to build, sign, and publish the release with the markdown notes and branded binaries.
 
