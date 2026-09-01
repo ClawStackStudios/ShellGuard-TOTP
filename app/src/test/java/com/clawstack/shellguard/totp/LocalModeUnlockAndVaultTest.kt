@@ -66,17 +66,10 @@ class LocalModeUnlockAndVaultTest {
 
     @After
     fun tearDown() {
-        // Prevent JobCancellationException from active viewmodel scopes when DB closes
-        try {
-            val clearMethod = androidx.lifecycle.ViewModel::class.java.getDeclaredMethod("clear")
-            clearMethod.isAccessible = true
-            clearMethod.invoke(totpViewModel)
-            clearMethod.invoke(authViewModel)
-        } catch (e: Exception) {
-            // Ignore
-        }
-        shadowOf(Looper.getMainLooper()).idle()
-        database.close()
+        // We omit database.close() here because closing the Room database while
+        // TotpViewModel still has active Flow subscriptions (via stateIn) causes Room
+        // to throw a JobCancellationException which crashes the Robolectric test.
+        // Since it's an in-memory database, it will safely be garbage collected.
     }
 
     @Test

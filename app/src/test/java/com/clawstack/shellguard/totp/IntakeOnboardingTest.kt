@@ -69,14 +69,7 @@ class IntakeOnboardingTest {
 
     @After
     fun tearDown() {
-        try {
-            val clearMethod = androidx.lifecycle.ViewModel::class.java.getDeclaredMethod("clear")
-            clearMethod.isAccessible = true
-            clearMethod.invoke(intakeViewModel)
-        } catch (e: Exception) {
-            // Ignore
-        }
-        database.close()
+        // Omit database.close() to prevent JobCancellationException on active flows.
     }
 
     // ── 1. MultiVaultBackupPreValidator Tests ─────────────────────────
@@ -326,9 +319,14 @@ class IntakeOnboardingTest {
             completed = true
         }
 
-        // Flush pending main-thread coroutine tasks (viewModelScope.launch runs on main dispatcher)
-        // and wait for Dispatchers.IO context switch to finish.
-        composeTestRule.waitUntil(5000) { completed }
+        // Wait for Dispatchers.IO context switch to finish.
+        var retries = 0
+        while (!completed && retries < 50) {
+            Thread.sleep(100)
+            shadowOf(Looper.getMainLooper()).idle()
+            retries++
+        }
+        assertTrue("hatchAndImportVault did not complete", completed)
         assertEquals(IntakeStep.COMPLETED, intakeViewModel.uiState.value.step)
         assertTrue(authRepository.isVaultHatched.first())
         assertEquals(VaultProtectionMode.PIN, authRepository.vaultMode.first())
