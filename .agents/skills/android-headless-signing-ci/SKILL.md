@@ -1,0 +1,121 @@
+---
+name: android-headless-signing-ci
+description: Comprehensive playbook for headless Android CI/CD release builds, Python 3 base64 keystore decoding, native AGP in-engine signing, dual binary distribution (.aab + .apk), and Google Play Console release notes formatting.
+---
+
+# 🔑 Skill: Android Headless CI Signing & Release Pipeline
+
+This skill provides the definitive, battle-tested playbook for cryptographically signing Android App Bundles (`.aab`) and standalone APKs (`.apk`) inside headless CI/CD environments (e.g. GitHub Actions) without relying on deprecated third-party signing actions.
+
+---
+
+## 🛑 The Core Gotchas & Why Old Approaches Fail
+
+1. **The GNU `base64` Trailing Newline Trap**:
+   - Passing multi-line or base64-encoded keystores through `echo "$KEY" | base64 -d` on Linux runners often fails with `base64: invalid input` due to environment variable wrapping, padding truncation, or OS-specific base64 flags (`-d` vs `-D` vs `--decode`).
+   - **The Fix**: Use Python 3's built-in `base64.b64decode(os.environ['KEY'].strip())`, which strips all whitespace, handles padding seamlessly, and writes raw binary `.jks` files with 100% reliability.
+
+2. **The "Hardcoded Keystore in Gradle" Failure**:
+   - If `build.gradle.kts` unconditionally references `file("my-upload-key.jks")`, local developer builds and unit tests fail whenever the private keystore is absent from disk.
+   - **The Fix**: Conditional Gradle signing configuration.
+
+3. **Deprecated Third-Party GitHub Actions**:
+   - Actions like `r0adkll/sign-android-release` rely on deprecated Node.js runtimes (Node 12/16/20) and create brittle dependencies.
+   - **The Fix**: Android Gradle Plugin (AGP) natively bundles `apksigner` and `bundletool`. Let Gradle sign the artifacts directly during compilation.
+
+---
+
+## 🛠️ 1. Conditional AGP Signing in `app/build.gradle.kts`
+
+```kotlin
+android {
+    // ...
+    val releaseKeystoreFile = file("../my-upload-key.jks")
+    val hasReleaseKeystore = releaseKeystoreFile.exists()
+
+    signingConfigs {
+        if (hasReleaseKeystore) {
+            create("release") {
+                storeFile = releaseKeystoreFile
+                storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
+                keyAlias = System.getenv("KEY_ALIAS") ?: ""
+                keyPassword = System.getenv("KEY_PASSWORD") ?: ""
+                enableV1Signing = true
+                enableV2Signing = true
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            if (hasReleaseKeystore) {
+                signingConfig = signingConfigs.getByName("release")
+            }
+        }
+    }
+}
+```
+
+---
+
+## 🐍 2. Robust Python 3 Keystore Decoding in GitHub Actions
+
+In `.github/workflows/release.yml`, decode the keystore using Python 3:
+
+```yaml
+      - name: Decode Android Keystore
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+        run: |
+          python3 -c "import os, base64; open('my-upload-key.jks', 'wb').write(base64.b64decode(os.environ['SIGNING_KEY'].strip()))"
+
+      - name: Build Signed App Bundle & Standalone APK
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          ./gradlew bundleRelease assembleRelease
+
+      - name: Shred Ephemeral Keystore (Immediate Cleanup)
+        if: always()
+        run: |
+          rm -f my-upload-key.jks
+```
+
+---
+
+## 📦 3. Dual Binary Packaging & Naming
+
+Always stage and publish both formats with clean, predictable names:
+- `shellguard-totp-vX.Y.Z.N.aab` (For Google Play Console upload)
+- `shellguard-totp-vX.Y.Z.N.apk` (For F-Droid / GitHub Direct Install)
+
+```bash
+TAG="${GITHUB_REF#refs/tags/}"
+cp app/build/outputs/bundle/release/app-release.aab "shellguard-totp-${TAG}.aab"
+cp app/build/outputs/apk/release/app-release.apk "shellguard-totp-${TAG}.apk"
+```
+
+---
+
+## 📝 4. Dedicated Google Play Store Notes (`RELEASE-PLAY.md`)
+
+Google Play Console enforces a **500-character limit** for release notes per language.
+Maintain a root file `RELEASE-PLAY.md` with `<en-US>` tags:
+
+```markdown
+<en-US>
+- RFC 6238 TOTP engine with SHA-1/256/512 support.
+- SQLCipher whole-database encrypted local persistence.
+- Hardware Android KeyStore biometric sealing.
+- CameraX live QR scanner & Base32 manual entry.
+- 16 KB memory page-size alignment for Android 15+.
+</en-US>
+```
