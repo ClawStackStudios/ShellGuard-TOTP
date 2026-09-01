@@ -2,6 +2,12 @@
 
 All notable changes to the ShellGuard TOTP project will be documented in this file.
 
+## [0.0.0.1.3] - 2026-08-31 (Build 3)
+### Changed
+- **Official Package Name Alignment**: Updated `applicationId` to `com.clawstack.shellguard.totp` in `app/build.gradle.kts` to establish exact parity with the newly created Google Play Console application listing.
+- **Dedicated Google Play Release Notes**: Created `RELEASE-PLAY.md` with localized `<en-US>` release notes (<500 characters) and integrated it into release workflows.
+- **Headless Cloud CI Signing Hardening**: Migrated from legacy third-party signing actions to native Android Gradle Plugin signing via Python 3 base64 keystore decoding from environment variables, eliminating Node deprecations and GNU base64 input parsing errors.
+
 ## [0.0.0.1] - 2026-08-31
 ### Added
 - **Dynamic Release Version Synchronization**:

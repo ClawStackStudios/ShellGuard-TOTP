@@ -148,14 +148,33 @@ jobs:
         if: always() && steps.detect.outputs.tag != ''
         run: rm -f my-upload-key.jks
 
+      - name: 🏷️ Prepare Branded Release Artifacts (shellguard-totp)
+        if: steps.detect.outputs.tag != ''
+        run: |
+          TAG="${{ steps.detect.outputs.tag }}"
+          mkdir -p dist
+          # Find generated AAB and APK files
+          AAB_SRC=$(find app/build/outputs/bundle/release -name "*.aab" | head -1)
+          APK_SRC=$(find app/build/outputs/apk/release -name "*.apk" | head -1)
+
+          echo "Found AAB at: $AAB_SRC"
+          echo "Found APK at: $APK_SRC"
+
+          cp "$AAB_SRC" "dist/shellguard-totp-${TAG}.aab"
+          cp "$APK_SRC" "dist/shellguard-totp-${TAG}.apk"
+          cp "$AAB_SRC" "dist/shellguard-totp.aab"
+          cp "$APK_SRC" "dist/shellguard-totp.apk"
+
       - name: 📤 Upload Build Artifacts (Actions Dashboard)
         if: steps.detect.outputs.tag != ''
         uses: actions/upload-artifact@v4
         with:
           name: shellguard-totp-${{ steps.detect.outputs.tag }}
           path: |
-            app/build/outputs/bundle/release/app-release.aab
-            app/build/outputs/apk/release/app-release.apk
+            dist/shellguard-totp-${{ steps.detect.outputs.tag }}.aab
+            dist/shellguard-totp-${{ steps.detect.outputs.tag }}.apk
+            dist/shellguard-totp.aab
+            dist/shellguard-totp.apk
           retention-days: 14
 
       - name: Publish GitHub Release 🚀
@@ -168,8 +187,8 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            app/build/outputs/bundle/release/app-release.aab
-            app/build/outputs/apk/release/app-release.apk
+            dist/shellguard-totp-${{ steps.detect.outputs.tag }}.aab
+            dist/shellguard-totp-${{ steps.detect.outputs.tag }}.apk
 
   mirror:
     name: Mirror RELEASE Document into the GitHub Release 🪞
