@@ -25,6 +25,8 @@ trigger: always_on
   - `build/`, `**/build/`, `*.apk`, `*.aab`, `*.apks`, `*.obb`, `*.dex`, `*.class`.
 - **NEVER Commit IDE Caches**:
   - `.idea/`, `.gradle/`, `.kotlin/`, `captures/`, `.externalNativeBuild/`, `.cxx/`.
+- **NEVER Commit Internal Agent Scratchpads & Visual Design Assets**:
+  - `.agents/internal/`, `.agents/scratch/`, `**/scratch/**`. Always ensure these directories are declared in `.gitignore` and excluded from git staging.
 
 ## Destructive Operations — NEVER Without Explicit Confirmation
 - `git push --force` / `--force-with-lease`
