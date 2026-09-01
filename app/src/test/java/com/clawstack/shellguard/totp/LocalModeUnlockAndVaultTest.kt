@@ -66,9 +66,15 @@ class LocalModeUnlockAndVaultTest {
 
     @After
     fun tearDown() {
-        // Drain pending main-thread coroutine tasks before closing the database.
-        // TotpViewModel collects Room Flows on viewModelScope; closing the DB while
-        // those are active propagates a JobCancellationException through runBlocking.
+        // Prevent JobCancellationException from active viewmodel scopes when DB closes
+        try {
+            val clearMethod = androidx.lifecycle.ViewModel::class.java.getDeclaredMethod("clear")
+            clearMethod.isAccessible = true
+            clearMethod.invoke(totpViewModel)
+            clearMethod.invoke(authViewModel)
+        } catch (e: Exception) {
+            // Ignore
+        }
         shadowOf(Looper.getMainLooper()).idle()
         database.close()
     }

@@ -150,8 +150,8 @@ object BitwardenSanitizer {
 
             val parsedFromUri = TotpUriParser.parse(rawKey)
             if (parsedFromUri != null) {
-                val finalTitle = if (!name.isNullOrBlank()) name else (issuer ?: parsedFromUri.title)
-                val finalUsername = parsedFromUri.username ?: if (!issuer.isNullOrBlank() && !name.isNullOrBlank() && name != issuer) name else null
+                val finalTitle = issuer ?: parsedFromUri.issuer ?: name ?: parsedFromUri.title
+                val finalUsername = parsedFromUri.username ?: if (name != null && name != issuer) name else null
 
                 parsedItems.add(
                     ParsedTotpItem(

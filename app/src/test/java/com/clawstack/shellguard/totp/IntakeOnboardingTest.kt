@@ -69,6 +69,13 @@ class IntakeOnboardingTest {
 
     @After
     fun tearDown() {
+        try {
+            val clearMethod = androidx.lifecycle.ViewModel::class.java.getDeclaredMethod("clear")
+            clearMethod.isAccessible = true
+            clearMethod.invoke(intakeViewModel)
+        } catch (e: Exception) {
+            // Ignore
+        }
         database.close()
     }
 
@@ -320,9 +327,8 @@ class IntakeOnboardingTest {
         }
 
         // Flush pending main-thread coroutine tasks (viewModelScope.launch runs on main dispatcher)
-        shadowOf(Looper.getMainLooper()).idle()
-
-        assertTrue(completed)
+        // and wait for Dispatchers.IO context switch to finish.
+        composeTestRule.waitUntil(5000) { completed }
         assertEquals(IntakeStep.COMPLETED, intakeViewModel.uiState.value.step)
         assertTrue(authRepository.isVaultHatched.first())
         assertEquals(VaultProtectionMode.PIN, authRepository.vaultMode.first())
