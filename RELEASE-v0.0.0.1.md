@@ -37,10 +37,10 @@
 
 ## 📦 Downloads & Installation
 
-| Asset | Format | Recommended For |
-| :--- | :--- | :--- |
-| **`app-release.aab`** | Android App Bundle | Google Play Console upload / Store distribution |
-| **`app-release.apk`** | Standalone Android Package | Direct sideloading / FOSS distribution |
+| Asset                              | Format | Recommended For |
+|:-----------------------------------| :--- | :--- |
+| **`shellguard-totp-v0.0.0.1.aab`** | Android App Bundle | Google Play Console upload / Store distribution |
+| **`shellguard-totp-v0.0.0.1.apk`**    | Standalone Android Package | Direct sideloading / FOSS distribution |
 
 ---
 
