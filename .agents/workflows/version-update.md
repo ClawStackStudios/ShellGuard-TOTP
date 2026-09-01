@@ -46,6 +46,7 @@ Update all version anchors across the codebase:
    ```
 3. **`CHANGELOG.md`**: Create `## [X.Y.Z.N] - YYYY-MM-DD` section and move relevant items from `[Unreleased]`.
 4. **`RELEASE-vX.Y.Z.N.md`** *(if cutting a release)*: Generate release document adhering to `.agents/templates/release-template.md`.
+5. **`RELEASE-PLAY.md`** *(if cutting a release)*: Prepend punchy `<en-US>` release notes (<500 characters) for Google Play Console testers.
 
 ---
 
@@ -62,7 +63,7 @@ Update all version anchors across the codebase:
 
 1. **Stage Modified Files:**
    ```bash
-   git add app/build.gradle.kts README.md .agents/memory-bank/changelog.md [RELEASE-vX.Y.Z.N.md]
+   git add app/build.gradle.kts README.md .agents/memory-bank/changelog.md RELEASE-PLAY.md [RELEASE-vX.Y.Z.N.md]
    ```
 
 2. **Commit using Two-Layer Attribution:**

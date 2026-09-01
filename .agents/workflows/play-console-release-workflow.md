@@ -156,15 +156,17 @@ bundletool build-apks \
 3. In the left-hand sidebar, navigate to **Testing** → **Internal testing** (or **Closed testing**).
 4. Click **Create new release** (top right).
 5. **Upload Bundle**: Drag and drop `app-release.aab` into the upload zone.
-6. **Release Name**: Play Console will automatically populate `0.0.0.1 (1)` matching your Gradle config.
-7. **Release Notes**: Provide notes for your testers:
-   ```markdown
+6. **Release Name**: Play Console will automatically populate `X.Y.Z.N (Build N)` matching your Gradle config.
+7. **Release Notes**: Copy the formatted `<en-US>` notes directly from [`RELEASE-PLAY.md`](file:///config/Documents/workspace-lucas/projects/Agents/ShellGuard-TOTP/RELEASE-PLAY.md) (<500 characters):
+   ```xml
    <en-US>
-   • Initial release of ShellGuard-TOTP Authenticator.
-   • Privacy-first 2FA companion with hardware KeyStore AES-256 encryption.
-   • Full offline zero-knowledge TOTP generation & self-hosted server delta sync.
-   • Reef Pink bioluminescent modernist design with 6 custom theme accents.
-   • 16 KB memory page size compatibility for Android 15+.
+   • Initial release of ShellGuard-TOTP Authenticator!
+   • Zero-Knowledge Privacy: Hardware KeyStore AES-256 encryption.
+   • Offline Autonomy: Generate RFC 6238 2FA codes with live countdown arcs.
+   • Dynamic Design: Modernist Reef Pink default theme + 6 custom accent palettes.
+   • Fast Setup: CameraX QR scanner & screenshot import.
+   • Self-Hosted Sync: Optional two-way delta sync with ShellGuard servers.
+   • Android 15+ 16 KB page-size kernel ready.
    </en-US>
    ```
 8. Click **Next** → **Save** → **Review release** → **Start rollout to Internal testing**.
