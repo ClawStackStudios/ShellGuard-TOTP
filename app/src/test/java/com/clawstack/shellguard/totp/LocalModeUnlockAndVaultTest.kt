@@ -33,7 +33,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
+import android.os.Looper
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], application = ShellGuardTotpApp::class, qualifiers = "w1000dp-h2000dp")
@@ -64,6 +66,10 @@ class LocalModeUnlockAndVaultTest {
 
     @After
     fun tearDown() {
+        // Drain pending main-thread coroutine tasks before closing the database.
+        // TotpViewModel collects Room Flows on viewModelScope; closing the DB while
+        // those are active propagates a JobCancellationException through runBlocking.
+        shadowOf(Looper.getMainLooper()).idle()
         database.close()
     }
 

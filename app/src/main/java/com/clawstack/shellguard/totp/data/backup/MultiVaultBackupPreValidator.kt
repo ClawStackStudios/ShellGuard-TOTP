@@ -173,7 +173,10 @@ object MultiVaultBackupPreValidator {
         // 4. Aegis Authenticator
         if (obj.containsKey("header") || obj.containsKey("db")) {
             val header = obj["header"]?.jsonObject
-            val isEncrypted = header?.containsKey("slots") == true
+            val slotsElem = header?.get("slots")
+            val isEncrypted = slotsElem != null &&
+                    slotsElem !is kotlinx.serialization.json.JsonNull &&
+                    (slotsElem as? kotlinx.serialization.json.JsonArray)?.isNotEmpty() == true
             if (isEncrypted) {
                 return PreValidationResult.Success(
                     schemaType = BackupSchemaType.AEGIS,
@@ -420,14 +423,25 @@ object MultiVaultBackupPreValidator {
 
         for (entryElem in entries) {
             val entry = entryElem.jsonObject
+            val type = entry["type"]?.jsonPrimitive?.contentOrNull?.trim()?.lowercase() ?: "totp"
+            if (type != "totp" && type != "steam" && type != "hotp") continue
+
             val name = entry["name"]?.jsonPrimitive?.contentOrNull ?: "2FA Account"
             val issuer = entry["issuer"]?.jsonPrimitive?.contentOrNull
             val group = entry["group"]?.jsonPrimitive?.contentOrNull
             val info = entry["info"]?.jsonObject ?: continue
 
             val secret = info["secret"]?.jsonPrimitive?.contentOrNull ?: continue
-            val algo = info["algo"]?.jsonPrimitive?.contentOrNull ?: "SHA1"
-            val digits = info["digits"]?.jsonPrimitive?.intOrNull ?: 6
+            val isSteam = type == "steam"
+            val rawAlgo = info["algo"]?.jsonPrimitive?.contentOrNull?.trim()?.uppercase() ?: "SHA1"
+            val algorithm = if (isSteam) "STEAM" else when (rawAlgo) {
+                "SHA256", "HMACSHA256" -> "SHA256"
+                "SHA512", "HMACSHA512" -> "SHA512"
+                "STEAM" -> "STEAM"
+                else -> "SHA1"
+            }
+            val defaultDigits = if (isSteam) 5 else 6
+            val digits = info["digits"]?.jsonPrimitive?.intOrNull ?: defaultDigits
             val period = info["period"]?.jsonPrimitive?.intOrNull ?: 30
 
             val title = issuer ?: name
@@ -441,7 +455,7 @@ object MultiVaultBackupPreValidator {
                     username = username,
                     category = group ?: issuer ?: "General",
                     secret = secret.replace(" ", "").replace("-", "").uppercase(),
-                    algorithm = algo,
+                    algorithm = algorithm,
                     digits = digits,
                     period = period,
                     isLocalOnly = true,
@@ -457,6 +471,18 @@ object MultiVaultBackupPreValidator {
         val services = root["services"]?.jsonArray ?: return emptyList()
         val result = mutableListOf<TotpItemEntity>()
 
+        // Build group map from root-level "groups" array (standard 2FAS schema with groupId on services)
+        val groupMap = mutableMapOf<String, String>()
+        root["groups"]?.jsonArray?.forEach { groupElem ->
+            if (groupElem is JsonObject) {
+                val id = groupElem["id"]?.jsonPrimitive?.contentOrNull
+                val grpName = groupElem["name"]?.jsonPrimitive?.contentOrNull
+                if (!id.isNullOrBlank() && !grpName.isNullOrBlank()) {
+                    groupMap[id] = grpName
+                }
+            }
+        }
+
         for (svcElem in services) {
             val svc = svcElem.jsonObject
             val name = svc["name"]?.jsonPrimitive?.contentOrNull ?: "2FA Account"
@@ -467,11 +493,29 @@ object MultiVaultBackupPreValidator {
 
             val account = otpObj?.get("account")?.jsonPrimitive?.contentOrNull
             val issuer = otpObj?.get("issuer")?.jsonPrimitive?.contentOrNull
-            val digits = otpObj?.get("digits")?.jsonPrimitive?.intOrNull ?: 6
-            val period = otpObj?.get("period")?.jsonPrimitive?.intOrNull ?: 30
-            val algorithm = otpObj?.get("algorithm")?.jsonPrimitive?.contentOrNull ?: "SHA1"
 
-            val groupName = svc["group"]?.jsonObject?.get("name")?.jsonPrimitive?.contentOrNull
+            val serviceType = svc["serviceType"]?.jsonPrimitive?.contentOrNull?.trim()?.uppercase()
+            val tokenType = otpObj?.get("tokenType")?.jsonPrimitive?.contentOrNull?.trim()?.uppercase()
+            val isSteam = serviceType == "STEAM" || tokenType == "STEAM"
+
+            val rawAlgo = otpObj?.get("algorithm")?.jsonPrimitive?.contentOrNull?.trim()?.uppercase() ?: "SHA1"
+            val algorithm = if (isSteam) "STEAM" else when (rawAlgo) {
+                "SHA256", "HMACSHA256" -> "SHA256"
+                "SHA512", "HMACSHA512" -> "SHA512"
+                "STEAM" -> "STEAM"
+                else -> "SHA1"
+            }
+            val defaultDigits = if (isSteam) 5 else 6
+            val digits = otpObj?.get("digits")?.jsonPrimitive?.intOrNull ?: defaultDigits
+            val period = otpObj?.get("period")?.jsonPrimitive?.intOrNull ?: 30
+
+            // Resolve group: prefer root groupMap via groupId, fall back to embedded group object
+            val groupId = svc["groupId"]?.jsonPrimitive?.contentOrNull
+            val groupName = if (groupId != null) {
+                groupMap[groupId]
+            } else {
+                svc["group"]?.jsonObject?.get("name")?.jsonPrimitive?.contentOrNull
+            }
 
             val title = issuer ?: name
             val username = account?.ifBlank { null }

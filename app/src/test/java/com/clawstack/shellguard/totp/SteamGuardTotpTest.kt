@@ -29,7 +29,7 @@ class SteamGuardTotpTest {
     fun testSteamGuardDeterministicGeneration() {
         val t0 = 1700000000000L
         val code1 = TotpEngine.generateSteamGuardCode(sampleSecret, t0)
-        val code2 = TotpEngine.generateSteamGuardCode(sampleSecret, t0 + 10000L) // same 30s window
+        val code2 = TotpEngine.generateSteamGuardCode(sampleSecret, t0 + 5000L) // same 30s window (+5s, position 25/30)
 
         assertEquals("Codes within the same 30s window must match", code1, code2)
 

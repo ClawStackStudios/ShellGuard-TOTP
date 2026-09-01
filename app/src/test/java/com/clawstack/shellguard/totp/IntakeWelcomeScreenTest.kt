@@ -31,7 +31,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34], application = ShellGuardTotpApp::class)
+@Config(sdk = [34], application = ShellGuardTotpApp::class, qualifiers = "w1000dp-h2000dp")
 class IntakeWelcomeScreenTest {
 
     @get:Rule

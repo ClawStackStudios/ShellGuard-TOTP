@@ -37,9 +37,11 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
+import android.os.Looper
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], application = ShellGuardTotpApp::class, qualifiers = "w1000dp-h2000dp")
@@ -316,6 +318,9 @@ class IntakeOnboardingTest {
         intakeViewModel.hatchAndImportVault {
             completed = true
         }
+
+        // Flush pending main-thread coroutine tasks (viewModelScope.launch runs on main dispatcher)
+        shadowOf(Looper.getMainLooper()).idle()
 
         assertTrue(completed)
         assertEquals(IntakeStep.COMPLETED, intakeViewModel.uiState.value.step)
