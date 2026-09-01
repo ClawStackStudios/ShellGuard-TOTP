@@ -12,6 +12,17 @@ UI (Jetpack Compose) → ViewModel (StateFlow/Intent) → UseCase/Repository →
 3. **ShellCryption AAD Binding**: AAD format `vault_pearls_totp:<record_id>` validated on every decrypt operation.
 4. **Offline Resilience**: Local cache is strictly preserved on network errors and remote pruning preserves `is_local_only = 1`.
 5. **Memory Safety**: TOTP seeds stored in Base32, cleared when sessions are purged.
+6. **Zero-Knowledge Backup Intake & Sanitization**: Imported Bitwarden, Aegis, 2FAS, or ShellGuard exports have passwords, notes, cards, and metadata completely stripped in volatile RAM before writing to Room SQLCipher storage (0% non-TOTP secret leakage).
+
+## First-Run Brand Hero & Intake Architecture
+```
+SAF File Picker (OpenDocument) → MultiVaultBackupPreValidator (Schema & RAM Sanitizer)
+       ↓ (Encrypted)                                   ↓ (Plain/Sanitized)
+PASSWORD_PROMPT BottomSheet                  SUMMARY_CONFIRM BottomSheet (Protection Mode + PIN)
+       ↓ (Decrypted)                                   ↓ (Hatch & Upsert)
+AuthRepository.hatchVault() + TotpItemDao.upsertItems() → Screen.CodeList
+```
+
 
 ## Release Hardening & Splash Screen Patterns
 1. **Android 12+ Splash Screen Integration**:

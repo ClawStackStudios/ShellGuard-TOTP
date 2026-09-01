@@ -2,6 +2,21 @@
 
 All notable changes to the ShellGuard TOTP project will be documented in this file.
 
+## [0.0.0.2] - 2026-08-31
+### Added
+- **Proprietary `.sgtotp.bak` Format & Dynamic Protection Mode Detection**:
+  - Adopted ShellGuard TOTP proprietary backup format `sgtotp.bak` matching ShellGuard's ecosystem standards (`sgbak`).
+  - Added metadata fields `format = "sgtotp.bak"`, `protectionMode` ("PIN" vs "PASSWORD"), `pinLength`, and `isBiometricEnabled` to `BackupEnvelope`.
+  - Enhanced `MultiVaultBackupPreValidator` with automatic protection mode detection, resilient multi-salt key derivation, and user-friendly error messages intercepting raw BoringSSL `BAD_DECRYPT` / `AEADBadTagException` errors.
+  - Enhanced `IntakeWelcomeScreen` with a dynamic mode switcher (`[ 🔢 PIN Code ]  [ 🔑 Password ]`), dynamic `KeyboardType.NumberPassword` numpad keyboard for PINs, and biometric configuration badges.
+  - Updated `SettingsScreen` to export backups with the active vault secret and `.sgtotp.bak` default filename.
+- **First-Run Brand Hero Welcome & Multi-Vault Intake State Machine (Task 14)**:
+  - Created `IntakeWelcomeScreen.kt` in `ui/screens/onboarding/` featuring the vector ShellGuard launcher shield (`R.drawable.ic_launcher_foreground`), glowing ambient radial backdrop aura, clean typography, primary `[ 📥 Import Habitat / Vault ]` action button, and floating action button with infinite breathing pulse animation for forward navigation.
+  - Implemented `IntakeViewModel.kt` and `IntakeState.kt` in `ui/onboarding/` managing the first-run intake lifecycle (`WELCOME`, `VALIDATING`, `PASSWORD_PROMPT`, `SUMMARY_CONFIRM`, `SECURITY_SETUP`, `COMPLETED`), password decryption for encrypted habitats, and Room database token upserting with KeyStore vault hatching.
+  - Built `MultiVaultBackupPreValidator.kt` in `data/backup/` providing zero-knowledge in-RAM sanitization for Bitwarden Password Manager exports (`login.totp` extraction, passwords and notes stripped 100%), Steam Guard URIs (`steam://...`), Bitwarden Authenticator, Aegis Authenticator, 2FAS, and ShellGuard habitats.
+  - Integrated `Screen.IntakeWelcome` into `TotpNavHost.kt` with fluid composable fade and horizontal slide transitions.
+  - Added comprehensive test suite `IntakeOnboardingTest.kt` and `IntakeEngineTest.kt` covering schema detection, zero-knowledge parsing, state machine transitions, and Compose UI rendering.
+
 ## [0.0.0.1.3] - 2026-08-31 (Build 3)
 ### Changed
 - **Official Package Name Alignment**: Updated `applicationId` to `com.clawstack.shellguard.totp` in `app/build.gradle.kts` to establish exact parity with the newly created Google Play Console application listing.

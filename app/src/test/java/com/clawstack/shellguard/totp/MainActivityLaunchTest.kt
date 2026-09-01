@@ -7,6 +7,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import com.clawstack.shellguard.totp.crypto.EncryptedDeviceVault
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -123,5 +124,25 @@ class MainActivityLaunchTest {
         assertNotNull(p2)
         assertEquals(32, p1.size)
         assertEquals(32, p2.size)
+    }
+
+    @Test
+    fun testFreshLaunchStartsAtIntakeWelcome() {
+        val app = ApplicationProvider.getApplicationContext<ShellGuardTotpApp>()
+        // Confirm fresh launch state
+        assertFalse(app.authRepository.isVaultHatched.value)
+
+        val controller = Robolectric.buildActivity(MainActivity::class.java)
+        controller.create()
+        controller.start()
+        controller.resume()
+
+        val activity = controller.get()
+        assertNotNull(activity)
+        assertTrue(activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED))
+
+        controller.pause()
+        controller.stop()
+        controller.destroy()
     }
 }

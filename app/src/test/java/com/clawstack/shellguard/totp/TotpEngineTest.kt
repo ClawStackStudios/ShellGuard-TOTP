@@ -54,4 +54,32 @@ class TotpEngineTest {
         val remainingStart = TotpEngine.getRemainingSeconds(60000L, 30L)
         assertEquals(30, remainingStart)
     }
+
+    @Test
+    fun testSteamGuardTotpGeneration() {
+        val secretBase32 = "HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ"
+        val steamCode = TotpEngine.generateSteamGuardCode(
+            secretBase32 = secretBase32,
+            timestampMillis = 1700000000000L
+        )
+        assertEquals(5, steamCode.length)
+        assertTrue(steamCode.all { it in TotpEngine.STEAM_CHARS })
+
+        // Test routing through generateTotp when algorithm = HashAlgorithm.STEAM
+        val routedCode = TotpEngine.generateTotp(
+            secretBase32 = secretBase32,
+            timestampMillis = 1700000000000L,
+            algorithm = HashAlgorithm.STEAM
+        )
+        assertEquals(steamCode, routedCode)
+
+        // Test routing through generateTotp when digits = 5
+        val digits5Code = TotpEngine.generateTotp(
+            secretBase32 = secretBase32,
+            timestampMillis = 1700000000000L,
+            digits = 5
+        )
+        assertEquals(steamCode, digits5Code)
+    }
 }
+

@@ -13,6 +13,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.clawstack.shellguard.totp.ui.onboarding.IntakeViewModel
 import com.clawstack.shellguard.totp.ui.screens.AddSecretScreen
 import com.clawstack.shellguard.totp.ui.screens.GatewayScreen
 import com.clawstack.shellguard.totp.ui.screens.HatchVaultScreen
@@ -21,11 +23,13 @@ import com.clawstack.shellguard.totp.ui.screens.LoginScreen
 import com.clawstack.shellguard.totp.ui.screens.QrScannerScreen
 import com.clawstack.shellguard.totp.ui.screens.SettingsScreen
 import com.clawstack.shellguard.totp.ui.screens.TotpListScreen
+import com.clawstack.shellguard.totp.ui.screens.onboarding.IntakeWelcomeScreen
 import com.clawstack.shellguard.totp.ui.viewmodels.AuthViewModel
 import com.clawstack.shellguard.totp.ui.viewmodels.GatewayViewModel
 import com.clawstack.shellguard.totp.ui.viewmodels.TotpViewModel
 
 sealed class Screen(val route: String) {
+    data object IntakeWelcome : Screen("intake_welcome")
     data object HatchVault : Screen("hatch_vault")
     data object Lock : Screen("lock")
     data object Login : Screen("login")
@@ -48,7 +52,7 @@ fun TotpNavHost(
     modifier: Modifier = Modifier
 ) {
     val initialDestination = when {
-        !isVaultHatched -> Screen.HatchVault.route
+        !isVaultHatched -> Screen.IntakeWelcome.route
         isBiometricEnabled || isLocked -> Screen.Lock.route
         else -> Screen.CodeList.route
     }
@@ -61,15 +65,34 @@ fun TotpNavHost(
         modifier = modifier
     ) {
         composable(
-            route = Screen.HatchVault.route,
+            route = Screen.IntakeWelcome.route,
             enterTransition = { fadeIn() },
             exitTransition = { fadeOut() }
+        ) {
+            val intakeViewModel: IntakeViewModel = viewModel()
+            IntakeWelcomeScreen(
+                viewModel = intakeViewModel,
+                onNavigateToFreshVault = {
+                    navController.navigate(Screen.HatchVault.route)
+                },
+                onIntakeCompleted = {
+                    navController.navigate(Screen.CodeList.route) {
+                        popUpTo(Screen.IntakeWelcome.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = Screen.HatchVault.route,
+            enterTransition = { slideInHorizontally(initialOffsetX = { it }) + fadeIn() },
+            exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) + fadeOut() }
         ) {
             HatchVaultScreen(
                 onVaultHatched = { masterSecret, isPin, enableBiometrics ->
                     authViewModel.hatchVault(masterSecret, isPin, enableBiometrics)
                     navController.navigate(Screen.CodeList.route) {
-                        popUpTo(Screen.HatchVault.route) { inclusive = true }
+                        popUpTo(Screen.IntakeWelcome.route) { inclusive = true }
                     }
                 }
             )

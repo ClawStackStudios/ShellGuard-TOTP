@@ -65,4 +65,45 @@ class TotpUriParserTest {
 
         assertNull(parsed)
     }
+
+    @Test
+    fun testParseSteamUriDirectSecret() {
+        val uri = "steam://HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ"
+        val parsed = TotpUriParser.parse(uri)
+
+        assertNotNull(parsed)
+        assertEquals("Steam", parsed?.title)
+        assertEquals("Steam", parsed?.issuer)
+        assertEquals("HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ", parsed?.secret)
+        assertEquals("STEAM", parsed?.algorithm)
+        assertEquals(5, parsed?.digits)
+        assertEquals(30, parsed?.period)
+    }
+
+    @Test
+    fun testParseSteamUriWithLabelAndAccount() {
+        val uri = "steam://Steam:gamer_lucas?secret=HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ"
+        val parsed = TotpUriParser.parse(uri)
+
+        assertNotNull(parsed)
+        assertEquals("Steam", parsed?.title)
+        assertEquals("gamer_lucas", parsed?.username)
+        assertEquals("Steam", parsed?.issuer)
+        assertEquals("HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ", parsed?.secret)
+        assertEquals("STEAM", parsed?.algorithm)
+        assertEquals(5, parsed?.digits)
+    }
+
+    @Test
+    fun testParseOtpauthSteamAlgorithm() {
+        val uri = "otpauth://totp/Steam:gamer_lucas?secret=HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ&issuer=Steam&algorithm=STEAM"
+        val parsed = TotpUriParser.parse(uri)
+
+        assertNotNull(parsed)
+        assertEquals("Steam", parsed?.title)
+        assertEquals("gamer_lucas", parsed?.username)
+        assertEquals("STEAM", parsed?.algorithm)
+        assertEquals(5, parsed?.digits)
+    }
 }
+

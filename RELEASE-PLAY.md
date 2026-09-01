@@ -5,6 +5,20 @@
 
 ---
 
+## `v0.0.0.2` — Phase 7: First-Run Intake & Habitat Import (Build 4)
+
+```xml
+<en-US>
+• First-Run Welcome Wizard: Hero launcher shield branding and physical security guidance.
+• One-Tap Habitat Import: Support for ShellGuard (.sgtotp.bak, .sgbak) and encrypted backups.
+• Zero-Knowledge Multi-Vault Import: Bitwarden Vaults, Authenticator, Aegis & 2FAS with 0% leak.
+• Key Rotation at Import: Choose between 1-tap secret reuse or rotating to a new PIN/Password.
+• Steam Guard Support: Alphanumeric 5-character Steam TOTP generation & steam:// URIs.
+</en-US>
+```
+
+---
+
 ## `v0.0.0.1` — Initial Release (Build 3)
 
 ```xml

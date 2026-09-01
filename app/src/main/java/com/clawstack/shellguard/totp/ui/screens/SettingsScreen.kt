@@ -135,17 +135,25 @@ fun SettingsScreen(
 
     // Export Document Launcher
     val exportLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CreateDocument("application/json")
+        contract = ActivityResultContracts.CreateDocument("application/octet-stream")
     ) { uri: Uri? ->
         uri?.let { destUri ->
             coroutineScope.launch {
                 try {
                     context.contentResolver.openOutputStream(destUri)?.use { out ->
-                        val rawKey = currentSession?.rawHuKey ?: "shellguard_default_master_key"
+                        val rawKey = authRepo.getVaultSecret() ?: currentSession?.rawHuKey ?: "shellguard_default_master_key"
                         val ownerUuid = currentSession?.userUuid ?: "local"
-                        val result = backupManager.exportEncryptedBackup(out, rawKey, ownerUuid)
+                        val protMode = vaultMode.name
+                        val result = backupManager.exportEncryptedBackup(
+                            outputStream = out,
+                            rawKey = rawKey,
+                            ownerUuid = ownerUuid,
+                            protectionMode = protMode,
+                            isBiometricEnabled = isBiometricEnabled,
+                            pinLength = if (vaultMode == VaultProtectionMode.PIN) rawKey.length else null
+                        )
                         if (result.isSuccess) {
-                            Toast.makeText(context, "Exported ${result.getOrNull()} items securely.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, "Exported ${result.getOrNull()} items securely (.sgtotp.bak).", Toast.LENGTH_LONG).show()
                         } else {
                             Toast.makeText(context, "Export failed: ${result.exceptionOrNull()?.message}", Toast.LENGTH_LONG).show()
                         }
@@ -165,7 +173,7 @@ fun SettingsScreen(
             coroutineScope.launch {
                 try {
                     context.contentResolver.openInputStream(srcUri)?.use { input ->
-                        val rawKey = currentSession?.rawHuKey ?: "shellguard_default_master_key"
+                        val rawKey = authRepo.getVaultSecret() ?: currentSession?.rawHuKey ?: "shellguard_default_master_key"
                         val ownerUuid = currentSession?.userUuid ?: "local"
                         val result = backupManager.importEncryptedBackup(input, rawKey, ownerUuid)
                         if (result.isSuccess) {
@@ -641,7 +649,7 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         OutlinedButton(
-                            onClick = { exportLauncher.launch("shellguard-totp-backup.json") },
+                            onClick = { exportLauncher.launch("shellguard-totp-backup.sgtotp.bak") },
                             shape = RoundedCornerShape(12.dp),
                             border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                             modifier = Modifier
@@ -654,7 +662,7 @@ fun SettingsScreen(
                         }
 
                         OutlinedButton(
-                            onClick = { importLauncher.launch(arrayOf("application/json", "*/*")) },
+                            onClick = { importLauncher.launch(arrayOf("*/*", "application/octet-stream", "application/json")) },
                             shape = RoundedCornerShape(12.dp),
                             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                             modifier = Modifier

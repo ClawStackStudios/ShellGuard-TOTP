@@ -204,9 +204,11 @@ class AuthRepository(
     }
 
     fun hatchVault(masterSecret: String, isPin: Boolean, enableBiometrics: Boolean) {
-        val secretHash = ClawCrypto.hashHumanKey(masterSecret.trim())
+        val trimmedSecret = masterSecret.trim()
+        val secretHash = ClawCrypto.hashHumanKey(trimmedSecret)
         val mode = if (isPin) VaultProtectionMode.PIN else VaultProtectionMode.PASSWORD
         
+        EncryptedDeviceVault.storeSecureString(context, "pref_vault_secret", trimmedSecret)
         EncryptedDeviceVault.storeSecureString(context, "pref_vault_secret_hash", secretHash)
         prefs.edit()
             .putBoolean("pref_vault_hatched", true)
@@ -222,15 +224,21 @@ class AuthRepository(
     }
 
     fun updateVaultSecret(newSecret: String, isPin: Boolean) {
-        val secretHash = ClawCrypto.hashHumanKey(newSecret.trim())
+        val trimmedSecret = newSecret.trim()
+        val secretHash = ClawCrypto.hashHumanKey(trimmedSecret)
         val mode = if (isPin) VaultProtectionMode.PIN else VaultProtectionMode.PASSWORD
 
+        EncryptedDeviceVault.storeSecureString(context, "pref_vault_secret", trimmedSecret)
         EncryptedDeviceVault.storeSecureString(context, "pref_vault_secret_hash", secretHash)
         prefs.edit()
             .putString("pref_vault_mode", mode.name)
             .remove("pref_vault_secret_hash")
             .apply()
         _vaultMode.value = mode
+    }
+
+    fun getVaultSecret(): String? {
+        return EncryptedDeviceVault.getSecureString(context, "pref_vault_secret")
     }
 
     fun unlockWithSecret(inputSecret: String): Boolean {

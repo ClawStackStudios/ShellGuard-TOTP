@@ -35,9 +35,13 @@ data class BackupItemDto(
 data class BackupEnvelope(
     val version: Int = 1,
     val type: String = "shellguard-totp-backup-v1",
+    val format: String = "sgtotp.bak",
+    val protectionMode: String = "PIN",
+    val isBiometricEnabled: Boolean = false,
+    val pinLength: Int? = null,
     val createdAt: Long = System.currentTimeMillis(),
-    val ownerUuid: String,
-    val itemCount: Int,
+    val ownerUuid: String = "local",
+    val itemCount: Int = 0,
     val checksumSha256: String,
     val encryptedEnvelopeJson: String
 )
@@ -63,11 +67,15 @@ class BackupManager(
 
     /**
      * Exports all TOTP items for the user into an encrypted JSON envelope with SHA-256 integrity checksum.
+     * Uses proprietary .sgtotp.bak format with protectionMode metadata.
      */
     suspend fun exportEncryptedBackup(
         outputStream: OutputStream,
         rawKey: String,
-        ownerUuid: String = "local"
+        ownerUuid: String = "local",
+        protectionMode: String = "PIN",
+        isBiometricEnabled: Boolean = false,
+        pinLength: Int? = null
     ): Result<Int> = withContext(Dispatchers.IO) {
         runCatching {
             val items = totpItemDao.observeAllTotpItems(ownerUuid).first()
@@ -103,6 +111,10 @@ class BackupManager(
             val backupEnvelope = BackupEnvelope(
                 version = 1,
                 type = "shellguard-totp-backup-v1",
+                format = "sgtotp.bak",
+                protectionMode = protectionMode,
+                isBiometricEnabled = isBiometricEnabled,
+                pinLength = pinLength,
                 createdAt = System.currentTimeMillis(),
                 ownerUuid = ownerUuid,
                 itemCount = items.size,

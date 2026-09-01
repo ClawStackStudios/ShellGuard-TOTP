@@ -16,16 +16,18 @@ data class ParsedTotpUri(
 /**
  * Parses Key URI Format (RFC 6238 / Google Authenticator standard):
  * otpauth://totp/Issuer:account@domain?secret=JBSWY3DPEHPK3PXP&issuer=Issuer&algorithm=SHA1&digits=6&period=30
+ * And Steam Guard URIs:
+ * steam://<secret> or steam://totp/Steam:account?secret=...
  */
 object TotpUriParser {
 
     fun parse(rawUriString: String): ParsedTotpUri? {
         val trimmed = rawUriString.trim()
-        if (trimmed.startsWith("otpauth://", ignoreCase = true)) {
-            return parseOtpAuthUri(trimmed)
+        if (trimmed.startsWith("otpauth://", ignoreCase = true) || trimmed.startsWith("steam://", ignoreCase = true)) {
+            return parseUri(trimmed)
         }
 
-        // If it looks like a URL or has query delimiters but lacks otpauth scheme, do not treat as raw secret
+        // If it looks like a URL or has query delimiters but lacks otpauth/steam scheme, do not treat as raw secret
         if (trimmed.contains("://") || trimmed.contains("?") || trimmed.contains("&")) {
             return null
         }
@@ -49,18 +51,37 @@ object TotpUriParser {
         return null
     }
 
-    private fun parseOtpAuthUri(rawUri: String): ParsedTotpUri? {
+    private fun parseUri(rawUri: String): ParsedTotpUri? {
         return try {
-            val withoutScheme = rawUri.substring("otpauth://".length)
+            val isSteamScheme = rawUri.startsWith("steam://", ignoreCase = true)
+            val schemeLength = if (isSteamScheme) "steam://".length else "otpauth://".length
+            val withoutScheme = rawUri.substring(schemeLength)
+
+            // Handle direct raw secret in steam:// e.g. steam://HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ
+            if (isSteamScheme && !withoutScheme.contains('/') && !withoutScheme.contains('?') && !withoutScheme.contains('=')) {
+                val cleanSecret = withoutScheme.replace(" ", "").replace("-", "").uppercase()
+                if (cleanSecret.isNotBlank()) {
+                    return ParsedTotpUri(
+                        title = "Steam",
+                        username = null,
+                        secret = cleanSecret,
+                        issuer = "Steam",
+                        algorithm = "STEAM",
+                        digits = 5,
+                        period = 30
+                    )
+                }
+            }
+
             val questionIdx = withoutScheme.indexOf('?')
             val typeAndLabel = if (questionIdx != -1) withoutScheme.substring(0, questionIdx) else withoutScheme
             val queryString = if (questionIdx != -1) withoutScheme.substring(questionIdx + 1) else ""
 
             val slashIdx = typeAndLabel.indexOf('/')
-            val type = if (slashIdx != -1) typeAndLabel.substring(0, slashIdx).lowercase() else "totp"
-            if (type != "totp" && type != "hotp") return null
+            val type = if (slashIdx != -1) typeAndLabel.substring(0, slashIdx).lowercase() else if (isSteamScheme) "steam" else "totp"
+            if (type != "totp" && type != "hotp" && type != "steam") return null
 
-            val labelRaw = if (slashIdx != -1) typeAndLabel.substring(slashIdx + 1) else typeAndLabel
+            val labelRaw = if (slashIdx != -1) typeAndLabel.substring(slashIdx + 1) else if (isSteamScheme && !typeAndLabel.contains(':') && !typeAndLabel.contains('?')) "" else typeAndLabel
             val decodedLabel = try {
                 URLDecoder.decode(labelRaw, StandardCharsets.UTF_8.name())
             } catch (e: Exception) {
@@ -88,7 +109,9 @@ object TotpUriParser {
                 }
             }
 
-            val secret = params["secret"]?.replace(" ", "")?.replace("-", "")?.uppercase()
+            // If secret is not in params and isSteamScheme, typeAndLabel might be the secret itself
+            val secretParam = params["secret"] ?: if (isSteamScheme && decodedLabel.isNotBlank() && !decodedLabel.contains(':')) decodedLabel else null
+            val secret = secretParam?.replace(" ", "")?.replace("-", "")?.uppercase()
             if (secret.isNullOrBlank()) return null
 
             // Label format: "Issuer:account" or "account"
@@ -97,19 +120,24 @@ object TotpUriParser {
             val pathAccount = if (parts.size > 1) parts[1].trim() else parts[0].trim()
 
             val queryIssuer = params["issuer"]?.trim()
-            val finalIssuer = queryIssuer?.ifBlank { null } ?: pathIssuer?.ifBlank { null }
+            val isSteam = isSteamScheme || type == "steam" || params["algorithm"]?.uppercase()?.trim() == "STEAM" || queryIssuer.equals("Steam", ignoreCase = true) || pathIssuer.equals("Steam", ignoreCase = true)
 
-            val title = finalIssuer ?: if (pathAccount.isNotBlank()) pathAccount else "2FA Account"
-            val username = if (finalIssuer != null && pathAccount.isNotBlank() && pathAccount != finalIssuer) pathAccount else null
+            val defaultIssuer = if (isSteam) "Steam" else null
+            val finalIssuer = queryIssuer?.ifBlank { null } ?: pathIssuer?.ifBlank { null } ?: defaultIssuer
 
-            val rawAlg = params["algorithm"]?.uppercase()?.trim() ?: "SHA1"
+            val title = finalIssuer ?: if (pathAccount.isNotBlank()) pathAccount else if (isSteam) "Steam" else "2FA Account"
+            val username = if (pathAccount.isNotBlank() && pathAccount != finalIssuer && pathAccount != secret) pathAccount else null
+
+            val rawAlg = params["algorithm"]?.uppercase()?.trim() ?: if (isSteam) "STEAM" else "SHA1"
             val algorithm = when (rawAlg) {
                 "SHA256", "HMACSHA256" -> "SHA256"
                 "SHA512", "HMACSHA512" -> "SHA512"
-                else -> "SHA1"
+                "STEAM" -> "STEAM"
+                else -> if (isSteam) "STEAM" else "SHA1"
             }
 
-            val digits = params["digits"]?.toIntOrNull() ?: 6
+            val defaultDigits = if (algorithm == "STEAM") 5 else 6
+            val digits = params["digits"]?.toIntOrNull() ?: defaultDigits
             val period = params["period"]?.toIntOrNull() ?: 30
 
             ParsedTotpUri(

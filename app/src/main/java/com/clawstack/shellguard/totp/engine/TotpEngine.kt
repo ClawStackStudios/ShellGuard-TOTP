@@ -3,7 +3,6 @@ package com.clawstack.shellguard.totp.engine
 import com.clawstack.shellguard.totp.crypto.ClawCrypto
 import java.nio.ByteBuffer
 import kotlin.math.pow
-import kotlin.time.Duration.Companion.seconds
 
 /**
  * Supported HMAC Hash Algorithms for TOTP generation (RFC 6238).
@@ -11,13 +10,15 @@ import kotlin.time.Duration.Companion.seconds
 enum class HashAlgorithm(val hmacName: String) {
     SHA1("HmacSHA1"),
     SHA256("HmacSHA256"),
-    SHA512("HmacSHA512");
+    SHA512("HmacSHA512"),
+    STEAM("HmacSHA1");
 
     companion object {
         fun fromString(value: String?): HashAlgorithm {
             return when (value?.uppercase()?.trim()) {
                 "SHA256", "HMAC-SHA256", "HMACSHA256" -> SHA256
                 "SHA512", "HMAC-SHA512", "HMACSHA512" -> SHA512
+                "STEAM" -> STEAM
                 else -> SHA1
             }
         }
@@ -30,16 +31,18 @@ enum class HashAlgorithm(val hmacName: String) {
 object TotpEngine {
     const val DEFAULT_TIME_STEP_SECONDS = 30L
     const val DEFAULT_DIGITS = 6
+    const val STEAM_CHARS = "23456789BCDFGHJKMNPQRTVWXY"
 
     /**
-     * Computes the current TOTP numeric code for a given Base32 secret.
+     * Computes the current TOTP code for a given Base32 secret.
+     * Automatically routes to Steam Guard alphanumeric generation if algorithm is STEAM or digits is 5.
      *
      * @param secretBase32 Base32 encoded secret key or raw ASCII secret if indicated.
      * @param timestampMillis Current epoch time in milliseconds.
      * @param timeStepSeconds Time step window in seconds (standard: 30s).
      * @param digits Number of output digits (standard: 6).
      * @param algorithm HMAC algorithm (standard: SHA1).
-     * @return Zero-padded OTP code string.
+     * @return Zero-padded OTP code string or 5-char Steam Guard code.
      */
     fun generateTotp(
         secretBase32: String,
@@ -48,11 +51,50 @@ object TotpEngine {
         digits: Int = DEFAULT_DIGITS,
         algorithm: HashAlgorithm = HashAlgorithm.SHA1
     ): String {
+        if (algorithm == HashAlgorithm.STEAM || digits == 5) {
+            return generateSteamGuardCode(secretBase32, timestampMillis, timeStepSeconds)
+        }
         val cleanSecret = secretBase32.replace(" ", "").replace("-", "").uppercase()
         if (cleanSecret.isBlank()) return "------"
 
         val counter = (timestampMillis / 1000L) / timeStepSeconds
         return generateHotp(cleanSecret, counter, digits, algorithm)
+    }
+
+    /**
+     * Computes a 5-character alphanumeric Steam Guard TOTP code.
+     * Uses custom 26-character Base32 translation table: "23456789BCDFGHJKMNPQRTVWXY".
+     */
+    fun generateSteamGuardCode(
+        secretBase32: String,
+        timestampMillis: Long = System.currentTimeMillis(),
+        timeStepSeconds: Long = DEFAULT_TIME_STEP_SECONDS
+    ): String {
+        val cleanSecret = secretBase32.replace(" ", "").replace("-", "").uppercase()
+        if (cleanSecret.isBlank()) return "-----"
+
+        return try {
+            val counter = (timestampMillis / 1000L) / timeStepSeconds
+            val counterBuffer = ByteBuffer.allocate(8).putLong(counter).array()
+            val secretBytes = Base32Decoder.decode(cleanSecret)
+
+            val hmacHash = ClawCrypto.hmac("HmacSHA1", secretBytes, counterBuffer)
+
+            val offset = hmacHash.last().toInt() and 0x0F
+            var fullCode = ((hmacHash[offset].toInt() and 0x7F) shl 24) or
+                    ((hmacHash[offset + 1].toInt() and 0xFF) shl 16) or
+                    ((hmacHash[offset + 2].toInt() and 0xFF) shl 8) or
+                    (hmacHash[offset + 3].toInt() and 0xFF)
+
+            val codeBuilder = StringBuilder(5)
+            for (i in 0 until 5) {
+                codeBuilder.append(STEAM_CHARS[fullCode % STEAM_CHARS.length])
+                fullCode /= STEAM_CHARS.length
+            }
+            codeBuilder.toString()
+        } catch (e: Exception) {
+            "-----"
+        }
     }
 
     /**

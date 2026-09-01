@@ -146,13 +146,13 @@ Description: Create `ic_launcher_background.xml` (solid `#030712`) and `ic_launc
 > Phase Feature Set Overview:
 > Delivers a completely reimagined, welcoming user-first application intake flow. Features the official ShellGuard launcher shield hero branding, immediate "Import Habitat" one-tap backup restoration supporting ShellGuard, Bitwarden, and Aegis JSON backups via Android Storage Access Framework (SAF), and seamless forward navigation to vault protection.
 
-- [ ]  Task 13: [Functionality] First-Run Intake Engine, Multi-Vault Backup Pre-Validator & Dynamic Route State
+- [x]  Task 13: [Functionality] First-Run Intake Engine, Multi-Vault Backup Pre-Validator & Dynamic Route State
 
 Description: Implement the first-run intake orchestrator in `com.clawstack.shellguard.totp.ui.onboarding`. Provide reactive state management for onboarding flow progression (`INTAKE_WELCOME`, `IMPORTING_HABITAT`, `SECURITY_SETUP`, `COMPLETED`). Integrate Android Storage Access Framework (SAF) `OpenDocument` file parser to inspect and pre-validate imported `.json` / `.shellguard` backup envelopes before vault database creation. Automatically detect schema type (ShellGuard Habitat `shellguard-totp-backup-v1`, Bitwarden Vault `items[].login.totp`, Bitwarden Authenticator, Aegis, 2FAS) and prepare the unlock cipher / sanitizer state for password/PIN input.
 
 > Success Criteria: Intake engine pre-validates selected backup files within 100ms, detects corrupted or unsupported files with clear user feedback, and sets up dynamic navigation routes without corrupting local database state.
 
-- [ ]  Task 14: [UI Component] Brand Hero Welcome Screen & "Import Habitat" File Picker Launcher
+- [x]  Task 14: [UI Component] Brand Hero Welcome Screen & "Import Habitat" File Picker Launcher
 
 Description: Implement `IntakeWelcomeScreen.kt` (**First-Run Brand Hero Screen**):
 - **Hero Header**: Displays the high-resolution vector ShellGuard launcher shield (`ic_launcher_foreground`) with glowing ambient backdrop.
@@ -162,6 +162,7 @@ Description: Implement `IntakeWelcomeScreen.kt` (**First-Run Brand Hero Screen**
 - **Fresh Vault Forward Navigation**: An elegant floating arrow icon button (`Icons.AutoMirrored.Filled.ArrowForward`) in the bottom right corner with a subtle breathing pulse that transitions fresh users to the Vault Security screen.
 
 > Success Criteria: First launch presents a polished, welcoming brand hero screen. Tapping "Import Habitat" launches the native file picker, parses valid backups/Bitwarden exports, and moves directly to password unlock or import preview. Tapping the forward arrow navigates smoothly to Vault Security.
+
 
 ---
 

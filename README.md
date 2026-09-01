@@ -1,5 +1,7 @@
 # 📱 ShellGuard-TOTP — Android Authenticator Application
 
+[![Version](https://img.shields.io/badge/version-v0.0.0.2-blue.svg)](.agents/memory-bank/changelog.md)
+
 > **Tagline**: *"Store and generate 2FA verification codes on your device."*  
 > **Model**: Standalone Android Authenticator Client for the ShellGuard Secrets Vault Ecosystem.  
 > **Target Tooling**: Google AI Studio (Android Application Build Mode).
