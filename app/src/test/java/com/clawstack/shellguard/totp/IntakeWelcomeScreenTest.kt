@@ -20,6 +20,8 @@ import com.clawstack.shellguard.totp.ui.onboarding.IntakeViewModel
 import com.clawstack.shellguard.totp.ui.screens.onboarding.IntakeWelcomeScreen
 import com.clawstack.shellguard.totp.ui.theme.ShellGuardTheme
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule

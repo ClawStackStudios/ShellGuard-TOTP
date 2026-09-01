@@ -405,6 +405,7 @@ class IntakeEngineTest {
         val itemsToBackup = listOf(
             BackupItemDto(
                 id = "item-alpha",
+                ownerUuid = ownerUuid,
                 title = "Proton Mail",
                 username = "lucas@pm.me",
                 category = "Privacy",
@@ -415,6 +416,7 @@ class IntakeEngineTest {
             ),
             BackupItemDto(
                 id = "item-beta",
+                ownerUuid = ownerUuid,
                 title = "Tailscale Admin",
                 username = "admin",
                 category = "VPN",
@@ -430,7 +432,7 @@ class IntakeEngineTest {
 
         val shellKey = ShellCryptionEngine.deriveShellKey(correctPassword, ownerUuid)
         val encryptedEnvelope = ShellCryptionEngine.encryptField(
-            plainText = plainItemsJson,
+            plaintext = plainItemsJson,
             shellKey = shellKey,
             table = "totp_backup",
             recordId = ownerUuid
