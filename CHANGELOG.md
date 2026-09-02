@@ -10,8 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.0.2] - 2026-09-01
 ### Fixed
+- **Play Console Compliance**: Upgraded `targetSdk` to API 36 (Android 16) and bumped `versionCode` to 6 for Google Play Console distribution requirements.
 - **CI Pipeline**: Unconditionally register the release signing configuration in `app/build.gradle.kts` to bypass Gradle Configuration Cache misses during tag release workflows (Build 5).
-- **Test Stability**: Resolved Robolectric `JobCancellationException` and `ComposeTimeoutException` issues during CI headless unit tests (Build 4).
+- **Test Stability**: Resolved Robolectric `JobCancellationException`, `ComposeTimeoutException`, and cross-test database state pollution issues during CI headless unit tests (Build 4/5).
 
 ### Added
 - **Migration Engine**: Added `BitwardenSanitizer` to parse standalone Bitwarden Authenticator and Password Manager exports.

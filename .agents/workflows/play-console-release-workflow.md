@@ -50,7 +50,7 @@ android {
     defaultConfig {
         applicationId = "com.clawstack.shellguard.totp"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = N + 1         // Increment monotonically (+1 integer for every upload: 1, 2, 3...)
         versionName = "X.Y.Z.N"     // SemVer display version (e.g. "0.0.0.1", "0.0.0.2", "1.0.0.0"...)
     }
