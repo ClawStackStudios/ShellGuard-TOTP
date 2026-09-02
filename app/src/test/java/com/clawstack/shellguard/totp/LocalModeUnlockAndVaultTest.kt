@@ -129,8 +129,14 @@ class LocalModeUnlockAndVaultTest {
         }
 
         // 3. Verify Empty state renders and animations settle
-        composeTestRule.waitUntil(5000) {
-            composeTestRule.onAllNodesWithTag("totp_empty_state").fetchSemanticsNodes().isNotEmpty()
+        //    (Manual polling: Compose test clock stalls in headless Robolectric CI,
+        //     so we pump the Looper ourselves instead of using waitUntil.)
+        var retries = 0
+        while (composeTestRule.onAllNodesWithTag("totp_empty_state").fetchSemanticsNodes().isEmpty() && retries < 50) {
+            Thread.sleep(100)
+            shadowOf(Looper.getMainLooper()).idle()
+            composeTestRule.mainClock.advanceTimeBy(200)
+            retries++
         }
         composeTestRule.mainClock.advanceTimeBy(1000)
 
@@ -180,8 +186,13 @@ class LocalModeUnlockAndVaultTest {
         }
 
         // 3. Verify items display and animations settle
-        composeTestRule.waitUntil(5000) {
-            composeTestRule.onAllNodesWithText("GitHub Personal").fetchSemanticsNodes().isNotEmpty()
+        //    (Manual polling: same headless Robolectric CI workaround.)
+        var retries = 0
+        while (composeTestRule.onAllNodesWithText("GitHub Personal").fetchSemanticsNodes().isEmpty() && retries < 50) {
+            Thread.sleep(100)
+            shadowOf(Looper.getMainLooper()).idle()
+            composeTestRule.mainClock.advanceTimeBy(200)
+            retries++
         }
         composeTestRule.mainClock.advanceTimeBy(1000)
 
