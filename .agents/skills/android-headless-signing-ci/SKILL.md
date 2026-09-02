@@ -31,6 +31,9 @@ This skill provides the definitive, battle-tested playbook for cryptographically
 > **Configuration Cache Trap**: Do NOT wrap `create("release")` in `if (releaseKeystoreFile.exists())`.
 > When CI runs `testDebugUnitTest` before decoding the keystore, Gradle caches the project state *without* the release signing configuration. When `bundleRelease` runs later, Gradle reuses the cached configuration and silently drops signing or fails.
 
+> [!IMPORTANT]
+> **Google Play Target SDK Requirement**: All release bundles must declare `targetSdk = 36` (Android 16) in `defaultConfig`. Bundles targeting API 35 or lower will be rejected by Play Console during upload validation.
+
 ```kotlin
 android {
     // ...

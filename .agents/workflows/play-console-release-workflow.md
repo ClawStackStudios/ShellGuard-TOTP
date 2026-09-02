@@ -32,6 +32,7 @@ Before building a release artifact, run the full verification gate to ensure zer
 ```
 
 ### Invariants to Verify:
+- [ ] **Target SDK API 36**: Google Play Console strictly mandates `targetSdk = 36` (Android 16). Any bundle targeting API 35 or lower will be rejected during upload validation.
 - [ ] **Tests Passing**: 100% pass rate across all Robolectric and unit tests (46+ passing).
 - [ ] **16 KB Alignment**: `gradle/libs.versions.toml` specifies `sqlcipher = "4.6.1"` and `app/build.gradle.kts` specifies `jniLibs.useLegacyPackaging = false`.
 - [ ] **Security Boundaries**: `FLAG_SECURE` active for production builds (`!BuildConfig.DEBUG` in `MainActivity.kt`).
