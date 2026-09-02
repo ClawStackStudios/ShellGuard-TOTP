@@ -147,3 +147,16 @@ while (composeTestRule.onAllNodesWithTag("target_tag").fetchSemanticsNodes().isE
 }
 composeTestRule.mainClock.advanceTimeBy(1000)
 ```
+
+### 3. Cross-Test Room State Pollution (Empty-State Failures)
+**The Trap:** When using an in-memory Room database provided by the `Application` singleton, database state persists across test methods within the test runner. Tests that insert entities leave rows behind. If a subsequent test asserts that an empty state (`items.isEmpty()` / `TotpEmptyState`) is displayed, the assertion fails with `AssertionError: assertIsDisplayed()`.
+**The Fix:** Always explicitly clear DAO tables in `@Before setUp()` and at the beginning of any empty-state test:
+```kotlin
+@Before
+fun setUp() {
+    // ...
+    runBlocking {
+        database.totpItemDao().clearVault("local")
+    }
+}
+```

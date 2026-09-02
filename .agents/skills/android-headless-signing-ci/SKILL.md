@@ -124,3 +124,13 @@ Maintain a root file `RELEASE-PLAY.md` with `<en-US>` tags:
 - 16 KB memory page-size alignment for Android 15+.
 </en-US>
 ```
+
+---
+
+## ☕ 5. Local Container JBR & Gradle Execution
+In containerized environments lacking a system-wide JDK on `PATH`, utilize Android Studio's bundled JetBrains Runtime (JBR):
+```bash
+export JAVA_HOME=/config/Applications/android-studio/jbr
+export PATH="$JAVA_HOME/bin:$PATH"
+/config/.gradle/wrapper/dists/gradle-<version>/.../bin/gradle testDebugUnitTest
+```
