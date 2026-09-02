@@ -53,8 +53,8 @@ class BackupManagerTest {
             username = "octocat",
             category = "Dev",
             secret = "JBSWY3DPEHPK3PXP",
-            isLocalOnly = false,
-            syncState = "SYNCED"
+            isLocalOnly = true,
+            syncState = "LOCAL"
         )
         val item2 = TotpItemEntity(
             id = "item-2",
@@ -136,5 +136,45 @@ class BackupManagerTest {
         assertEquals(1, restored.size)
         assertEquals("AWS IAM", restored[0].title)
         assertEquals("SHA256", restored[0].algorithm)
+    }
+
+    @Test
+    fun testRemoteCodesAreExcludedFromExport() = runBlocking {
+        val dao = database.totpItemDao()
+        val ownerUuid = "user-test"
+        val masterKey = "hu-secret-key-12345678"
+
+        // 1 Local code and 2 Remote codes
+        val localItem = TotpItemEntity(
+            id = "local-1",
+            ownerUuid = ownerUuid,
+            title = "My Local Token",
+            secret = "JBSWY3DPEHPK3PXP",
+            isLocalOnly = true,
+            syncState = "LOCAL"
+        )
+        val remoteItem1 = TotpItemEntity(
+            id = "remote-1",
+            ownerUuid = ownerUuid,
+            title = "Remote Mirror Token 1",
+            secret = "KVKFKRCPNZQUYMLX",
+            isLocalOnly = false,
+            syncState = "SYNCED"
+        )
+        val remoteItem2 = TotpItemEntity(
+            id = "remote-2",
+            ownerUuid = ownerUuid,
+            title = "Remote Mirror Token 2",
+            secret = "HXDMVJECJJWSRB3H",
+            isLocalOnly = false,
+            syncState = "SYNCED"
+        )
+        dao.upsertItems(listOf(localItem, remoteItem1, remoteItem2))
+
+        val outputStream = ByteArrayOutputStream()
+        val exportResult = backupManager.exportEncryptedBackup(outputStream, masterKey, ownerUuid)
+        assertTrue(exportResult.isSuccess)
+        // Only the 1 local item should be exported
+        assertEquals(1, exportResult.getOrNull())
     }
 }

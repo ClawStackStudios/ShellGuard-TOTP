@@ -203,6 +203,6 @@ class LocalModeUnlockAndVaultTest {
 
         composeTestRule.onNodeWithText("GitHub Personal").assertIsDisplayed()
         composeTestRule.onNodeWithText("ProtonMail").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("filter_chip_all").assertIsDisplayed()
+        composeTestRule.onNodeWithText("📱 Local Vault").assertIsDisplayed()
     }
 }
