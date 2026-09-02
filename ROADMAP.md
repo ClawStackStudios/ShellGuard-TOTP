@@ -1,7 +1,7 @@
 ---
-roadmap_version: 2.1.0
-last_updated: 2026-08-31
-current_position: "Phase 6 Complete (v0.0.0.1 Launch Ready) — Transitioning to Phase 7: Post-Launch Enhancements"
+roadmap_version: 2.2.0
+last_updated: 2026-09-01
+current_position: "Phase 6 Complete (v0.0.0.2 Launch Ready) — Transitioning to Phase 7: Architectural Refactor (v0.0.1.0)"
 statistics:
   description: "Deterministic build roadmap for ShellGuard-TOTP Android Authenticator application. Engineered strictly in synergistic 2-task phases where Task A delivers core functionality and Task B delivers the corresponding UI/UX component."
   features_completed: "██████████ 100%"
@@ -11,7 +11,7 @@ statistics:
 # Master Project Roadmap — ShellGuard-TOTP Android
 
 ### 🏷️ Work-Driven Versioning Policy: `MAJOR.MINOR.PATCH.REVISION` (`X.Y.Z.N`)
-- **Baseline**: `v0.0.0.1 (Build 3)` (Launch Foundation: Phases 1–6).
+- **Baseline**: `v0.0.0.2 (Build 6)` (Launch Foundation: Phases 1–6).
 - **No Forced Targets**: Versions evolve naturally from the work done rather than arbitrary artificial goals.
   - **`MAJOR` (`X.0.0.0`)**: Fundamental structural overhauls or full 1.0 public launch.
   - **`MINOR` (`X.Y.0.0`)**: Substantial new subsystems or large feature groups.
@@ -141,18 +141,35 @@ Description: Create `ic_launcher_background.xml` (solid `#030712`) and `ic_launc
 
 ------------------ Next Horizon (Post-Launch Expansion) ------------------
 
-## Phase 7: Welcoming First-Run Wizard & "Import Habitat" Intake Flow [v0.0.0.2 (Build 4)]
+
+## Phase 7: Architectural Refactor — One-Way Mirror Sync, Grouped Dashboard & Unified Export [v0.0.1.0 (Build 7) — Milestone 1]
+
+> Phase Feature Set Overview:
+> Shifts the application from two-way bidirectional sync to a strict One-Way Mirror sync pattern. Codes added on Android remain exclusively local. The dashboard UI is overhauled to present Grouped Sections (Local Codes vs Remote Codes) eliminating cognitive load from the old Snackbar filter. Finally, imports/exports are simplified to strictly handle Local items using a unified `sgtotp.bak` format shared with the ShellGuard Web Server.
+
+- [ ]  Task 13: [Functionality] One-Way Sync Engine, Grouped Repository & Unified Export Schema
+Description: Overhaul `TotpRepository` to only pull down remote codes as read-only mirror items. Remove upstream pushes completely. Modify `TotpItemDao` and `TotpViewModel` to expose explicitly grouped streams (Local vs Synced). Revamp `BackupManager` to only export local codes, adopting the canonical `sgtotp.bak` backup schema that aligns perfectly with the ShellGuard web server import pipeline. Add a `compatibility_layer.md` doc to the ShellGuard repo to detail this integration.
+
+> Success Criteria: Application pulls remote items correctly without ever pushing. ViewModels group the codes natively. Exports produce valid `sgtotp.bak` JSON structures representing only local elements.
+
+- [ ]  Task 14: [UI Component] Grouped Authenticator Dashboard & Simplified Import Flow
+Description: Refactor `TotpListScreen.kt` to present a unified vertically-scrollable list with clear sticky-headers/dividers grouping "📱 Local Vault" at the top and "☁️ Synced from ShellGuard" below. Remove the old connection Snackbar and top-bar filter chips for local/synced. Update the Add Secret and QR Scanner flows to strictly save to local vault.
+
+> Success Criteria: Dashboard renders two distinct grouped sections clearly. Creating new items automatically appends them to the Local Vault group.
+
+---
+## Phase 8: Welcoming First-Run Wizard & "Import Habitat" Intake Flow [v0.0.0.2 (Build 4)]
 
 > Phase Feature Set Overview:
 > Delivers a completely reimagined, welcoming user-first application intake flow. Features the official ShellGuard launcher shield hero branding, immediate "Import Habitat" one-tap backup restoration supporting ShellGuard, Bitwarden, and Aegis JSON backups via Android Storage Access Framework (SAF), and seamless forward navigation to vault protection.
 
-- [x]  Task 13: [Functionality] First-Run Intake Engine, Multi-Vault Backup Pre-Validator & Dynamic Route State
+- [x]  Task 15: [Functionality] First-Run Intake Engine, Multi-Vault Backup Pre-Validator & Dynamic Route State
 
 Description: Implement the first-run intake orchestrator in `com.clawstack.shellguard.totp.ui.onboarding`. Provide reactive state management for onboarding flow progression (`INTAKE_WELCOME`, `IMPORTING_HABITAT`, `SECURITY_SETUP`, `COMPLETED`). Integrate Android Storage Access Framework (SAF) `OpenDocument` file parser to inspect and pre-validate imported `.json` / `.shellguard` backup envelopes before vault database creation. Automatically detect schema type (ShellGuard Habitat `shellguard-totp-backup-v1`, Bitwarden Vault `items[].login.totp`, Bitwarden Authenticator, Aegis, 2FAS) and prepare the unlock cipher / sanitizer state for password/PIN input.
 
 > Success Criteria: Intake engine pre-validates selected backup files within 100ms, detects corrupted or unsupported files with clear user feedback, and sets up dynamic navigation routes without corrupting local database state.
 
-- [x]  Task 14: [UI Component] Brand Hero Welcome Screen & "Import Habitat" File Picker Launcher
+- [x]  Task 16: [UI Component] Brand Hero Welcome Screen & "Import Habitat" File Picker Launcher
 
 Description: Implement `IntakeWelcomeScreen.kt` (**First-Run Brand Hero Screen**):
 - **Hero Header**: Displays the high-resolution vector ShellGuard launcher shield (`ic_launcher_foreground`) with glowing ambient backdrop.
@@ -166,18 +183,18 @@ Description: Implement `IntakeWelcomeScreen.kt` (**First-Run Brand Hero Screen**
 
 ---
 
-## Phase 8: Vault Security Education, Enlarged Spotlight Tour & Empty Vault Landing [v0.0.1.0 (Build 5) — Milestone 1]
+## Phase 9: Vault Security Education, Enlarged Spotlight Tour & Empty Vault Landing [v0.0.1.1 (Build 8) — Milestone 1]
 
 > Phase Feature Set Overview:
 > Delivers the educational Vault Security configuration screen explaining ShellGuard's zero-knowledge protection options, paired with an enhanced Spotlight Tour featuring enlarged, breathable circular cutouts that comfortably frame UI targets without crowding.
 
-- [ ]  Task 15: [Functionality] Android KeyStore Protection Orchestrator & Spotlight Geometry Engine
+- [ ]  Task 17: [Functionality] Android KeyStore Protection Orchestrator & Spotlight Geometry Engine
 
 Description: Refactor `AndroidKeyStoreHelper` and `AuthRepository` to support unified protection configuration (PIN vs Password vs Biometrics) with instant hardware key generation. Update `SpotlightOverlay.kt` geometry calculation engine to calculate enlarged, comfortable circular cutouts with configurable padding (+16dp to +20dp radial offset beyond target bounds) and smooth spring easing.
 
 > Success Criteria: Protection orchestrator binds selected PIN/Password and Biometrics into Android KeyStore AES-256-GCM hardware keys. Spotlight cutout geometry computes comfortable, non-cramped bounding circles with 60fps canvas clipping.
 
-- [ ]  Task 16: [UI Component] Vault Security Orientation Screen & Enhanced Spotlight Overlay
+- [ ]  Task 18: [UI Component] Vault Security Orientation Screen & Enhanced Spotlight Overlay
 
 Description: Implement `VaultSecurityScreen.kt` and update `SpotlightOverlay.kt`:
 - **Vault Security Orientation**: Educational screen explaining zero-knowledge encryption, hardware KeyStore isolation, and offline autonomy.
@@ -190,18 +207,18 @@ Description: Implement `VaultSecurityScreen.kt` and update `SpotlightOverlay.kt`
 
 ---
 
-## Phase 9: Expandable Floating Actions Speed Dial (QR, Image & Manual) [v0.0.1.1 (Build 6)]
+## Phase 10: Expandable Floating Actions Speed Dial (QR, Image & Manual) [v0.0.1.2 (Build 9)]
 
 > Phase Feature Set Overview:
 > Delivers an expandable speed dial Floating Action Button (FAB) on the main vault dashboard, providing one-tap access to CameraX live scanning, Gallery image QR decoding, and manual Base32 secret entry with animated icon pills and scrim dismissal.
 
-- [ ]  Task 17: [Functionality] Image QR Decoder Pipeline & Expandable FAB Interaction Controller
+- [ ]  Task 19: [Functionality] Image QR Decoder Pipeline & Expandable FAB Interaction Controller
 
 Description: Implement `ImageQrDecoder` using Google ML Kit Barcode Scanning on URI bitmap streams. Implement `SpeedDialState` controller managing expand/collapse transitions, back-handler interception, outside touch scrim dismissals, and permission requests.
 
 > Success Criteria: ML Kit barcode scanning decodes QR codes from high-res bitmap files in <200ms. SpeedDial controller coordinates animated expansion states without UI jank.
 
-- [ ]  Task 18: [UI Component] Animated Speed Dial FAB & Elevated Action Pills
+- [ ]  Task 20: [UI Component] Animated Speed Dial FAB & Elevated Action Pills
 
 Description: Implement `ExpandableSpeedDialFab.kt` on `TotpListScreen.kt`:
 - **Main FAB**: Smooth 45-degree rotation morphing from `+` to `✕`.
@@ -215,18 +232,18 @@ Description: Implement `ExpandableSpeedDialFab.kt` on `TotpListScreen.kt`:
 
 ---
 
-## Phase 10: Categorized Settings Hub & Appearance/Behavior Customization [v0.0.2.0 (Build 7) — Milestone 2]
+## Phase 11: Categorized Settings Hub & Appearance/Behavior Customization [v0.0.2.0 (Build 10) — Milestone 2]
 
 > Phase Feature Set Overview:
 > Transforms the monolithic settings page into a modular multi-tier Settings Hub with dedicated sub-screens for Appearance styling (theme modes, dynamic colors, digit grouping, entry view modes) and Application Behavior (search focus, minimize on copy, token tap highlights, freeze on tap).
 
-- [ ]  Task 19: [Functionality] Preferences Store Architecture & Entry Formatting Engine
+- [ ]  Task 21: [Functionality] Preferences Store Architecture & Entry Formatting Engine
 
 Description: Expand `AuthRepository` and `DataStore` / `SharedPreferences` to manage structured preferences for `AppearancePreferences` (view mode, show icons, show next code, expire blink indicator, digit grouping, issuer/account display rules) and `BehaviorPreferences` (search focus on start, search scope, minimize on copy, haptic feedback, multiselect categories, highlight tokens on tap, freeze tokens on tap).
 
 > Success Criteria: All user customization preferences persist reliably across app recreation and update reactive `StateFlow` streams synchronously.
 
-- [ ]  Task 20: [UI Component] Categorized Settings Hub (`SettingsMetaScreen`), Appearance & Behavior Sub-screens
+- [ ]  Task 22: [UI Component] Categorized Settings Hub (`SettingsMetaScreen`), Appearance & Behavior Sub-screens
 
 Description: Implement modular Settings navigation:
 - **`SettingsMetaScreen.kt`**: Master category list with icons and descriptive subtitles:
@@ -244,18 +261,18 @@ Description: Implement modular Settings navigation:
 
 ---
 
-## Phase 11: Security Suite, Panic Purge & Security Audit Logging [v0.0.2.1 (Build 8)]
+## Phase 12: Security Suite, Panic Purge & Security Audit Logging [v0.0.2.1 (Build 11)]
 
 > Phase Feature Set Overview:
 > Delivers advanced vault security controls (tap-to-reveal tokens, screen security toggle, emergency panic purge trigger integration) and a local append-only security Audit Log recording important cryptographic and access events.
 
-- [ ]  Task 21: [Functionality] Security Preference Controller, Panic Trigger Handler & Room Audit Log DAO
+- [ ]  Task 23: [Functionality] Security Preference Controller, Panic Trigger Handler & Room Audit Log DAO
 
 Description: Implement `AuditLogDao` and `AuditLogEntity` in Room to record security events (vault unlocked, biometric failed, backup created, secret added, panic triggered). Implement `PanicTriggerReceiver` (supporting broadcast/intent triggers to wipe encryption keys and purge Room DB on emergency). Implement configurable Tap-to-Reveal timeout timer (default 30s).
 
 > Success Criteria: Audit events are safely recorded with millisecond timestamps. Panic trigger securely wipes all local encryption keys and databases within 50ms.
 
-- [ ]  Task 22: [UI Component] Security Sub-screen (Tap-to-Reveal, Screen Security, Panic Purge) & Audit Log Screen
+- [ ]  Task 24: [UI Component] Security Sub-screen (Tap-to-Reveal, Screen Security, Panic Purge) & Audit Log Screen
 
 Description: Implement:
 - **`SettingsSecurityScreen.kt`**: Encryption status tile, Screen security toggle (`FLAG_SECURE`), Tap to reveal codes toggle with configurable timeout duration, Delete vault on panic trigger toggle.
@@ -265,12 +282,12 @@ Description: Implement:
 
 ---
 
-## Phase 12: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 9) — Milestone 3]
+## Phase 13: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 12) — Milestone 3]
 
 > Phase Feature Set Overview:
 > Delivers robust multi-format vault import with specialized Bitwarden vault parsing (extracting 2FA TOTP secrets while strictly stripping passwords and secure notes in-memory), dual persistence routing (Local SQLCipher vs Remote Gateway sync), and Google Authenticator multi-account migration QR export.
 
-- [ ]  Task 23: [Functionality] Multi-Format Import Engine (Bitwarden Vault/Auth, Aegis, 2FAS) & Dual Vault Persister
+- [ ]  Task 25: [Functionality] Multi-Format Import Engine (Bitwarden Vault/Auth, Aegis, 2FAS) & Dual Vault Persister
 
 Description: Implement `MultiFormatMigrationEngine` in `data/migration`:
 - **Bitwarden Vault Parsing**: Parses Bitwarden Password Manager JSON exports (`items[].login.totp` containing `otpauth://totp/...` or raw Base32 seeds, mapping `folders[]` ➔ ShellGuard Pod categories).
@@ -283,7 +300,7 @@ Description: Implement `MultiFormatMigrationEngine` in `data/migration`:
 
 > Success Criteria: Parser extracts all 2FA secrets from complex Bitwarden exports with 0% password/note leakage in memory or storage. Dual persister accurately routes to local Room DB or self-hosted server gateway.
 
-- [ ]  Task 24: [UI Component] Import & Export Screen, Bitwarden Migration Preview Wizard & Multi-QR Viewer
+- [ ]  Task 26: [UI Component] Import & Export Screen, Bitwarden Migration Preview Wizard & Multi-QR Viewer
 
 Description: Implement:
 - **`SettingsImportExportScreen.kt`**: Category tiles for "Import Bitwarden Vault", "Import ShellGuard Habitat", "Import Aegis / 2FAS", "Export Encrypted Vault", and "Export for Google Authenticator".
@@ -295,18 +312,18 @@ Description: Implement:
 
 ---
 
-## Phase 13: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 10) — Open Beta Candidate]
+## Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 13) — Open Beta Candidate]
 
 > Phase Feature Set Overview:
 > Delivers Android Glance Compose home screen widgets for fast 2FA access with live countdown progress arcs, and a custom SVG/Vector Icon Pack management engine for branded account icons.
 
-- [ ]  Task 25: [Functionality] AndroidX Glance AppWidget Engine & Custom Issuer Icon Pack Store
+- [ ]  Task 27: [Functionality] AndroidX Glance AppWidget Engine & Custom Issuer Icon Pack Store
 
 Description: Integrate `androidx.glance:glance-appwidget` and `androidx.glance:glance-material3`. Implement `TotpGlanceReceiver` and `TotpGlanceWidgetService`. Implement `IconPackManager` supporting loading, parsing, and caching vector/PNG icon packs for popular web services (GitHub, Google, AWS, Microsoft, Discord).
 
 > Success Criteria: Widget updates on 30s boundaries synchronously with system time consuming <0.1% battery/day. Icon pack manager resolves high-res brand icons dynamically by issuer name.
 
-- [ ]  Task 26: [UI Component] Modernist Glance 2FA Widgets (2x2 & 4x2) & Icon Pack Manager Screen
+- [ ]  Task 28: [UI Component] Modernist Glance 2FA Widgets (2x2 & 4x2) & Icon Pack Manager Screen
 
 Description: Implement:
 - **Glance 2FA Widgets**: Compact 2x2 single-token and expanded 4x2 multi-account list with live countdown progress bars, split digits (`123 456`), and one-tap copy actions.

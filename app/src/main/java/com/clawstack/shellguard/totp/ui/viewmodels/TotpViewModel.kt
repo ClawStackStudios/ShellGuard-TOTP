@@ -106,7 +106,28 @@ class TotpViewModel(application: Application) : AndroidViewModel(application) {
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
     // Filtered items flow combining search query & category selection & ownerUuid
-    val items: StateFlow<List<TotpItemEntity>> = combine(
+    
+    // Filtered items flow for local codes
+    val localItems: StateFlow<List<TotpItemEntity>> = combine(
+        currentOwnerUuid,
+        searchQuery,
+        selectedCategory
+    ) { owner, query, category ->
+        FilterState(owner, query, category, false)
+    }.flatMapLatest { filterState ->
+        val baseFlow = if (filterState.query.isNotBlank()) {
+            totpItemDao.searchTotpItems(filterState.owner, filterState.query.trim())
+        } else {
+            totpItemDao.observeAllTotpItems(filterState.owner)
+        }
+        baseFlow.map { list ->
+            list.filter { (it.isLocalOnly || it.ownerUuid == "local") && 
+                (filterState.category == null || filterState.category == "All Accounts" || filterState.category == "All Tokens" || it.category.equals(filterState.category, ignoreCase = true)) }
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    // Filtered items flow for remote codes
+    val remoteItems: StateFlow<List<TotpItemEntity>> = combine(
         currentOwnerUuid,
         searchQuery,
         selectedCategory,
@@ -114,23 +135,19 @@ class TotpViewModel(application: Application) : AndroidViewModel(application) {
     ) { owner, query, category, isConnected ->
         FilterState(owner, query, category, isConnected)
     }.flatMapLatest { filterState ->
+        if (!filterState.isConnected) return@flatMapLatest kotlinx.coroutines.flow.flowOf(emptyList<TotpItemEntity>())
+        
         val baseFlow = if (filterState.query.isNotBlank()) {
             totpItemDao.searchTotpItems(filterState.owner, filterState.query.trim())
         } else {
             totpItemDao.observeAllTotpItems(filterState.owner)
         }
-
         baseFlow.map { list ->
-            when (filterState.category) {
-                null, "All Accounts", "All Tokens" -> list
-                "☁️ Synced" -> if (filterState.isConnected) list.filter { !it.isLocalOnly && it.ownerUuid != "local" } else list
-                "📱 Local Only" -> list.filter { it.isLocalOnly || it.ownerUuid == "local" }
-                else -> list.filter { it.category.equals(filterState.category, ignoreCase = true) }
-            }
+            list.filter { !it.isLocalOnly && it.ownerUuid != "local" && 
+                (filterState.category == null || filterState.category == "All Accounts" || filterState.category == "All Tokens" || it.category.equals(filterState.category, ignoreCase = true)) }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    fun onSearchQueryChanged(query: String) {
+fun onSearchQueryChanged(query: String) {
         searchQuery.value = query
     }
 
@@ -210,8 +227,8 @@ class TotpViewModel(application: Application) : AndroidViewModel(application) {
                 algorithm = algorithm,
                 digits = digits,
                 period = period,
-                isLocalOnly = !isConnected,
-                syncState = if (isConnected) "PENDING_SYNC" else "SYNCED"
+                isLocalOnly = true,
+                syncState = "LOCAL"
             )
             totpItemDao.upsertItem(newItem)
         }
@@ -252,8 +269,8 @@ class TotpViewModel(application: Application) : AndroidViewModel(application) {
                 algorithm = parsed.algorithm,
                 digits = parsed.digits,
                 period = parsed.period,
-                isLocalOnly = !isConnected,
-                syncState = if (isConnected) "PENDING_SYNC" else "SYNCED"
+                isLocalOnly = true,
+                syncState = "LOCAL"
             )
             totpItemDao.upsertItem(newItem)
         }

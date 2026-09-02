@@ -456,7 +456,7 @@ fun SettingsScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Offline-only codes remain securely encrypted on this device and are never pushed to the server unless enabled.",
+                        text = "All codes generated on this device remain securely encrypted locally. Remote codes are synchronized as read-only mirrors.",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 12.sp
                     )

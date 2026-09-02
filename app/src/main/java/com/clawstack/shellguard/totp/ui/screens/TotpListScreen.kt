@@ -94,7 +94,8 @@ fun TotpListScreen(
     onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val items by viewModel.items.collectAsStateWithLifecycle()
+    val localItems by viewModel.localItems.collectAsStateWithLifecycle()
+    val remoteItems by viewModel.remoteItems.collectAsStateWithLifecycle()
     val categories by viewModel.categories.collectAsStateWithLifecycle()
     val selectedCategory by viewModel.selectedCategory.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
@@ -304,24 +305,15 @@ fun TotpListScreen(
                         .testTag("totp_search_bar")
                 )
 
-                // ── Category / Pod Filter Chips ─────────────────────────
-                Spacer(modifier = Modifier.height(4.dp))
-                PodFilterChips(
-                    categories = categories,
-                    selectedCategory = selectedCategory,
-                    onCategorySelected = { viewModel.onCategorySelected(it) },
-                    isServerConnected = isServerConnected
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
+                
 
                 // ── Main Content: List or Empty State ────────────────────
-                if (items.isEmpty() && searchQuery.isBlank() && selectedCategory == null) {
+                if (localItems.isEmpty() && remoteItems.isEmpty() && searchQuery.isBlank() && selectedCategory == null) {
                     TotpEmptyState(
                         onScanQrClick = onScanQrClick,
                         onManualAddClick = onAddSecretClick
                     )
-                } else if (items.isEmpty()) {
+                } else if (localItems.isEmpty() && remoteItems.isEmpty()) {
                     // No search results
                     Box(
                         modifier = Modifier
@@ -447,7 +439,12 @@ fun TotpListScreen(
                         }
                     }
 
-                        itemsIndexed(items, key = { _, item -> item.id }) { index, item ->
+                        
+                        if (localItems.isNotEmpty()) {
+                            item {
+                                Text("📱 Local Vault", modifier = Modifier.padding(top = 16.dp, bottom = 8.dp), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                            }
+                            itemsIndexed(localItems, key = { _, item -> item.id }) { index, item ->
                             val code = TotpEngine.generateTotp(
                                 secretBase32 = item.secret,
                                 timestampMillis = tickerState.timestampMillis,
@@ -480,6 +477,47 @@ fun TotpListScreen(
                                         itemPendingDeletion = item
                                     }
                                 )
+                            }
+                            }
+                        }
+                        if (remoteItems.isNotEmpty()) {
+                            item {
+                                Text("☁️ Synced from ShellGuard", modifier = Modifier.padding(top = 16.dp, bottom = 8.dp), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                            }
+                            itemsIndexed(remoteItems, key = { _, item -> item.id }) { index, item ->
+                            val code = TotpEngine.generateTotp(
+                                secretBase32 = item.secret,
+                                timestampMillis = tickerState.timestampMillis,
+                                timeStepSeconds = item.period.toLong(),
+                                digits = item.digits,
+                                algorithm = HashAlgorithm.fromString(item.algorithm)
+                            )
+
+                            StaggeredAnimatedItem(
+                                index = index,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .animateItem()
+                            ) {
+                                SwipeableTotpCard(
+                                    title = item.title,
+                                    username = item.username,
+                                    category = item.category,
+                                    code = code,
+                                    remainingSeconds = tickerState.remainingSeconds,
+                                    progress = tickerState.progress,
+                                    isLocalOnly = item.isLocalOnly,
+                                    onCopy = { rawCode ->
+                                        viewModel.copyToClipboard(item.title, rawCode)
+                                    },
+                                    onEdit = {
+                                        editingItem = item
+                                    },
+                                    onDelete = {
+                                        itemPendingDeletion = item
+                                    }
+                                )
+                            }
                             }
                         }
                     }

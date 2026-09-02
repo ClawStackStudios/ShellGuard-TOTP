@@ -1,10 +1,11 @@
 # ShellGuard TOTP — Progress
 
 ## Completed Features
+- ✅ **Grouped Dashboard & Unified Architecture**: Separated local and remote items into distinct UI groups ("📱 Local Vault" vs "☁️ Synced from ShellGuard"). Enforced local-only creation constraint for all new codes. Refactored BackupManager to exclusively export/import the canonical `sgtotp.bak` format for Local items.
 - ✅ **RFC 6238 TOTP Engine**: HMAC-SHA1, HMAC-SHA256, HMAC-SHA512 with custom digits (6/8) and periods (30s/60s).
 - ✅ **Live Epoch Ticker**: 1-second interval Flow emitting real-time countdown seconds and progress ratio.
 - ✅ **SQLCipher Encrypted Database**: AES-256 Room persistence with `TotpItemDao` and `SyncMetadataDao`.
-- ✅ **Remote API Client & Bidirectional Delta Sync**: Ktor HTTP client, `ShellGuardTotpClient` DTO endpoints (`createVaultItem`, `updateVaultItem`), `AuthRepository` with thread-safe `Mutex` and `withSyncLock`, `TotpRepository` two-way sync (upstream encrypted push, downstream pull & decryption, deleted item pruning), and `TotpSyncWorker` periodic background execution.
+- ✅ **Remote API Client & One-Way Mirror Sync**: Ktor HTTP client, `ShellGuardTotpClient` API integration, `AuthRepository` with thread-safe `Mutex` and `withSyncLock`, `TotpRepository` one-way sync (downstream pull & decryption, read-only remote mirroring), and `TotpSyncWorker` periodic background execution.
 - ✅ **Spotlight Guided Tour**: `SpotlightOverlay` with `BlendMode.Clear` circular cutout punching, animated cyan glowing rings, touch blocking, and contextual tooltip pills guiding through setup.
 - ✅ **Settings Screen Management**: Live server connection card, sync controls, local storage & offline codes dashboard filtering, biometric settings, and encrypted JSON export/restore.
 - ✅ **CameraX QR Code Scanner**: Live CameraX preview with ML Kit barcode scanner and fallback URI parser.

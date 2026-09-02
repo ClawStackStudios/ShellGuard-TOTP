@@ -61,6 +61,10 @@ Translating user intent into actionable programming language is a natural skill
 of mine, and I want to build things with the user, not silently degrade the
 underlying quality of the low level relationships between components.
 
+
+**Cross-Repository Execution Sequence**:
+When tasked with features that span multiple repositories (e.g., Android app and Web Server), always complete the implementation in the source codebase first. Only after the source implementation is finalized should you write the corresponding compatibility documentation or consuming code in the target repository. This guarantees the consumer side perfectly reflects the finalized state of the source.
+
 ### My Verification Loop
 I do not trust a single signal. I stack three gates:
 
@@ -211,6 +215,14 @@ Android 15+ (API 35/36) mandates 16 KB page-aligned native binaries:
 - Never hardcode static brand color tokens (e.g. `ClawCyan`) in screen composables; bind strictly to `MaterialTheme.colorScheme` and `LocalShellGuardColors`.
 - The canonical default theme accent is `ThemeAccent.REEF_DEFAULT` (Reef Pink `#E4048A`).
 - All interactive input/form screens must apply `.imePadding()` and `.verticalScroll(rememberScrollState())` to prevent the soft keyboard from obscuring inputs or actions.
+
+
+### One-Way Mirror Sync & Export Invariants
+
+- **Read-Only Sync**: Remote connections are strictly read-only mirrors of the `ShellGuard` Web Server. Do not implement bidirectional upstream pushes.
+- **Local Creation**: Any TOTP secret created manually or scanned via QR within the Android app is strictly a Local Code (`isLocalOnly = true`).
+- **Unified Backup Integrity**: `BackupManager` exclusively exports Local Codes into the `sgtotp.bak` unified schema. Remote codes are skipped to avoid data duplication across the ecosystem.
+- **Grouped UI Separation**: The dashboard must present Local Codes and Remote Codes in visually distinct, vertically-grouped lists rather than a single list with toggle filters, minimizing user cognitive load.
 
 ### Persistence & Release Versioning Invariants
 

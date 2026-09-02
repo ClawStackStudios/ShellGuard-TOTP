@@ -6,6 +6,13 @@
 UI (Jetpack Compose) → ViewModel (StateFlow/Intent) → UseCase/Repository → Data Source (Room DB / Ktor Client)
 ```
 
+
+## One-Way Mirror Sync & Unified Export Architecture
+1. **Isolated Local Vault**: All codes created locally via manual entry or QR scan are designated strictly as Local Codes (`isLocalOnly = true`) and are never pushed upstream.
+2. **Read-Only Remote Sync**: The remote connection strictly pulls `vault_pearls` from the ShellGuard web server, acting solely as a read-only mirror.
+3. **Grouped Dashboard Presentation**: The UI enforces a strict hierarchy, displaying "📱 Local Vault" separate from "☁️ Synced from ShellGuard" groups for immediate visual clarity.
+4. **Canonical Interoperability**: `BackupManager` exclusively exports Local Codes into the `sgtotp.bak` unified schema, removing the need to export redundant synced data.
+
 ## Security Invariants
 1. **SQLCipher Database**: All tables encrypted at rest with AES-256.
 2. **KeyStore StrongBox Wrapper**: Biometric key `sg_totp_biometric_wrapper` guarded by user authentication.
@@ -105,7 +112,7 @@ AuthRepository.hatchVault() + TotpItemDao.upsertItems() → Screen.CodeList
 3. **Conflict Resolution Policy**: Supports `SKIP_DUPLICATES`, `OVERWRITE_EXISTING`, and `KEEP_BOTH` policies during batch imports.
 4. **Dual-Pathway Persistence Routing**:
    - *Local Pathway*: Directly writes to Room SQLCipher with `is_local_only = 1`.
-   - *Remote Gateway Pathway*: Encrypts via `ShellCryptionEngine` (`huKey` + `userUuid` + AAD `vault_pearls_totp:{id}`) and pushes upstream via `POST /api/vault`.
+   - *Remote Gateway Pathway*: (Deprecated) Codes are now imported strictly to Local Storage. Upstream push is disabled in favor of One-Way Sync.
 5. **Post-Commit Hooks**: Automatically appends `IMPORT_SUCCESS` events to `AuditLogEntity` and triggers encrypted auto-backups via `BackupManager`.
 
 

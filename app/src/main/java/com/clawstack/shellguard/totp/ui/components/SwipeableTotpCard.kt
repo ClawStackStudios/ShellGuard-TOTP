@@ -56,7 +56,7 @@ fun SwipeableTotpCard(
     SwipeToDismissBox(
         state = dismissState,
         enableDismissFromStartToEnd = false,
-        enableDismissFromEndToStart = true,
+        enableDismissFromEndToStart = isLocalOnly,
         backgroundContent = {
             Box(
                 modifier = Modifier

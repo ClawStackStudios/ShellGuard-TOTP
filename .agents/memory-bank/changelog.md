@@ -2,6 +2,26 @@
 
 All notable changes to the ShellGuard TOTP project will be documented in this file.
 
+## [0.0.1.0] - 2026-09-01 (Build 7)
+### Changed
+- **Architectural Refactor — One-Way Mirror Sync**:
+  - Deprecated bidirectional delta sync in `TotpRepository`. Upstream pushes are removed; the app now functions as a read-only mirror for remote codes.
+  - Hardcoded new code creation (`addManualSecret` and `importScannedUri`) to always save as Local (`isLocalOnly = true`).
+- **Grouped Dashboard Hierarchy**:
+  - Removed top-bar filter chips and connection Snackbar from `TotpListScreen`.
+  - Splitting items stream into `localItems` and `remoteItems` inside `TotpViewModel`.
+  - Refactored `TotpListScreen` to display two distinct grouped lists: "📱 Local Vault" and "☁️ Synced from ShellGuard".
+- **Unified Export Architecture**:
+  - Modified `BackupManager` to exclusively backup and restore local codes in the unified `sgtotp.bak` JSON schema.
+  - Authored `compatibility_layer.md` in the ShellGuard web repo to establish the `sgtotp.bak` native format across both applications.
+
+### Fixed
+- **Roadmap Versioning Drift**: Corrected phase numbering and semantic versions in `ROADMAP.md` and `meta-prompt-ai-studio.md` to properly increment off `v0.0.1.0 (Build 7)`.
+- **UI Constraints & Copy**:
+  - Bound `SwipeableTotpCard` deletion gesture strictly to Local Codes (`isLocalOnly = true`), preventing accidental local swipe deletions of synchronized read-only records.
+  - Updated "Local Storage & Offline Codes" copy in `SettingsScreen.kt` to clearly state that remote codes are pulled as read-only mirrors and local codes remain on device.
+
+
 ## [0.0.0.2] - 2026-08-31
 ### Added
 - **Proprietary `.sgtotp.bak` Format & Dynamic Protection Mode Detection**:

@@ -78,7 +78,7 @@ class BackupManager(
         pinLength: Int? = null
     ): Result<Int> = withContext(Dispatchers.IO) {
         runCatching {
-            val items = totpItemDao.observeAllTotpItems(ownerUuid).first()
+            val items = totpItemDao.observeAllTotpItems(ownerUuid).first().filter { it.isLocalOnly || it.ownerUuid == "local" }
             val dtos = items.map { item ->
                 BackupItemDto(
                     id = item.id,
@@ -178,7 +178,7 @@ class BackupManager(
                     digits = dto.digits,
                     period = dto.period,
                     isLocalOnly = true, // Safeguard imported items as local
-                    syncState = "PENDING_SYNC",
+                    syncState = "LOCAL",
                     remoteUpdatedAt = dto.remoteUpdatedAt,
                     localUpdatedAt = System.currentTimeMillis()
                 )
@@ -200,7 +200,7 @@ class BackupManager(
         ownerUuid: String = "local"
     ): Result<Int> = withContext(Dispatchers.IO) {
         runCatching {
-            val items = totpItemDao.observeAllTotpItems(ownerUuid).first()
+            val items = totpItemDao.observeAllTotpItems(ownerUuid).first().filter { it.isLocalOnly || it.ownerUuid == "local" }
             val dtos = items.map { item ->
                 BackupItemDto(
                     id = item.id,
@@ -270,7 +270,7 @@ class BackupManager(
                     digits = dto.digits,
                     period = dto.period,
                     isLocalOnly = true,
-                    syncState = "PENDING_SYNC",
+                    syncState = "LOCAL",
                     remoteUpdatedAt = dto.remoteUpdatedAt,
                     localUpdatedAt = System.currentTimeMillis()
                 )
