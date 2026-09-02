@@ -115,6 +115,13 @@ AuthRepository.hatchVault() + TotpItemDao.upsertItems() → Screen.CodeList
    - *Remote Gateway Pathway*: (Deprecated) Codes are now imported strictly to Local Storage. Upstream push is disabled in favor of One-Way Sync.
 5. **Post-Commit Hooks**: Automatically appends `IMPORT_SUCCESS` events to `AuditLogEntity` and triggers encrypted auto-backups via `BackupManager`.
 
+## Ingestion & Deduplication Pattern
+- **Normalized Fingerprint Dedup**:
+  - `fingerprint = secret.uppercase().replace(" ", "").replace("-", "") + "_" + title.trim().lowercase()`
+  - Filter incoming batches against existing database records using this fingerprint before calling `upsertItems()`.
+  - Guarantees zero duplicate entries even across separate imports where UUIDs differ.
 
-
-
+## ClawKey Identity Pattern
+- **Format Invariant**: Sovereign human key (`hu-` + 64 hex/base62 characters = 67 characters).
+- **Single Source Validator**: Pure-function `ClawKeyValidator.isValid(key)`.
+- **Dual-Tab UX Form**: Mirroring `QuickLoginModal.tsx` on web with "Key Paste" (monospace textarea) and "Upload File" (SAF `.json` parser extracting `identity.token`).

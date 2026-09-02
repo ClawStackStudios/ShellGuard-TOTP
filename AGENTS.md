@@ -229,3 +229,14 @@ Android 15+ (API 35/36) mandates 16 KB page-aligned native binaries:
 - Every user-facing setting must be backed by persistent storage (`SharedPreferences` or `EncryptedDeviceVault`), never ephemeral Compose `remember` state alone.
 - User-facing version labels must bind dynamically to `BuildConfig.VERSION_NAME`.
 - Every release bundle uploaded to Google Play Console requires a strictly incremented monotonic `versionCode` (+1).
+
+### Test Oracle & Architectural Invariant Synchronization
+
+- **Test Oracle Audit on Refactor**: Whenever an architectural rule or UI layout changes (such as data filtering in `BackupManager`, layout removal/grouping in screens), all existing test classes in `app/src/test` MUST be audited for obsolete assertions (e.g. removed test tags, outdated entity flags).
+- Never push or release without verifying that test fixtures reflect current storage and UI invariants.
+
+### ClawKey Identity & Deduplication Invariants
+
+- **Sovereign Key Format**: The ShellGuard ClawKey format is strictly `hu-` followed by 64 characters (total length: 67).
+- **Single Source Validator**: All ClawKey input surfaces (Vault creation, Lock screen, Settings import) must use `ClawKeyValidator.isValid()`.
+- **Pre-DAO Fingerprint Deduplication**: Backup import engines must deduplicate incoming records by normalized `secret` + `title` fingerprint prior to DAO insertion, preventing duplicate UUID false negatives.
