@@ -208,6 +208,19 @@ class AuthRepository(
         val secretHash = ClawCrypto.hashHumanKey(trimmedSecret)
         val mode = if (isPin) VaultProtectionMode.PIN else VaultProtectionMode.PASSWORD
         
+        // Instant hardware key generation for the selected mode
+        if (isPin) {
+            com.clawstack.shellguard.totp.crypto.AndroidKeyStoreHelper.getOrCreatePinSecretKey()
+        } else {
+            com.clawstack.shellguard.totp.crypto.AndroidKeyStoreHelper.getOrCreatePasswordSecretKey()
+        }
+        
+        if (enableBiometrics) {
+            com.clawstack.shellguard.totp.crypto.AndroidKeyStoreHelper.getOrCreateBiometricSecretKey()
+        } else {
+            com.clawstack.shellguard.totp.crypto.AndroidKeyStoreHelper.deleteKey(com.clawstack.shellguard.totp.crypto.AndroidKeyStoreHelper.KEY_ALIAS_BIOMETRIC_WRAPPER)
+        }
+
         EncryptedDeviceVault.storeSecureString(context, "pref_vault_secret", trimmedSecret)
         EncryptedDeviceVault.storeSecureString(context, "pref_vault_secret_hash", secretHash)
         prefs.edit()
@@ -227,6 +240,13 @@ class AuthRepository(
         val trimmedSecret = newSecret.trim()
         val secretHash = ClawCrypto.hashHumanKey(trimmedSecret)
         val mode = if (isPin) VaultProtectionMode.PIN else VaultProtectionMode.PASSWORD
+        
+        // Instant hardware key generation for the selected mode
+        if (isPin) {
+            com.clawstack.shellguard.totp.crypto.AndroidKeyStoreHelper.getOrCreatePinSecretKey()
+        } else {
+            com.clawstack.shellguard.totp.crypto.AndroidKeyStoreHelper.getOrCreatePasswordSecretKey()
+        }
 
         EncryptedDeviceVault.storeSecureString(context, "pref_vault_secret", trimmedSecret)
         EncryptedDeviceVault.storeSecureString(context, "pref_vault_secret_hash", secretHash)

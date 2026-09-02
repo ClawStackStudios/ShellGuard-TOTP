@@ -2,7 +2,16 @@
 
 All notable changes to the ShellGuard TOTP project will be documented in this file.
 
-## [0.0.1.0] - 2026-09-01 (Build 7)
+## [0.0.1.0] - 2026-09-02 (Build 7)
+### Added
+- **Vault Security Orientation (Task 18)**:
+  - Created `VaultSecurityScreen.kt` in `ui/screens/onboarding/` featuring educational zero-knowledge security cards, PIN/Password radio selector with a live 4-tier password entropy meter, and biometric toggle card.
+  - Added dedicated Android KeyStore hardware wrapper key generators (`KEY_ALIAS_PIN_WRAPPER`, `KEY_ALIAS_PASSWORD_WRAPPER`) in `AndroidKeyStoreHelper.kt` and hooked into `AuthRepository.hatchVault()` and `updateVaultSecret()`.
+- **Spotlight Guided Tour Enhancements (Task 17 & 18)**:
+  - Overhauled `SpotlightOverlay.kt` to use Jetpack Compose `Spring.DampingRatioMediumBouncy` physics for animated target translation and radius scaling.
+  - Added configurable, density-aware radial padding (+18dp) around interactive UI targets to ensure breathable, non-cramped cutouts.
+  - Added double-ringed bioluminescent pulsing halos and stacked action controls featuring a centered `[ Skip Tutorial ]` button.
+
 ### Changed
 - **Architectural Refactor — One-Way Mirror Sync**:
   - Deprecated bidirectional delta sync in `TotpRepository`. Upstream pushes are removed; the app now functions as a read-only mirror for remote codes.
@@ -14,6 +23,11 @@ All notable changes to the ShellGuard TOTP project will be documented in this fi
 - **Unified Export Architecture**:
   - Modified `BackupManager` to exclusively backup and restore local codes in the unified `sgtotp.bak` JSON schema.
   - Authored `compatibility_layer.md` in the ShellGuard web repo to establish the `sgtotp.bak` native format across both applications.
+- **Navigation Routing**:
+  - Replaced `HatchVaultScreen` with `VaultSecurityScreen` in `TotpNavHost.kt` and transitioned fresh onboarding directly to `TotpEmptyState`.
+
+### Removed
+- **Legacy Components**: Cleaned up obsolete `HatchVaultScreen.kt`.
 
 ### Fixed
 - **Roadmap Versioning Drift**: Corrected phase numbering and semantic versions in `ROADMAP.md` and `meta-prompt-ai-studio.md` to properly increment off `v0.0.1.0 (Build 7)`.

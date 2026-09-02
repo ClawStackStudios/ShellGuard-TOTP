@@ -21,6 +21,8 @@ object AndroidKeyStoreHelper {
      * Standard Key Alias for the biometric wrapper key.
      */
     const val KEY_ALIAS_BIOMETRIC_WRAPPER = "sg_totp_biometric_wrapper"
+    const val KEY_ALIAS_PIN_WRAPPER = "sg_totp_pin_wrapper"
+    const val KEY_ALIAS_PASSWORD_WRAPPER = "sg_totp_password_wrapper"
 
     private const val ANDROID_KEYSTORE_PROVIDER = "AndroidKeyStore"
     private const val TRANSFORMATION = "${KeyProperties.KEY_ALGORITHM_AES}/${KeyProperties.BLOCK_MODE_GCM}/${KeyProperties.ENCRYPTION_PADDING_NONE}"
@@ -42,7 +44,7 @@ object AndroidKeyStoreHelper {
      * @return SecretKey residing in Android KeyStore / TEE / StrongBox.
      */
     @Synchronized
-    fun getOrCreateBiometricKey(
+    fun getOrCreateKey(
         alias: String = KEY_ALIAS_BIOMETRIC_WRAPPER,
         userAuthenticationRequired: Boolean = true,
         authTimeoutSeconds: Int = -1
@@ -97,10 +99,21 @@ object AndroidKeyStoreHelper {
         return keyGenerator.generateKey()
     }
 
+    // Legacy support for previous calls
+    fun getOrCreateBiometricKey(
+        alias: String = KEY_ALIAS_BIOMETRIC_WRAPPER,
+        userAuthenticationRequired: Boolean = true,
+        authTimeoutSeconds: Int = -1
+    ) = getOrCreateKey(alias, userAuthenticationRequired, authTimeoutSeconds)
+
     /**
      * Alias for getOrCreateBiometricKey with default parameters.
      */
-    fun getOrCreateBiometricSecretKey(): SecretKey = getOrCreateBiometricKey()
+    fun getOrCreateBiometricSecretKey(): SecretKey = getOrCreateKey(KEY_ALIAS_BIOMETRIC_WRAPPER, true)
+
+    fun getOrCreatePinSecretKey(): SecretKey = getOrCreateKey(KEY_ALIAS_PIN_WRAPPER, false)
+    
+    fun getOrCreatePasswordSecretKey(): SecretKey = getOrCreateKey(KEY_ALIAS_PASSWORD_WRAPPER, false)
 
     /**
      * Obtains an initialized Cipher for BiometricPrompt.CryptoObject authentication.
@@ -121,7 +134,7 @@ object AndroidKeyStoreHelper {
      * Initializes a Cipher in ENCRYPT_MODE suitable for wrapping inside a `BiometricPrompt.CryptoObject`.
      */
     fun createEncryptCipher(alias: String = KEY_ALIAS_BIOMETRIC_WRAPPER): Cipher {
-        val secretKey = getOrCreateBiometricKey(alias)
+        val secretKey = getOrCreateKey(alias)
         val cipher = Cipher.getInstance(TRANSFORMATION)
         cipher.init(Cipher.ENCRYPT_MODE, secretKey)
         return cipher
@@ -132,7 +145,7 @@ object AndroidKeyStoreHelper {
      * Suitable for wrapping inside a `BiometricPrompt.CryptoObject`.
      */
     fun createDecryptCipher(iv: ByteArray, alias: String = KEY_ALIAS_BIOMETRIC_WRAPPER): Cipher {
-        val secretKey = getOrCreateBiometricKey(alias)
+        val secretKey = getOrCreateKey(alias)
         val cipher = Cipher.getInstance(TRANSFORMATION)
         val spec = GCMParameterSpec(TAG_LENGTH_BITS, iv)
         cipher.init(Cipher.DECRYPT_MODE, secretKey, spec)

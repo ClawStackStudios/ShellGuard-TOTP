@@ -188,13 +188,13 @@ Description: Implement `IntakeWelcomeScreen.kt` (**First-Run Brand Hero Screen**
 > Phase Feature Set Overview:
 > Delivers the educational Vault Security configuration screen explaining ShellGuard's zero-knowledge protection options, paired with an enhanced Spotlight Tour featuring enlarged, breathable circular cutouts that comfortably frame UI targets without crowding.
 
-- [ ]  Task 17: [Functionality] Android KeyStore Protection Orchestrator & Spotlight Geometry Engine
+- [x]  Task 17: [Functionality] Android KeyStore Protection Orchestrator & Spotlight Geometry Engine
 
 Description: Refactor `AndroidKeyStoreHelper` and `AuthRepository` to support unified protection configuration (PIN vs Password vs Biometrics) with instant hardware key generation. Update `SpotlightOverlay.kt` geometry calculation engine to calculate enlarged, comfortable circular cutouts with configurable padding (+16dp to +20dp radial offset beyond target bounds) and smooth spring easing.
 
 > Success Criteria: Protection orchestrator binds selected PIN/Password and Biometrics into Android KeyStore AES-256-GCM hardware keys. Spotlight cutout geometry computes comfortable, non-cramped bounding circles with 60fps canvas clipping.
 
-- [ ]  Task 18: [UI Component] Vault Security Orientation Screen & Enhanced Spotlight Overlay
+- [x]  Task 18: [UI Component] Vault Security Orientation Screen & Enhanced Spotlight Overlay
 
 Description: Implement `VaultSecurityScreen.kt` and update `SpotlightOverlay.kt`:
 - **Vault Security Orientation**: Educational screen explaining zero-knowledge encryption, hardware KeyStore isolation, and offline autonomy.
@@ -334,3 +334,33 @@ Description: Implement:
 
 
 
+
+## Phase 15: ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.0.1.1 (Build 9)]
+
+> Phase Feature Set Overview:
+> Introduces the ShellGuard sovereign `hu-` ClawKey as a third vault creation and import authentication method, bringing the Android identity model into parity with the ShellGuard web platform. Delivers a reusable dual-tab `ClawKeyInputForm` (Paste / Upload), consistent format validation, correct lock screen branching, proper export envelope stamping, and a pre-import duplicate resolution engine.
+
+- [ ]  Task 29: [Functionality] ClawKey Mode Engine — VaultProtectionMode, AndroidKeyStoreHelper, AuthRepository & Duplicate Resolver
+
+Description: Implement the full back-end plumbing for ClawKey vault mode:
+- **`VaultProtectionMode`**: Add `CLAWKEY` as a fourth enum value alongside `PIN`, `PASSWORD`, `BIOMETRICS`.
+- **`AndroidKeyStoreHelper.kt`**: Add `KEY_ALIAS_CLAWKEY_WRAPPER` constant and `getOrCreateClawKeySecretKey()` generator (mirrors existing PIN/Password wrapper pattern).
+- **`AuthRepository.kt`**: In `hatchVault()` and `updateVaultSecret()`, add a `CLAWKEY` branch that generates the hardware KeyStore wrapper key and stores the validated `hu-` key string as the vault secret — routing through the existing password KDF pathway (no new derivation layer).
+- **`ClawKeyValidator.kt`** *(new, `crypto/` package)*: Single pure-function object implementing the canonical validation rule: `key.trim().startsWith("hu-") && key.trim().length == 67`. Used by all three surfaces (vault creation, lock, import) to prevent format drift.
+- **`BackupManager.kt` — Duplicate Resolution**: Before calling `totpItemDao.upsertItems()` in both `importEncryptedBackup()` and `importPlainJsonBackup()`, query existing items and compute a normalized fingerprint per record (`secret.uppercase().replace(" ","").replace("-","")` + `title.trim().lowercase()`). Skip any incoming item whose fingerprint matches an existing record. Return the count of actually inserted items (not total processed).
+- **`BackupManager.kt` — Export Stamping**: `exportEncryptedBackup()` already accepts `protectionMode: String` — ensure the `SettingsScreen` caller passes `vaultMode.name` which will now correctly emit `"CLAWKEY"` for ClawKey vaults.
+
+> Success Criteria: `CLAWKEY` mode successfully initializes hardware KeyStore key, stores the `hu-` key as vault secret, and `ClawKeyValidator` rejects any string not matching the `hu-` prefix + 67-char invariant. Duplicate imports are silently skipped with an accurate inserted-count returned.
+
+- [ ]  Task 30: [UI Component] ClawKeyInputForm, VaultSecurityScreen Integration, LockScreen Branch & Settings Import Sheet
+
+Description: Implement all user-facing surfaces for the ClawKey mode:
+- **`ClawKeyInputForm.kt`** *(new, `ui/components/` package)*: Reusable dual-tab composable mirroring the ShellGuard web `QuickLoginModal`:
+  - **"Key Paste" tab**: Monospace `OutlinedTextField` with `hu-xxxxxxxx...` placeholder. CTA button disabled until `ClawKeyValidator.isValid()` returns true. Inline error chip on invalid format.
+  - **"Upload File" tab**: Android SAF `OpenDocument` launcher restricted to `application/json`. On file selected: parse `identity.token` field from JSON, run `ClawKeyValidator`. Show file name badge on success. Same CTA button pattern.
+  - Both tabs call the same `onKeyResolved(huKey: String)` callback — the form's consumer never needs to know which tab the key came from.
+- **`VaultSecurityScreen.kt`**: Add a third tab `[ 🗝️ ClawKey ]` to the existing PIN / Password selector. When selected, render `ClawKeyInputForm` in place of the PIN/Password input area. On `onKeyResolved`, call `onVaultHatched(huKey, isPin = false, enableBiometrics = false)`.
+- **`LockScreen.kt`**: Add `VaultProtectionMode.CLAWKEY` branch: render `ClawKeyInputForm` as the unlock form. On `onKeyResolved`, call `onUnlockWithSecret(huKey)`.
+- **`SettingsScreen.kt` — Import Flow**: After `MultiVaultBackupPreValidator` resolves the backup file, inspect `protectionMode`. If `"CLAWKEY"`, show a `ModalBottomSheet` hosting `ClawKeyInputForm` before calling `importEncryptedBackup()`. On wrong key, surface a sanitized error: *"Invalid ClawKey — vault could not be decrypted."*
+
+> Success Criteria: A user can create a vault secured by their `hu-` ClawKey (paste or upload), be correctly prompted for their ClawKey on app lock/restart, export a `.sgtotp.bak` with `protectionMode = "CLAWKEY"` stamped in the envelope, and re-import that backup on another device using only their ClawKey. Duplicate TOTP entries are silently skipped during all import flows.

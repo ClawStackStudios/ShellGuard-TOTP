@@ -5,6 +5,21 @@
 
 ---
 
+## `v0.0.1.0` — Phase 9: Vault Security, Grouped Dashboard & Spotlight Tour (Build 7)
+
+```xml
+<en-US>
+• Grouped Vault Separation: Clear visual segregation between Local Vault codes and Synced Server codes.
+• One-Way Mirror Sync: Seamless read-only syncing with self-hosted ShellGuard servers.
+• Vault Security Orientation: Zero-knowledge PIN/Password setup with real-time strength meter.
+• Hardware Key Isolation: Android KeyStore AES-256-GCM hardware protection across all modes.
+• Enlarged Spotlight Tour: Fluid spring guidance with breathable cutouts.
+• Android 16 (API 36) & 16 KB kernel ready.
+</en-US>
+```
+
+---
+
 ## `v0.0.0.2` — Phase 7: First-Run Intake & Habitat Import (Build 4)
 
 ```xml

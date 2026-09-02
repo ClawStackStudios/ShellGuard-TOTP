@@ -17,7 +17,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.clawstack.shellguard.totp.ui.onboarding.IntakeViewModel
 import com.clawstack.shellguard.totp.ui.screens.AddSecretScreen
 import com.clawstack.shellguard.totp.ui.screens.GatewayScreen
-import com.clawstack.shellguard.totp.ui.screens.HatchVaultScreen
 import com.clawstack.shellguard.totp.ui.screens.LockScreen
 import com.clawstack.shellguard.totp.ui.screens.LoginScreen
 import com.clawstack.shellguard.totp.ui.screens.QrScannerScreen
@@ -88,7 +87,7 @@ fun TotpNavHost(
             enterTransition = { slideInHorizontally(initialOffsetX = { it }) + fadeIn() },
             exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) + fadeOut() }
         ) {
-            HatchVaultScreen(
+            com.clawstack.shellguard.totp.ui.screens.onboarding.VaultSecurityScreen(
                 onVaultHatched = { masterSecret, isPin, enableBiometrics ->
                     authViewModel.hatchVault(masterSecret, isPin, enableBiometrics)
                     navController.navigate(Screen.CodeList.route) {

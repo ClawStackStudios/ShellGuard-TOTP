@@ -750,3 +750,61 @@ Verify widgets update reliably on home screens with tap-to-copy responsiveness, 
 
 
 
+
+---
+
+## 📱 Stage 16: Phase 15 Prompt — ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.0.1.1 (Build 9)]
+
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-15-clawkey-vault-creation-import-authentication--duplicate-resolution-v0011-build-9) for complete specifications on **Task 29** and **Task 30**.
+> **📖 Required Context Files for Phase 15**:
+> 1. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — Section 2 (AndroidKeyStoreHelper patterns).
+> 2. [`room-storage-schema.md`](./room-storage-schema.md) — Section 6 (BackupManager.kt import/export).
+> 3. [`ui-ux-design-system.md`](./ui-ux-design-system.md) — Section 9 (VaultSecurityScreen dual-tab pattern).
+> 4. **External Reference**: [`ShellGuard/src/components/QuickLoginModal.tsx`](../../ShellGuard/src/components/QuickLoginModal.tsx) — The web platform's dual-tab ClawKey form (Paste / Upload) that the Android `ClawKeyInputForm` must mirror in UX behaviour.
+
+Copy and paste this prompt to execute **Phase 15 (Tasks 29 & 30)**:
+
+```markdown
+# PHASE 15 EXECUTION: ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.0.1.1 (Build 9)]
+
+## 📖 Reference Documentation & Roadmap
+Before writing code, inspect:
+- `ROADMAP.md`: Phase 15 (Task 29: ClawKey Mode Engine · Task 30: ClawKeyInputForm & UI Integration).
+- `crypto-and-keystore.md`: Section 2 (AndroidKeyStoreHelper KEY_ALIAS patterns).
+- `room-storage-schema.md`: Section 6 (BackupManager.kt — importEncryptedBackup, importPlainJsonBackup, upsertItems).
+- `ui-ux-design-system.md`: Section 9 (VaultSecurityScreen tab selector pattern).
+- `ShellGuard/src/components/QuickLoginModal.tsx`: The canonical dual-tab (Key Paste / Upload File) reference implementation. The Android form must mirror this UX exactly.
+
+Execute Phase 15 adhering to the Functionality + UI Component pairing:
+
+### Task 29: [Functionality] ClawKey Mode Engine — VaultProtectionMode, AndroidKeyStoreHelper, AuthRepository & Duplicate Resolver
+- **`VaultProtectionMode`**: Add `CLAWKEY` as a fourth enum value.
+- **`AndroidKeyStoreHelper.kt`**: Add `KEY_ALIAS_CLAWKEY_WRAPPER` and `getOrCreateClawKeySecretKey()`.
+- **`AuthRepository.kt`**: Add `CLAWKEY` branch in `hatchVault()` and `updateVaultSecret()`. Store the validated `hu-` key string as vault secret via the existing password KDF pathway.
+- **`ClawKeyValidator.kt`** (new, `crypto/` package): Pure-function object with:
+  ```kotlin
+  fun isValid(key: String): Boolean = key.trim().startsWith("hu-") && key.trim().length == 67
+  ```
+  This is the single source of truth — used by all three surfaces.
+- **`BackupManager.kt` — Duplicate Resolution**: Before `upsertItems()` in both `importEncryptedBackup()` and `importPlainJsonBackup()`:
+  - Compute per-record fingerprint: `secret.uppercase().replace(" ","").replace("-","")` + `title.trim().lowercase()`.
+  - Query existing items, build a fingerprint set.
+  - Filter incoming list to only items whose fingerprint is NOT already present.
+  - Call `upsertItems()` only on the filtered list.
+  - Return count of actually inserted items.
+- **`BackupManager.kt` — Export**: Confirm `SettingsScreen` passes `vaultMode.name` as `protectionMode`, which now correctly emits `"CLAWKEY"`.
+
+### Task 30: [UI Component] ClawKeyInputForm, VaultSecurityScreen Integration, LockScreen Branch & Settings Import Sheet
+- **`ClawKeyInputForm.kt`** (new, `ui/components/`): Reusable dual-tab composable:
+  - **"Key Paste" tab**: Monospace `OutlinedTextField`, `hu-xxxxxxxx...` placeholder, `KeyboardType.Password`. CTA disabled until `ClawKeyValidator.isValid()` is true. Inline error on invalid format.
+  - **"Upload File" tab**: SAF `OpenDocument` launcher (MIME `application/json`). Parse `identity.token` from JSON. Validate with `ClawKeyValidator`. Show file name badge on success.
+  - Both tabs call `onKeyResolved(huKey: String)` — consumer is tab-agnostic.
+- **`VaultSecurityScreen.kt`**: Add third tab `ClawKey` to PIN / Password selector row. Render `ClawKeyInputForm` when selected. On `onKeyResolved`, call `onVaultHatched(huKey, isPin = false, enableBiometrics = false)`.
+- **`LockScreen.kt`**: Add `VaultProtectionMode.CLAWKEY` branch — render `ClawKeyInputForm`. On `onKeyResolved`, call `onUnlockWithSecret(huKey)`.
+- **`SettingsScreen.kt`**: In the import file launcher callback, after `MultiVaultBackupPreValidator` resolves the file:
+  - If `result.protectionMode == "CLAWKEY"`: show `ModalBottomSheet` containing `ClawKeyInputForm`.
+  - On `onKeyResolved`, call `backupManager.importEncryptedBackup(input, huKey, ownerUuid)`.
+  - On decryption failure, surface sanitized error: *"Invalid ClawKey — vault could not be decrypted."*
+
+Verify: A user can create a ClawKey vault (paste or upload), be correctly prompted for their ClawKey on lock/restart, export a `.sgtotp.bak` with `protectionMode = "CLAWKEY"` stamped in the envelope, re-import on another device using their ClawKey, and duplicate TOTP entries are silently skipped during all import flows.
+```

@@ -65,11 +65,34 @@ fun SpotlightOverlay(
     step: Int, // 1: Settings on main screen, 2: Connect to Server in settings, 3: Completed
     targetCenter: Offset? = null,
     targetRadius: Float = 80f,
+    targetRadiusPadding: androidx.compose.ui.unit.Dp = 18.dp,
     onNext: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary
+    val density = androidx.compose.ui.platform.LocalDensity.current
+    val paddingPx = with(density) { targetRadiusPadding.toPx() }
+    val computedRadius = if (targetRadius > 0f) targetRadius + paddingPx else 0f
+
+    val animCenter by androidx.compose.animation.core.animateOffsetAsState(
+        targetValue = targetCenter ?: Offset.Zero,
+        animationSpec = androidx.compose.animation.core.spring(
+            dampingRatio = androidx.compose.animation.core.Spring.DampingRatioMediumBouncy,
+            stiffness = androidx.compose.animation.core.Spring.StiffnessLow
+        ),
+        label = "spotlightCenterAnim"
+    )
+
+    val animRadius by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = computedRadius,
+        animationSpec = androidx.compose.animation.core.spring(
+            dampingRatio = androidx.compose.animation.core.Spring.DampingRatioMediumBouncy,
+            stiffness = androidx.compose.animation.core.Spring.StiffnessLow
+        ),
+        label = "spotlightRadiusAnim"
+    )
+
     val infiniteTransition = rememberInfiniteTransition(label = "halo_pulse")
     val pulseScale by infiniteTransition.animateFloat(
         initialValue = 1.0f,
@@ -121,21 +144,21 @@ fun SpotlightOverlay(
                 if (targetCenter != null && targetCenter.isSpecified && targetRadius > 0f) {
                     drawCircle(
                         color = Color.Transparent,
-                        radius = targetRadius,
-                        center = targetCenter,
+                        radius = animRadius,
+                        center = animCenter,
                         blendMode = BlendMode.Clear
                     )
                     // Draw outer glowing pulsing rings
                     drawCircle(
                         color = primaryColor.copy(alpha = pulseAlpha),
-                        radius = targetRadius * pulseScale,
-                        center = targetCenter,
+                        radius = animRadius * pulseScale,
+                        center = animCenter,
                         style = Stroke(width = 2.dp.toPx())
                     )
                     drawCircle(
                         color = primaryColor,
-                        radius = targetRadius,
-                        center = targetCenter,
+                        radius = animRadius,
+                        center = animCenter,
                         style = Stroke(width = 2.dp.toPx())
                     )
                 }
@@ -207,22 +230,11 @@ fun SpotlightOverlay(
                         Spacer(modifier = Modifier.height(20.dp))
 
                         // Actions
-                        Row(
+                        Column(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            OutlinedButton(
-                                onClick = onDismiss,
-                                shape = RoundedCornerShape(10.dp),
-                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .testTag("spotlight_skip_button")
-                            ) {
-                                Text("Skip Tutorial", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
-                            }
-
                             Button(
                                 onClick = onNext,
                                 shape = RoundedCornerShape(10.dp),
@@ -231,15 +243,26 @@ fun SpotlightOverlay(
                                     contentColor = MaterialTheme.colorScheme.onPrimary
                                 ),
                                 modifier = Modifier
-                                    .weight(1f)
+                                    .fillMaxWidth()
                                     .testTag("spotlight_next_button")
                             ) {
                                 Text(
                                     text = if (step == 1) "Open Settings" else "Got It!",
                                     color = MaterialTheme.colorScheme.onPrimary,
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 13.sp
+                                    fontSize = 14.sp
                                 )
+                            }
+
+                            OutlinedButton(
+                                onClick = onDismiss,
+                                shape = RoundedCornerShape(10.dp),
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .testTag("spotlight_skip_button")
+                            ) {
+                                Text("Skip Tutorial", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
                             }
                         }
                     }
