@@ -135,13 +135,15 @@ When running Robolectric tests in CI environments (like headless Linux runners),
 **The Fix:** For in-memory `Room.inMemoryDatabaseBuilder` databases, **do not call `database.close()`**. Allow the test to finish and the database to naturally garbage collect. Attempting to explicitly `clear()` the ViewModel to stop the scope will trigger the exact same cancellation crash.
 
 ### 2. The Headless `composeTestRule.waitUntil` Timeout
-**The Trap:** In a test that evaluates `ViewModel` state without rendering UI, using `composeTestRule.waitUntil(5000) { condition }` to await a `Dispatchers.IO` coroutine will fail with a `ComposeTimeoutException`. If `composeTestRule.setContent {}` is never called, the compose clock is never initialized in the test tree, causing `waitUntil` to stall without actually pumping the main looper.
-**The Fix:** Avoid `waitUntil` if there is no UI. Instead, use a manual polling loop to pump the looper directly:
+**The Trap:** In headless Linux CI runners (Robolectric), `composeTestRule.waitUntil(5000) { condition }` frequently stalls with a `ComposeTimeoutException` regardless of whether `setContent {}` was invoked. In headless mode, Compose test clocks do not auto-advance during semantic tree queries without explicitly pumping the main looper.
+**The Fix:** Avoid `waitUntil` in Robolectric unit tests. Instead, use a manual polling loop that explicitly cycles the main looper and advances the compose clock:
 ```kotlin
 var retries = 0
-while (!completed && retries < 50) {
+while (composeTestRule.onAllNodesWithTag("target_tag").fetchSemanticsNodes().isEmpty() && retries < 50) {
     Thread.sleep(100)
     org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle()
+    composeTestRule.mainClock.advanceTimeBy(200)
     retries++
 }
+composeTestRule.mainClock.advanceTimeBy(1000)
 ```

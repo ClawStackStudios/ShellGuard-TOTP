@@ -25,37 +25,42 @@ This skill provides the definitive, battle-tested playbook for cryptographically
 
 ---
 
-## 🛠️ 1. Conditional AGP Signing in `app/build.gradle.kts`
+## 🛠️ 1. Unconditional AGP Signing in `app/build.gradle.kts`
+
+> [!CAUTION]
+> **Configuration Cache Trap**: Do NOT wrap `create("release")` in `if (releaseKeystoreFile.exists())`.
+> When CI runs `testDebugUnitTest` before decoding the keystore, Gradle caches the project state *without* the release signing configuration. When `bundleRelease` runs later, Gradle reuses the cached configuration and silently drops signing or fails.
 
 ```kotlin
 android {
     // ...
-    val releaseKeystoreFile = file("../my-upload-key.jks")
-    val hasReleaseKeystore = releaseKeystoreFile.exists()
-
     signingConfigs {
-        if (hasReleaseKeystore) {
-            create("release") {
-                storeFile = releaseKeystoreFile
-                storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
-                keyAlias = System.getenv("KEY_ALIAS") ?: ""
-                keyPassword = System.getenv("KEY_PASSWORD") ?: ""
-                enableV1Signing = true
-                enableV2Signing = true
-            }
+        val releaseKeystorePath = System.getenv("KEYSTORE_PATH") ?: "${rootDir}/my-upload-key.jks"
+        val releaseKeystoreFile = file(releaseKeystorePath)
+
+        create("release") {
+            val sPassword = System.getenv("STORE_PASSWORD")
+            val kPassword = System.getenv("KEY_PASSWORD")?.takeIf { it.isNotBlank() } ?: sPassword
+            val kAlias = System.getenv("KEY_ALIAS")?.takeIf { it.isNotBlank() } ?: "upload"
+
+            storeFile = releaseKeystoreFile
+            storePassword = sPassword
+            keyAlias = kAlias
+            keyPassword = kPassword
+            enableV1Signing = true
+            enableV2Signing = true
         }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            if (hasReleaseKeystore) {
-                signingConfig = signingConfigs.getByName("release")
+            signingConfigs.findByName("release")?.let {
+                signingConfig = it
             }
         }
     }

@@ -58,6 +58,9 @@ class LocalModeUnlockAndVaultTest {
         database = app.database
         authRepository = app.authRepository
         totpRepository = app.totpRepository
+        runBlocking {
+            database.totpItemDao().clearVault("local")
+        }
         authViewModel = AuthViewModel(app)
         totpViewModel = TotpViewModel(app)
         // Dismiss spotlight guided tour so it does not obscure underlying screen elements in UI tests
@@ -76,6 +79,7 @@ class LocalModeUnlockAndVaultTest {
     fun testLocalModeHatchWithPinUnlock() {
         // 1. Hatch vault in PIN mode with secret "5678" in short runBlocking
         runBlocking {
+            database.totpItemDao().clearVault("local")
             authViewModel.hatchVault("5678", isPin = true, enableBiometrics = false)
             assertTrue(authViewModel.isVaultHatched.first())
             assertEquals(VaultProtectionMode.PIN, authViewModel.vaultMode.first())
@@ -112,8 +116,9 @@ class LocalModeUnlockAndVaultTest {
 
     @Test
     fun testLocalModeVaultLandingRendersEmptyStateAfterHatch() {
-        // 1. Hatch vault in short runBlocking
+        // 1. Hatch vault in short runBlocking and ensure clean table
         runBlocking {
+            database.totpItemDao().clearVault("local")
             authViewModel.hatchVault("5678", isPin = true, enableBiometrics = false)
             assertTrue(authViewModel.isVaultHatched.first())
         }
