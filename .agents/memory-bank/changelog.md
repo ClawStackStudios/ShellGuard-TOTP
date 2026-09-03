@@ -29,11 +29,13 @@ All notable changes to the ShellGuard TOTP project will be documented in this fi
 ### Removed
 - **Legacy Components**: Cleaned up obsolete `HatchVaultScreen.kt`.
 
-### Fixed
-- **Roadmap Versioning Drift**: Corrected phase numbering and semantic versions in `ROADMAP.md` and `meta-prompt-ai-studio.md` to properly increment off `v0.0.1.0 (Build 7)`.
-- **UI Constraints & Copy**:
-  - Bound `SwipeableTotpCard` deletion gesture strictly to Local Codes (`isLocalOnly = true`), preventing accidental local swipe deletions of synchronized read-only records.
-  - Updated "Local Storage & Offline Codes" copy in `SettingsScreen.kt` to clearly state that remote codes are pulled as read-only mirrors and local codes remain on device.
+- **CI Test Suite Hardening**:
+  - Resolved headless KeyStore `NoSuchAlgorithmException` in `AndroidKeyStoreHelper.kt` with a deterministic HMAC-SHA256 test fallback matching `EncryptedDeviceVault`.
+  - Resolved `UnsatisfiedLinkError: SQLiteConnectionNatives` in Robolectric tests by detecting Robolectric via `Class.forName("org.robolectric.Robolectric")` and explicitly assigning `FrameworkSQLiteOpenHelperFactory()`.
+  - Resolved JBR container `SIGBUS` in `PerfLongVariant::sample()+0x1b` by adding `-XX:-UsePerfData` to `gradle.properties` and test runner `jvmArgs`.
+  - Redirected test `java.io.tmpdir` to `app/build/tmp` to prevent container temp folder permissions exceptions.
+  - Re-aligned test assertions in `LocalModeUnlockAndVaultTest` and `BackupManagerTest` to match One-Way Sync and grouped dashboard invariants.
+  - Generated and committed `gradlew` and `gradle-wrapper.jar` to ensure autonomous local and CI test execution works out-of-the-box.
 
 
 ## [0.0.0.2] - 2026-08-31

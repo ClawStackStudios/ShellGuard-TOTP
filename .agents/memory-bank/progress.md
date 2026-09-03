@@ -27,5 +27,17 @@
 - ✅ **First-Run Brand Hero Welcome & "Import Habitat" Engine (Task 14)**: Welcoming brand hero onboarding screen (`IntakeWelcomeScreen`) with bioluminescent glowing shield aura, SAF OpenDocument file picker launcher, multi-vault pre-validation engine (`MultiVaultBackupPreValidator`) supporting ShellGuard Encrypted Habitats, Bitwarden Vaults (with zero-knowledge in-RAM password/note stripping), Bitwarden Authenticator, Aegis, and 2FAS, encrypted habitat password unlock modal bottom sheet, token summary confirmation badge, and smooth breathing pulse forward navigation.
 - ✅ **Vault Security Orientation & Hardware KeyStore Isolation (Tasks 17 & 18)**: Educational zero-knowledge orientation screen (`VaultSecurityScreen`), interactive PIN/Password protection selector with a live 4-tier password entropy meter, biometric toggle card, dedicated Android KeyStore AES-256-GCM hardware key generators (`KEY_ALIAS_PIN_WRAPPER`, `KEY_ALIAS_PASSWORD_WRAPPER`), and smooth landing onto the pristine empty vault dashboard (`TotpEmptyState`).
 - ✅ **Physics-Based Spring Spotlight Tour (Tasks 17 & 18)**: Upgraded `SpotlightOverlay` with `Spring.DampingRatioMediumBouncy` animated geometry, density-aware +18dp radial breathing offset, pulsing cyan halos, and stacked action controls featuring a centered `[ Skip Tutorial ]` button.
+- ✅ **Headless CI & Test Suite Hardening**: Fixed test regressions and KeyStore headless fallback in `AndroidKeyStoreHelper`, wired `FrameworkSQLiteOpenHelperFactory` into Robolectric test runs, added container flags `-XX:-UsePerfData`, and verified 100% green pass across all 79 unit tests.
+- ✅ **Milestone 1 / Release v0.0.1.0 (Build 7)**: Tagged, verified, signed, and published to GitHub Releases.
 
-
+## What's Next
+- ⏳ **Phase 10: Expandable Floating Actions Speed Dial (QR, Image & Manual) [v0.0.1.2 (Build 9)]**:
+  - Task 19: [Functionality] Image QR Decoder Pipeline (`ImageQrDecoder` with ML Kit) & Expandable FAB Interaction Controller (`SpeedDialState`).
+  - Task 20: [UI Component] Animated Speed Dial FAB (`ExpandableSpeedDialFab`) & Elevated Action Pills on `TotpListScreen.kt`.
+- ⏳ **Phase 11: Categorized Settings Hub & Appearance/Behavior Customization [v0.0.2.0 (Build 10)]**:
+  - Task 21: [Functionality] Preferences Store Architecture & Entry Formatting Engine.
+  - Task 22: [UI Component] Categorized Settings Hub (`SettingsMetaScreen`), Appearance & Behavior Sub-screens.
+- ⏳ **Phase 12: Security Suite, Panic Purge & Security Audit Logging [v0.0.2.1 (Build 11)]**
+- ⏳ **Phase 13: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 12)]**
+- ⏳ **Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 13)]**
+- ⏳ **Phase 15: Sovereign ClawKey (`hu-`) Vault Creation & Import Integration [v0.1.1.0 (Build 14)]**

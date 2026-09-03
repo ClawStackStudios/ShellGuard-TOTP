@@ -552,25 +552,25 @@ Verify security setup binds to KeyStore, spotlight cutouts are spacious and clea
 
 ---
 
-## ⚡ Stage 11: Phase 10 Prompt — Expandable Floating Actions Speed Dial (QR, Image & Manual) [v0.0.1.1 (Build 6)]
+## ⚡ Stage 11: Phase 10 Prompt — Expandable Floating Actions Speed Dial (QR, Image & Manual) [v0.0.1.2 (Build 9)]
 
-> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-9-expandable-floating-actions-speed-dial-qr-image--manual-v0011-build-6) for complete specifications on **Task 19** and **Task 20**.  
-> **📖 Required Context Files for Phase 9**:  
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-10-expandable-floating-actions-speed-dial-qr-image--manual-v0012-build-9) for complete specifications on **Task 19** and **Task 20**.  
+> **📖 Required Context Files for Phase 10**:  
 > 1. [`totp-engine-spec.md`](./totp-engine-spec.md) — ML Kit QrCodeAnalyzer.kt.  
 > 2. [`DESIGN.md`](./DESIGN.md) — Section 6 (ScannerFab & Speed Dial tokens).  
 
-Copy and paste this prompt to execute **Phase 9 (Tasks 17 & 18)**:
+Copy and paste this prompt to execute **Phase 10 (Tasks 19 & 20)**:
 
 ```markdown
-# PHASE 9 EXECUTION: Expandable Floating Actions Speed Dial (QR, Image & Manual) [v0.0.1.1 (Build 6)]
+# PHASE 10 EXECUTION: Expandable Floating Actions Speed Dial (QR, Image & Manual) [v0.0.1.2 (Build 9)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:
-- `ROADMAP.md`: Phase 9 (Task 19: Image QR Decoder · Task 20: ExpandableSpeedDialFab).
+- `ROADMAP.md`: Phase 10 (Task 19: Image QR Decoder · Task 20: ExpandableSpeedDialFab).
 - `totp-engine-spec.md`: Section 5 (QrCodeAnalyzer.kt & Image URI decoder).
 - `DESIGN.md`: Section 6 (Floating Actions & Scrim Tokens).
 
-Execute Phase 9 adhering to the Functionality + UI Component pairing:
+Execute Phase 10 adhering to the Functionality + UI Component pairing:
 
 ### Task 19: [Functionality] Image QR Decoder Pipeline & Expandable FAB Interaction Controller
 - Implement `ImageQrDecoder` using Google ML Kit Barcode Scanning (`InputImage.fromFilePath` / `fromBitmap`) on URI streams.
@@ -590,24 +590,24 @@ Verify FAB rotates smoothly, scrim dims background, tapping outside closes menu,
 
 ---
 
-## ⚙️ Stage 12: Phase 11 Prompt — Categorized Settings Hub & Appearance/Behavior Customization [v0.0.2.0 (Build 7) — Milestone 2]
+## ⚙️ Stage 12: Phase 11 Prompt — Categorized Settings Hub & Appearance/Behavior Customization [v0.0.2.0 (Build 10) — Milestone 2]
 
-> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-10-categorized-settings-hub--appearancebehavior-customization-v0020-build-7--milestone-2) for complete specifications on **Task 21** and **Task 22**.  
-> **📖 Required Context Files for Phase 10**:  
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-11-categorized-settings-hub--appearancebehavior-customization-v0020-build-10--milestone-2) for complete specifications on **Task 21** and **Task 22**.  
+> **📖 Required Context Files for Phase 11**:  
 > 1. [`DESIGN.md`](./DESIGN.md) — Section 2 (Theme Tokens) & Section 9 (Settings Navigation).  
 > 2. [`ui-ux-design-system.md`](./ui-ux-design-system.md) — Section 4 (Settings Architecture).  
 
-Copy and paste this prompt to execute **Phase 10 (Tasks 19 & 20)**:
+Copy and paste this prompt to execute **Phase 11 (Tasks 21 & 22)**:
 
 ```markdown
-# PHASE 10 EXECUTION: Categorized Settings Hub & Appearance/Behavior Customization [v0.0.2.0 (Build 7)]
+# PHASE 11 EXECUTION: Categorized Settings Hub & Appearance/Behavior Customization [v0.0.2.0 (Build 10)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:
-- `ROADMAP.md`: Phase 10 (Task 21: Preferences Store · Task 22: SettingsMetaScreen, Appearance & Behavior Screens).
+- `ROADMAP.md`: Phase 11 (Task 21: Preferences Store · Task 22: SettingsMetaScreen, Appearance & Behavior Screens).
 - `DESIGN.md`: Section 9 (Settings List Design).
 
-Execute Phase 10 adhering to the Functionality + UI Component pairing:
+Execute Phase 11 adhering to the Functionality + UI Component pairing:
 
 ### Task 21: [Functionality] Preferences Store Architecture & Entry Formatting Engine
 - Expand `AuthRepository` and `DataStore` / `SharedPreferences` to manage structured preferences:
