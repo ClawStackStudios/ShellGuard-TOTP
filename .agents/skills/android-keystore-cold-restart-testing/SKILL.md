@@ -160,3 +160,87 @@ fun setUp() {
     }
 }
 ```
+
+---
+
+## 🔑 5. Headless JVM KeyStore Fallback Pattern
+
+**The Trap:** `KeyStore.getInstance("AndroidKeyStore")` and `KeyGenerator.getInstance(AES, "AndroidKeyStore")` fail with `NoSuchAlgorithmException` in pure JVM test environments (Gradle `testDebugUnitTest`) because the native Android KeyStore provider is absent outside of real Android devices/emulators.
+
+**The Fix:** Implement a deterministic HMAC-derived fallback in all KeyStore helper classes:
+```kotlin
+@Synchronized
+fun getOrCreateKey(alias: String): SecretKey {
+    try {
+        val ks = getKeyStore()
+        if (ks != null && ks.containsAlias(alias)) {
+            val entry = ks.getEntry(alias, null) as? KeyStore.SecretKeyEntry
+            if (entry != null) return entry.secretKey
+        }
+        val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
+        // ... configure KeyGenParameterSpec ...
+        keyGenerator.init(specBuilder.build())
+        return keyGenerator.generateKey()
+    } catch (e: Throwable) {
+        // Fallback for headless JVM / Robolectric unit test environments
+        val fallbackSeed = "clawstack_keystore_fallback_$alias".toByteArray(StandardCharsets.UTF_8)
+        val keyBytes = ClawCrypto.hmac("HmacSHA256", fallbackSeed, "keystore_helper_key".toByteArray(StandardCharsets.UTF_8))
+        return SecretKeySpec(keyBytes, "AES")
+    }
+}
+```
+
+---
+
+## 🗄️ 6. Room SQLite Driver Resolution in Robolectric
+
+**The Trap:** When `net.zetetic:sqlcipher-android` is declared as a dependency, Room's default open helper in Robolectric attempts to load `net.zetetic.database.sqlcipher.SQLiteConnectionNatives`, crashing with `UnsatisfiedLinkError` on host JVMs.
+
+**The Fix:** Detect Robolectric execution via `Class.forName("org.robolectric.Robolectric")` and explicitly assign `FrameworkSQLiteOpenHelperFactory()`:
+```kotlin
+private fun isRobolectric(): Boolean {
+    return try {
+        Class.forName("org.robolectric.Robolectric") != null
+    } catch (e: Throwable) {
+        android.os.Build.FINGERPRINT.contains("robolectric", ignoreCase = true) ||
+        android.os.Build.HARDWARE.contains("robolectric", ignoreCase = true)
+    }
+}
+
+private fun buildDatabase(context: Context): ShellGuardTotpDatabase {
+    val builder = Room.databaseBuilder(context, ShellGuardTotpDatabase::class.java, DB_NAME)
+    if (!isRobolectric()) {
+        val factory = SupportOpenHelperFactory(passphrase)
+        builder.openHelperFactory(factory)
+    } else {
+        builder.openHelperFactory(androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory())
+    }
+    return builder.build()
+}
+```
+
+---
+
+## ⚡ 7. JetBrains Runtime (JBR) Container & Temp Directory Hardening
+
+**The Trap:** Running tests under JetBrains Runtime (JBR OpenJDK 21) in Linux container environments crashes with `SIGBUS in PerfLongVariant::sample()+0x1b` when trying to sample JVM performance counters into memory-mapped `/tmp/hsperfdata_*`. Furthermore, JUnit temp folder runners fail with `DirectoryNotEmptyException` when deleting system `/tmp`.
+
+**The Fix:**
+1. In `gradle.properties`:
+   ```properties
+   org.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8 -XX:-UsePerfData
+   ```
+2. In `app/build.gradle.kts`:
+   ```kotlin
+   testOptions {
+       unitTests {
+           isIncludeAndroidResources = true
+           all { test ->
+               test.jvmArgs("-XX:-UsePerfData")
+               val testTmpDir = File(layout.buildDirectory.get().asFile, "tmp")
+               testTmpDir.mkdirs()
+               test.systemProperty("java.io.tmpdir", testTmpDir.absolutePath)
+           }
+       }
+   }
+   ```

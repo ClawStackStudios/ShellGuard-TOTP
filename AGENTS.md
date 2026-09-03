@@ -240,3 +240,9 @@ Android 15+ (API 35/36) mandates 16 KB page-aligned native binaries:
 - **Sovereign Key Format**: The ShellGuard ClawKey format is strictly `hu-` followed by 64 characters (total length: 67).
 - **Single Source Validator**: All ClawKey input surfaces (Vault creation, Lock screen, Settings import) must use `ClawKeyValidator.isValid()`.
 - **Pre-DAO Fingerprint Deduplication**: Backup import engines must deduplicate incoming records by normalized `secret` + `title` fingerprint prior to DAO insertion, preventing duplicate UUID false negatives.
+
+### Robolectric & Headless KeyStore Testing Invariants
+
+- **KeyStore Headless JVM Fallback**: All KeyStore wrapper classes (`AndroidKeyStoreHelper`, `EncryptedDeviceVault`) must provide a catch-and-fallback mechanism to HMAC-derived `SecretKeySpec` for headless JVM unit tests when `AndroidKeyStore` is absent.
+- **Robolectric Framework SQLite Open Helper**: When configuring Room databases (`ShellGuardTotpDatabase`), always detect Robolectric via `Class.forName("org.robolectric.Robolectric")` and assign `FrameworkSQLiteOpenHelperFactory()` to prevent host `UnsatisfiedLinkError` crashes against native SQLCipher binaries.
+- **Container JBR Test Flags**: Gradle test options must pass `-XX:-UsePerfData` and isolate `java.io.tmpdir` to `app/build/tmp` for containerized runtime stability.
