@@ -5,6 +5,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,12 +26,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Settings
@@ -41,7 +40,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -79,10 +77,13 @@ import com.clawstack.shellguard.totp.engine.TotpEngine
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.clawstack.shellguard.totp.ui.components.ClipboardToastPill
+import com.clawstack.shellguard.totp.ui.components.ExpandableSpeedDialFab
 import com.clawstack.shellguard.totp.ui.components.PodFilterChips
 import com.clawstack.shellguard.totp.ui.components.SpotlightOverlay
+import com.clawstack.shellguard.totp.ui.components.SpeedDialState
 import com.clawstack.shellguard.totp.ui.components.SwipeableTotpCard
 import com.clawstack.shellguard.totp.ui.components.TotpEmptyState
+import com.clawstack.shellguard.totp.ui.components.rememberSpeedDialState
 import com.clawstack.shellguard.totp.ui.viewmodels.TotpViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -119,55 +120,20 @@ fun TotpListScreen(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Secondary Manual Add Mini-FAB
-                FloatingActionButton(
-                    onClick = onAddSecretClick,
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    contentColor = MaterialTheme.colorScheme.primary,
-                    shape = CircleShape,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .testTag("add_manual_fab")
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add Secret Manually",
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-
-                // Primary QR Scanner FAB
-                FloatingActionButton(
-                    onClick = onScanQrClick,
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.testTag("scan_qr_fab")
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.QrCodeScanner,
-                            contentDescription = "Scan 2FA QR",
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.size(22.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Scan QR",
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp
-                        )
+            val speedDialState = rememberSpeedDialState()
+            ExpandableSpeedDialFab(
+                speedDialState = speedDialState,
+                onScanQrClick = onScanQrClick,
+                onAddSecretClick = onAddSecretClick,
+                onImageQrDecoded = { rawUri ->
+                    if (viewModel.importScannedUri(rawUri)) {
+                        Toast.makeText(context, "2FA code added to Local Vault.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "Invalid 2FA QR code.", Toast.LENGTH_SHORT).show()
                     }
-                }
-            }
+                },
+                modifier = Modifier.testTag("speed_dial_host")
+            )
         }
     ) { paddingValues ->
         Box(

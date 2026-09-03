@@ -147,7 +147,7 @@ class LocalModeUnlockAndVaultTest {
 
         composeTestRule.onNodeWithTag("totp_empty_state").assertIsDisplayed()
         composeTestRule.onNodeWithText("No 2FA Codes Yet").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("scan_qr_fab").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("speed_dial_fab").assertIsDisplayed()
     }
 
     @Test
