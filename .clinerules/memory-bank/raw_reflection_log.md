@@ -2,6 +2,22 @@
 
 ---
 Date: 2026-09-02
+TaskRef: "/learn — android-container-gradle-testing skill"
+
+Classification: Skill (multi-step environment cheatsheet + JVM test pattern)
+Destination: `.clinerules/workflows/android-container-gradle-testing.md` (matches existing workflows convention)
+User approval: granted interactively (option: "Yes — create skill with all 3 learnings")
+
+Learnings consolidated into skill:
+1. GRADLE_OPTS PerfData/tmpdir exports (launcher SIGBUS + KSP tmpdir failures).
+2. Ephemeral per-shell /tmp — logs into app/build/.
+3. Advancing MonotonicFrameClock for plain-JVM Compose Animatable tests (zero-delta = hang) + stale JUnit XML timestamp check.
+
+Scope note (user correction): do NOT search outside the project workspace when
+locating configuration — Cline config lives in `.clinerules/` only.
+
+---
+Date: 2026-09-02
 TaskRef: "Phase 10 Speed Dial implementation & Cline memory bank init"
 
 Learnings:
