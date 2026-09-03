@@ -38,7 +38,12 @@ abstract class ShellGuardTotpDatabase : RoomDatabase() {
         private var sqlCipherSuccessfullyLoaded = false
 
         private fun isRobolectric(): Boolean {
-            return android.os.Build.FINGERPRINT == "robolectric"
+            return try {
+                Class.forName("org.robolectric.Robolectric") != null
+            } catch (e: Throwable) {
+                android.os.Build.FINGERPRINT.contains("robolectric", ignoreCase = true) ||
+                android.os.Build.HARDWARE.contains("robolectric", ignoreCase = true)
+            }
         }
 
         private fun isSqlCipherLoaded(context: Context): Boolean {
@@ -80,6 +85,8 @@ abstract class ShellGuardTotpDatabase : RoomDatabase() {
                         Log.w(TAG, "SQLCipher open helper note: ${e.message}")
                     }
                 }
+            } else {
+                builder.openHelperFactory(androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory())
             }
 
             return builder.build()
@@ -89,10 +96,14 @@ abstract class ShellGuardTotpDatabase : RoomDatabase() {
          * For in-memory testing or direct creation with specific factory.
          */
         fun createInMemory(context: Context): ShellGuardTotpDatabase {
-            return Room.inMemoryDatabaseBuilder(
+            val builder = Room.inMemoryDatabaseBuilder(
                 context,
                 ShellGuardTotpDatabase::class.java
-            ).allowMainThreadQueries().build()
+            ).allowMainThreadQueries()
+            if (isRobolectric()) {
+                builder.openHelperFactory(androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory())
+            }
+            return builder.build()
         }
     }
 }

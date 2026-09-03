@@ -71,7 +71,17 @@ android {
     compose = true
     buildConfig = true
   }
-  testOptions { unitTests { isIncludeAndroidResources = true } }
+  testOptions {
+    unitTests {
+      isIncludeAndroidResources = true
+      all { test ->
+        test.jvmArgs("-XX:-UsePerfData")
+        val testTmpDir = File(layout.buildDirectory.get().asFile, "tmp")
+        testTmpDir.mkdirs()
+        test.systemProperty("java.io.tmpdir", testTmpDir.absolutePath)
+      }
+    }
+  }
   dependenciesInfo {
     includeInApk = false
     includeInBundle = true

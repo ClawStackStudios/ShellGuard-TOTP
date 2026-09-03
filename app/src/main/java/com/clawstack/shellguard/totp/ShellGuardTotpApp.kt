@@ -48,7 +48,12 @@ class ShellGuardTotpApp : Application() {
     }
 
     private fun isRobolectric(): Boolean {
-        return android.os.Build.FINGERPRINT == "robolectric"
+        return try {
+            Class.forName("org.robolectric.Robolectric") != null
+        } catch (e: Throwable) {
+            android.os.Build.FINGERPRINT.contains("robolectric", ignoreCase = true) ||
+            android.os.Build.HARDWARE.contains("robolectric", ignoreCase = true)
+        }
     }
 
     private fun initializeSecurityFoundation() {
