@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - No unreleased changes yet.
 
+## [0.0.1.2] - 2026-09-02 (Build 9)
+### Added
+- **Expandable Speed Dial FAB**: Replaced static dual action buttons with `ExpandableSpeedDialFab`, providing a spring-driven 45-degree morph from `+` to `✕`, semi-transparent dark dimming scrim, and 3 staggered animated action pills.
+- **High-Throughput ML Kit Image QR Decoder**: Built `ImageQrDecoder` leveraging Google ML Kit Barcode Scanning on URI bitmap streams for instant decoding of screenshot 2FA QR codes.
+- **SAF Image Gallery Picker**: Integrated Storage Access Framework gallery picker directly into the speed dial for one-tap photo QR code import.
+
+### Changed
+- **Unified Vision Pipeline**: Consolidated gallery QR decoding across the app into the shared `ImageQrDecoder` engine.
+- **Speed Dial State Coordination**: Implemented `SpeedDialState` managing expand/collapse transitions, outside touch scrim dismissals, and hardware back-press interception.
+- **Test Oracle Alignment**: Updated UI test semantic finders in `LocalModeUnlockAndVaultTest` to bind to `speed_dial_fab`.
+
+### Removed
+- **Legacy Components**: Cleaned up obsolete `ScannerFab.kt`.
+
 ## [0.0.1.0] - 2026-09-02
 ### Added
 - **Vault Security Orientation**: Implemented `VaultSecurityScreen` with zero-knowledge educational cards, interactive PIN/Password protection selector, real-time password strength meter, and biometric switch card.

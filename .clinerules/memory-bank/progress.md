@@ -11,8 +11,10 @@
 - ✅ Spotlight tour (spring physics, +18dp cutouts), splash screen, adaptive icon, 6 accent palettes.
 - ✅ Headless CI hardening (KeyStore HMAC fallback, FrameworkSQLiteOpenHelperFactory, -XX:-UsePerfData).
 
+- ✅ Phase 10: Expandable Speed Dial FAB (v0.0.1.2 Build 9) — implementation complete, verified (86/86 tests, build green), release prepped.
+
 ## In Progress
-- ⏳ Phase 10: Expandable Speed Dial FAB (v0.0.1.2 Build 9) — **implementation complete, verified** (86/86 tests, build green). On-device live run + release tagging pending.
+- ⏳ Release v0.0.1.2 (Build 9) — ready to merge into main and tag.
 
 ## Backlog (Roadmap)
 - Phase 11: Categorized Settings Hub (v0.0.2.0)

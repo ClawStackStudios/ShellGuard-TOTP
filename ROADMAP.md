@@ -212,13 +212,13 @@ Description: Implement `VaultSecurityScreen.kt` and update `SpotlightOverlay.kt`
 > Phase Feature Set Overview:
 > Delivers an expandable speed dial Floating Action Button (FAB) on the main vault dashboard, providing one-tap access to CameraX live scanning, Gallery image QR decoding, and manual Base32 secret entry with animated icon pills and scrim dismissal.
 
-- [ ]  Task 19: [Functionality] Image QR Decoder Pipeline & Expandable FAB Interaction Controller
+- [x]  Task 19: [Functionality] Image QR Decoder Pipeline & Expandable FAB Interaction Controller
 
 Description: Implement `ImageQrDecoder` using Google ML Kit Barcode Scanning on URI bitmap streams. Implement `SpeedDialState` controller managing expand/collapse transitions, back-handler interception, outside touch scrim dismissals, and permission requests.
 
 > Success Criteria: ML Kit barcode scanning decodes QR codes from high-res bitmap files in <200ms. SpeedDial controller coordinates animated expansion states without UI jank.
 
-- [ ]  Task 20: [UI Component] Animated Speed Dial FAB & Elevated Action Pills
+- [x]  Task 20: [UI Component] Animated Speed Dial FAB & Elevated Action Pills
 
 Description: Implement `ExpandableSpeedDialFab.kt` on `TotpListScreen.kt`:
 - **Main FAB**: Smooth 45-degree rotation morphing from `+` to `✕`.

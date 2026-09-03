@@ -16,6 +16,7 @@
 - `ScannerFab.kt` deleted (zero remaining references).
 
 ## Next Steps
-1. **User live-run gate**: install `app-debug.apk` on device/emulator; verify FAB morph, scrim, pills, image decode (container has no device).
-2. Release prep when approved: bump `versionCode = 9` / `versionName = "0.0.1.2"`, release notes, tag `v0.0.1.2`.
-3. Phase 11: Categorized Settings Hub (v0.0.2.0).
+1. Release prep complete: `versionCode = 9`, `versionName = "0.0.1.2"`, `RELEASE-v0.0.1.2.md` and `RELEASE-PLAY.md` aligned.
+2. User notification gate before merging `feat/phase-10-speed-dial` into `main`.
+3. Tag `v0.0.1.2` and trigger GitHub Actions release build.
+4. Phase 11: Categorized Settings Hub (v0.0.2.0).

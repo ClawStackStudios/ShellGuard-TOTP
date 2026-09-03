@@ -2,6 +2,28 @@
 
 ---
 Date: 2026-09-02
+TaskRef: "Release v0.0.1.2 (Build 9) Preparation & Phase 10 Speed Dial Verification"
+
+Learnings:
+- Gradle launcher JVM SIGBUS under container runtime: export `GRADLE_OPTS="-XX:-UsePerfData -Djava.io.tmpdir=$PWD/app/build/tmp"` ensures launcher process does not crash before task execution.
+- Image QR decoding via Google ML Kit Barcode Scanning can be deduplicated across both live camera fallback and dashboard speed dial gallery picker via a centralized `ImageQrDecoder` component.
+- Updating UI interaction components requires a test oracle audit: replacing dual FABs with `ExpandableSpeedDialFab` required updating `scan_qr_fab` ➔ `speed_dial_fab` in `LocalModeUnlockAndVaultTest`.
+
+Difficulties:
+- MonotonicFrameClock on plain JVM Robolectric tests requires explicit clock advancements or coroutine scheduling to prevent indefinite loops during spring physics calculations.
+
+Successes:
+- 86/86 unit and Robolectric tests passing 100% green.
+- Clean `assembleDebug` compilation.
+- Prepped `RELEASE-v0.0.1.2.md` and prepended `<en-US>` release notes (<500 chars) to `RELEASE-PLAY.md`.
+- Monotonically bumped `versionCode = 9` and `versionName = "0.0.1.2"`.
+
+Improvements_Identified_For_Consolidation:
+- Container Gradle launcher JVM flags (`GRADLE_OPTS`) pattern.
+---
+
+---
+Date: 2026-09-02
 TaskRef: "Release v0.0.1.0 Preparation, Test Suite Alignment & Invariant Codification"
 
 Learnings:
