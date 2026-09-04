@@ -250,7 +250,7 @@ class IntakeViewModel(application: Application) : AndroidViewModel(application) 
                         item.copy(
                             ownerUuid = "local",
                             isLocalOnly = true,
-                            syncState = "PENDING_SYNC",
+                            syncState = "LOCAL",
                             localUpdatedAt = System.currentTimeMillis()
                         )
                     }

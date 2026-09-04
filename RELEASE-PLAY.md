@@ -5,6 +5,20 @@
 
 ---
 
+## `v0.0.1.2` — Phase 10: Expandable Floating Actions Speed Dial (Build 8)
+
+```xml
+<en-US>
+• Expandable Speed Dial: Smooth 45° morphing FAB with outside-touch scrim.
+• Image QR Scanner: Decode 2FA secret QR screenshots directly from your gallery.
+• Elevated Action Pills: Instant access to live scanner, gallery & manual entry.
+• Keyboard & Navigation Polish: Seamless back-handler and scrim dismissal.
+• Android 16 (API 36) & 16 KB kernel ready.
+</en-US>
+```
+
+---
+
 ## `v0.0.1.0` — Phase 9: Vault Security, Grouped Dashboard & Spotlight Tour (Build 7)
 
 ```xml

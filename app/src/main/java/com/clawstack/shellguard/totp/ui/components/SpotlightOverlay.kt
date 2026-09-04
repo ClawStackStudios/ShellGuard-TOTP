@@ -219,7 +219,7 @@ fun SpotlightOverlay(
                             text = if (step == 1) {
                                 "To add a new server to sync to, open the settings menu"
                             } else {
-                                "Tap 'Connect to Server' to authenticate and sync your 2FA codes with your self-hosted ShellGuard instance."
+                                "Tap 'Connect to Server' to authenticate and mirror 2FA codes from your self-hosted ShellGuard instance."
                             },
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 14.sp,

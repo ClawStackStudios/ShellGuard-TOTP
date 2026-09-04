@@ -68,9 +68,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import com.clawstack.shellguard.totp.scanner.ImageQrDecoder
 import com.clawstack.shellguard.totp.ui.scanner.QrCodeAnalyzer
-import com.google.mlkit.vision.barcode.BarcodeScanning
-import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.Executors
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -115,26 +114,15 @@ fun QrScannerScreen(
     ) { uri: Uri? ->
         uri?.let { imageUri ->
             isAnalyzingImage = true
-            try {
-                val inputImage = InputImage.fromFilePath(context, imageUri)
-                val scanner = BarcodeScanning.getClient()
-                scanner.process(inputImage)
-                    .addOnSuccessListener { barcodes ->
-                        isAnalyzingImage = false
-                        val firstBarcode = barcodes.firstOrNull { !it.rawValue.isNullOrBlank() }
-                        if (firstBarcode?.rawValue != null) {
-                            onCodeScanned(firstBarcode.rawValue!!)
-                        } else {
-                            Toast.makeText(context, "No 2FA QR code found in selected image.", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                    .addOnFailureListener { e ->
-                        isAnalyzingImage = false
-                        Toast.makeText(context, "Failed to analyze image: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
-            } catch (e: Exception) {
+            ImageQrDecoder.decode(context, imageUri) { result ->
                 isAnalyzingImage = false
-                Toast.makeText(context, "Error opening image: ${e.message}", Toast.LENGTH_SHORT).show()
+                when (result) {
+                    is ImageQrDecoder.DecodeResult.Success -> onCodeScanned(result.rawValue)
+                    is ImageQrDecoder.DecodeResult.NoBarcodeFound ->
+                        Toast.makeText(context, "No 2FA QR code found in selected image.", Toast.LENGTH_SHORT).show()
+                    is ImageQrDecoder.DecodeResult.Failure ->
+                        Toast.makeText(context, result.message, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

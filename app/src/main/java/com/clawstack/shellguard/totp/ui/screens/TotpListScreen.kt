@@ -5,6 +5,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,15 +23,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Settings
@@ -41,7 +42,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -50,6 +50,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -79,10 +80,13 @@ import com.clawstack.shellguard.totp.engine.TotpEngine
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.clawstack.shellguard.totp.ui.components.ClipboardToastPill
+import com.clawstack.shellguard.totp.ui.components.ExpandableSpeedDialFab
 import com.clawstack.shellguard.totp.ui.components.PodFilterChips
 import com.clawstack.shellguard.totp.ui.components.SpotlightOverlay
+import com.clawstack.shellguard.totp.ui.components.SpeedDialState
 import com.clawstack.shellguard.totp.ui.components.SwipeableTotpCard
 import com.clawstack.shellguard.totp.ui.components.TotpEmptyState
+import com.clawstack.shellguard.totp.ui.components.rememberSpeedDialState
 import com.clawstack.shellguard.totp.ui.viewmodels.TotpViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -103,6 +107,7 @@ fun TotpListScreen(
     val syncMeta by viewModel.syncMetadata.collectAsStateWithLifecycle()
     val isServerConnected by viewModel.isServerConnected.collectAsStateWithLifecycle()
     val clipboardFeedback by viewModel.clipboardFeedback.collectAsStateWithLifecycle()
+    val isSyncing by viewModel.isSyncing.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
     val app = context.applicationContext as ShellGuardTotpApp
@@ -119,55 +124,20 @@ fun TotpListScreen(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Secondary Manual Add Mini-FAB
-                FloatingActionButton(
-                    onClick = onAddSecretClick,
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    contentColor = MaterialTheme.colorScheme.primary,
-                    shape = CircleShape,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .testTag("add_manual_fab")
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add Secret Manually",
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-
-                // Primary QR Scanner FAB
-                FloatingActionButton(
-                    onClick = onScanQrClick,
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.testTag("scan_qr_fab")
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.QrCodeScanner,
-                            contentDescription = "Scan 2FA QR",
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.size(22.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Scan QR",
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp
-                        )
+            val speedDialState = rememberSpeedDialState()
+            ExpandableSpeedDialFab(
+                speedDialState = speedDialState,
+                onScanQrClick = onScanQrClick,
+                onAddSecretClick = onAddSecretClick,
+                onImageQrDecoded = { rawUri ->
+                    if (viewModel.importScannedUri(rawUri)) {
+                        Toast.makeText(context, "2FA code added to Local Vault.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "Invalid 2FA QR code.", Toast.LENGTH_SHORT).show()
                     }
-                }
-            }
+                },
+                modifier = Modifier.testTag("speed_dial_host")
+            )
         }
     ) { paddingValues ->
         Box(
@@ -308,33 +278,62 @@ fun TotpListScreen(
                 
 
                 // ── Main Content: List or Empty State ────────────────────
-                if (localItems.isEmpty() && remoteItems.isEmpty() && searchQuery.isBlank() && selectedCategory == null) {
-                    TotpEmptyState(
-                        onScanQrClick = onScanQrClick,
-                        onManualAddClick = onAddSecretClick
-                    )
-                } else if (localItems.isEmpty() && remoteItems.isEmpty()) {
-                    // No search results
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(32.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "No matching 2FA tokens found.",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontSize = 14.sp
-                        )
-                    }
-                } else {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 20.dp),
-                        contentPadding = PaddingValues(top = 4.dp, bottom = 96.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
+                PullToRefreshBox(
+                    isRefreshing = isSyncing,
+                    onRefresh = {
+                        if (isServerConnected) {
+                            viewModel.refreshRemoteVault { success ->
+                                Toast.makeText(
+                                    context,
+                                    if (success) "Vault synchronized." else "Sync failed. Check connection.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "Local Mode: Remote sync requires server connection.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    },
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    if (localItems.isEmpty() && remoteItems.isEmpty() && searchQuery.isBlank() && selectedCategory == null) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(rememberScrollState()),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            TotpEmptyState(
+                                onScanQrClick = onScanQrClick,
+                                onManualAddClick = onAddSecretClick
+                            )
+                        }
+                    } else if (localItems.isEmpty() && remoteItems.isEmpty()) {
+                        // No search results
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(rememberScrollState())
+                                .padding(32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "No matching 2FA tokens found.",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontSize = 14.sp
+                            )
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 20.dp),
+                            contentPadding = PaddingValues(top = 4.dp, bottom = 96.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
                         // ── Proactive Encrypted Backup Prompt Card ───────────────
                         if (!isBackupPromptDismissed && searchQuery.isBlank() && selectedCategory == null) {
                             item(key = "backup_prompt_card") {
@@ -511,16 +510,17 @@ fun TotpListScreen(
                                         viewModel.copyToClipboard(item.title, rawCode)
                                     },
                                     onEdit = {
-                                        editingItem = item
+                                        Toast.makeText(context, "Synced codes are read-only. Manage from ShellGuard Web Server.", Toast.LENGTH_SHORT).show()
                                     },
                                     onDelete = {
-                                        itemPendingDeletion = item
+                                        // No-op: Remote synced codes cannot be deleted on device
                                     }
                                 )
                             }
                             }
                         }
                     }
+                }
                 }
             }
 
@@ -535,6 +535,10 @@ fun TotpListScreen(
 
     // ── Edit Account Modal Dialog ───────────────────────────────
     editingItem?.let { item ->
+        if (!item.isLocalOnly && item.ownerUuid != "local") {
+            editingItem = null
+            return@let
+        }
         var editTitle by remember(item) { mutableStateOf(item.title) }
         var editUsername by remember(item) { mutableStateOf(item.username ?: "") }
         var editCategory by remember(item) { mutableStateOf(item.category ?: "") }
@@ -651,6 +655,10 @@ fun TotpListScreen(
 
     // ── Delete Confirmation Modal Dialog ────────────────────────
     itemPendingDeletion?.let { item ->
+        if (!item.isLocalOnly && item.ownerUuid != "local") {
+            itemPendingDeletion = null
+            return@let
+        }
         AlertDialog(
             onDismissRequest = { itemPendingDeletion = null },
             icon = {

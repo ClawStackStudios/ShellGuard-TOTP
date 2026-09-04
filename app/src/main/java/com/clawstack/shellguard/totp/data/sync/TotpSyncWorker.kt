@@ -40,18 +40,18 @@ class TotpSyncWorker(
     companion object {
         private const val WORK_NAME = "shellguard_totp_periodic_sync"
 
-        fun schedulePeriodicSync(context: Context, intervalMinutes: Long = 15) {
+        fun schedulePeriodicSync(context: Context, intervalHours: Long = 6) {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
-            val syncRequest = PeriodicWorkRequestBuilder<TotpSyncWorker>(intervalMinutes, TimeUnit.MINUTES)
+            val syncRequest = PeriodicWorkRequestBuilder<TotpSyncWorker>(intervalHours, TimeUnit.HOURS)
                 .setConstraints(constraints)
                 .build()
 
             WorkManager.getInstance(context).enqueueUniquePeriodicWork(
                 WORK_NAME,
-                ExistingPeriodicWorkPolicy.KEEP,
+                ExistingPeriodicWorkPolicy.UPDATE,
                 syncRequest
             )
         }

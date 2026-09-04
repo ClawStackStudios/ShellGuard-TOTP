@@ -2,6 +2,28 @@
 
 All notable changes to the ShellGuard TOTP project will be documented in this file.
 
+## [0.0.1.2] - 2026-09-03 (Build 8)
+### Added
+- **Expandable Floating Actions Speed Dial (Tasks 19 & 20)**:
+  - Created `ExpandableSpeedDialFab.kt` with a fluid 45-degree morph from `+` to `✕`, semi-transparent dark dimming scrim, and 3 staggered animated action pills.
+  - Implemented `SpeedDialState.kt` controller managing expand/collapse transitions, outside touch scrim dismissals, and hardware back-press interception.
+  - Built `ImageQrDecoder.kt` leveraging Google ML Kit Barcode Scanning on URI bitmap streams for instant decoding of screenshot 2FA QR codes.
+  - Integrated Storage Access Framework (SAF) image gallery picker directly into the speed dial for one-tap screenshot QR code import.
+  - Added unit test suites: `ImageQrDecoderTest` (2 tests), `SpeedDialStateTest` (5 tests), and `OneWaySyncAndReadOnlyProtectionTest` (4 tests) — 90/90 unit and Robolectric tests passing 100% green.
+
+### Changed
+- **Vision Pipeline Consolidation**:
+  - Refactored `QrScannerScreen` gallery path to use shared `ImageQrDecoder` engine.
+  - Replaced legacy dual FABs and empty-state button on `TotpListScreen` with `ExpandableSpeedDialFab`.
+  - Updated test oracle in `LocalModeUnlockAndVaultTest` to align semantic finder (`scan_qr_fab` ➔ `speed_dial_fab`).
+- **One-Way Sync Hardening & Efficiencies**:
+  - Added `TotpItemDao.deleteByIdIfLocal` to execute conditional SQL delete (`WHERE is_local_only = 1 OR owner_uuid = 'local'`) guarding remote synced items without requiring a pre-fetch read.
+  - Added snapshot query `TotpItemDao.getRemoteItemsOnce` and client-side delta sync in `TotpRepository.syncRemoteVault` skipping AES-GCM decryption for records with matching `updated_at`.
+  - Added `refreshRemoteVault` in `TotpViewModel` wired to dashboard pull-to-refresh.
+
+### Removed
+- **Legacy Components**: Cleaned up obsolete `ScannerFab.kt`.
+
 ## [0.0.1.0] - 2026-09-02 (Build 7)
 ### Added
 - **Vault Security Orientation (Task 18)**:

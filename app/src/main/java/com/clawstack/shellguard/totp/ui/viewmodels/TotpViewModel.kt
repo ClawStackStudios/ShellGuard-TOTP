@@ -51,6 +51,7 @@ class TotpViewModel(application: Application) : AndroidViewModel(application) {
     val searchQuery = MutableStateFlow("")
     val selectedCategory = MutableStateFlow<String?>(null)
     val clipboardFeedback = MutableStateFlow(ClipboardFeedbackState())
+    val isSyncing = MutableStateFlow(false)
 
     private var clipboardClearJob: Job? = null
     private var toastDismissJob: Job? = null
@@ -236,6 +237,10 @@ fun onSearchQueryChanged(query: String) {
 
     fun updateItem(item: TotpItemEntity) {
         viewModelScope.launch {
+            if (!item.isLocalOnly && item.ownerUuid != "local") {
+                // Security Invariant: Remote synced items are strictly read-only on device
+                return@launch
+            }
             totpItemDao.updateItem(item.copy(localUpdatedAt = System.currentTimeMillis()))
         }
     }
@@ -243,6 +248,10 @@ fun onSearchQueryChanged(query: String) {
     fun updateItemDetails(id: String, title: String, username: String?, category: String?) {
         viewModelScope.launch {
             val existing = totpItemDao.getItemById(id) ?: return@launch
+            if (!existing.isLocalOnly && existing.ownerUuid != "local") {
+                // Security Invariant: Remote synced items are strictly read-only on device
+                return@launch
+            }
             val updated = existing.copy(
                 title = title.trim(),
                 username = username?.trim()?.ifBlank { null },
@@ -279,13 +288,42 @@ fun onSearchQueryChanged(query: String) {
 
     fun deleteItem(id: String) {
         viewModelScope.launch {
-            totpItemDao.deleteById(id)
+            // Single-query guard: conditional DELETE only removes locally-owned rows,
+            // so remote synced mirrors are protected without an extra read.
+            totpItemDao.deleteByIdIfLocal(id)
         }
     }
 
     fun deleteItem(item: TotpItemEntity) {
         viewModelScope.launch {
+            if (!item.isLocalOnly && item.ownerUuid != "local") {
+                // Security Invariant: Remote synced items cannot be deleted locally
+                return@launch
+            }
             totpItemDao.deleteById(item.id)
+        }
+    }
+
+    /**
+     * Triggers a manual one-way pull to refresh remote items from the connected server.
+     */
+    fun refreshRemoteVault(onComplete: ((Boolean) -> Unit)? = null) {
+        val session = authRepository.currentSession.value
+        if (session == null) {
+            onComplete?.invoke(false)
+            return
+        }
+        viewModelScope.launch {
+            isSyncing.value = true
+            val result = authRepository.withSyncLock {
+                app.totpRepository.syncRemoteVault(
+                    serverUrl = session.serverUrl,
+                    rawHuKey = session.rawHuKey,
+                    userUuid = session.userUuid
+                )
+            }
+            isSyncing.value = false
+            onComplete?.invoke(result.isSuccess)
         }
     }
 }
