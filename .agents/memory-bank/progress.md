@@ -29,11 +29,12 @@
 - ✅ **Physics-Based Spring Spotlight Tour (Tasks 17 & 18)**: Upgraded `SpotlightOverlay` with `Spring.DampingRatioMediumBouncy` animated geometry, density-aware +18dp radial breathing offset, pulsing cyan halos, and stacked action controls featuring a centered `[ Skip Tutorial ]` button.
 - ✅ **Headless CI & Test Suite Hardening**: Fixed test regressions and KeyStore headless fallback in `AndroidKeyStoreHelper`, wired `FrameworkSQLiteOpenHelperFactory` into Robolectric test runs, added container flags `-XX:-UsePerfData`, and verified 100% green pass across all 79 unit tests.
 - ✅ **Milestone 1 / Release v0.0.1.0 (Build 7)**: Tagged, verified, signed, and published to GitHub Releases.
-- ✅ **Phase 10: Expandable Floating Actions Speed Dial (QR, Image & Manual) [v0.0.1.2 (Build 9)]**:
+- ✅ **Phase 10: Expandable Floating Actions Speed Dial (QR, Image & Manual) [v0.0.1.2 (Build 8)]**:
   - `ImageQrDecoder.kt`: Shared high-throughput ML Kit barcode decoding engine on URI bitmap streams.
   - `SpeedDialState.kt`: Expand/collapse state machine, back-handler interception, outside-touch scrim dismissal.
   - `ExpandableSpeedDialFab.kt`: Fluid 45° morph (+ to ✕), dark alpha dimming scrim, and 3 staggered elevated action pills (CameraX live scan, SAF gallery image decode, manual Base32 entry).
-  - 86/86 unit and Robolectric tests passing 100% green.
+  - One-Way Sync Hardening: `TotpItemDao.deleteByIdIfLocal` conditional delete, client-side delta sync skipping unchanged decryption, pull-to-refresh integration.
+  - 90/90 unit and Robolectric tests passing 100% green.
 
 ## What's Next
 - ⏳ **Phase 11: Categorized Settings Hub & Appearance/Behavior Customization [v0.0.2.0 (Build 10) — Milestone 2]**:

@@ -8,15 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - No unreleased changes yet.
 
-## [0.0.1.2] - 2026-09-02 (Build 8)
+## [0.0.1.2] - 2026-09-03 (Build 8)
 ### Added
 - **Expandable Speed Dial FAB**: Replaced static dual action buttons with `ExpandableSpeedDialFab`, providing a spring-driven 45-degree morph from `+` to `✕`, semi-transparent dark dimming scrim, and 3 staggered animated action pills.
 - **High-Throughput ML Kit Image QR Decoder**: Built `ImageQrDecoder` leveraging Google ML Kit Barcode Scanning on URI bitmap streams for instant decoding of screenshot 2FA QR codes.
 - **SAF Image Gallery Picker**: Integrated Storage Access Framework gallery picker directly into the speed dial for one-tap photo QR code import.
+- **One-Way Sync Protection Test Suite**: Added `OneWaySyncAndReadOnlyProtectionTest` verifying remote synced items are immutable and protected against local edit or deletion, bringing total passing unit tests to 90/90.
 
 ### Changed
 - **Unified Vision Pipeline**: Consolidated gallery QR decoding across the app into the shared `ImageQrDecoder` engine.
 - **Speed Dial State Coordination**: Implemented `SpeedDialState` managing expand/collapse transitions, outside touch scrim dismissals, and hardware back-press interception.
+- **One-Way Sync Hardening & Delta Efficiencies**: Added `TotpItemDao.deleteByIdIfLocal` to atomically guard against local deletion of synced remote items at the database level, and added client-side delta comparison in `TotpRepository.syncRemoteVault` to skip AES-GCM decryption for unchanged items.
+- **Pull-to-Refresh Remote Sync**: Integrated `refreshRemoteVault` in `TotpViewModel` and wired dashboard pull-to-refresh.
 - **Test Oracle Alignment**: Updated UI test semantic finders in `LocalModeUnlockAndVaultTest` to bind to `speed_dial_fab`.
 
 ### Removed

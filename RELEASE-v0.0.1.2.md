@@ -40,8 +40,13 @@ This update introduces high-throughput image QR decoding using Google ML Kit on 
   2. `[ 🖼️ Scan image ]` — Opens the native Android image gallery picker to decode screenshot QR codes.
   3. `[ ✏️ Enter manually ]` — Opens the manual secret entry form for custom Base32 keys, algorithms (SHA1/SHA256/SHA512), and periods.
 
-### 🧪 4. Test Suite Oracle Alignment & Stability
-* **86/86 Passing Tests**: Full test coverage across all unit and Robolectric suites, including 7 new tests in `SpeedDialStateTest` and `ImageQrDecoderTest`.
+### 🔄 4. One-Way Sync Efficiencies & Protected Mirroring
+* **Conditional SQL Deletion Guard**: Implemented `TotpItemDao.deleteByIdIfLocal` to atomically enforce local-only deletion at the database query level without requiring an extra pre-fetch read.
+* **Client-Side Delta Optimization**: `TotpRepository.syncRemoteVault` now compares remote timestamps against local snapshots, skipping expensive AES-GCM decryption for unchanged items while maintaining accurate pruning for server-deleted rows.
+* **Pull-to-Refresh & ViewModel Protection**: Added `refreshRemoteVault` and strict read-only guards on remote items in `TotpViewModel`.
+
+### 🧪 5. Test Suite Oracle Alignment & Stability
+* **90/90 Passing Tests**: Full test coverage across all unit and Robolectric suites, including 7 new tests in `SpeedDialStateTest` and `ImageQrDecoderTest`, plus 4 new tests in `OneWaySyncAndReadOnlyProtectionTest`.
 * **Test Oracle Synchronization**: Updated UI test selectors in `LocalModeUnlockAndVaultTest` (`scan_qr_fab` ➔ `speed_dial_fab`) ensuring continuous verification alignment.
 
 ---
@@ -88,8 +93,9 @@ This update introduces high-throughput image QR decoding using Google ML Kit on 
 | **Speed Dial UI** | `ui/components/ExpandableSpeedDialFab.kt`, `ui/components/SpeedDialState.kt` | Animated FAB with 45° morph, dark dimming scrim, back-handler, and staggered action pills. |
 | **Vision & Image Pipeline** | `scanner/ImageQrDecoder.kt`, `ui/screens/QrScannerScreen.kt` | Shared ML Kit barcode scanning pipeline on URI bitmap streams. |
 | **Dashboard Integration** | `ui/screens/TotpListScreen.kt` | Replaced legacy dual FABs and `ScannerFab` with unified expandable speed dial and SAF gallery launcher. |
+| **One-Way Sync Hardening** | `data/local/dao/TotpItemDao.kt`, `data/repository/TotpRepository.kt`, `ui/viewmodels/TotpViewModel.kt` | Fast delta comparison, conditional delete SQL, and pull-to-refresh integration. |
 | **Cleanups** | `ui/components/ScannerFab.kt` | Removed dead component. |
-| **Test Suites** | `SpeedDialStateTest.kt`, `ImageQrDecoderTest.kt`, `LocalModeUnlockAndVaultTest.kt` | Full test coverage verifying interaction transitions, image decoding, and updated UI test tags (86/86 passing). |
+| **Test Suites** | `SpeedDialStateTest.kt`, `ImageQrDecoderTest.kt`, `LocalModeUnlockAndVaultTest.kt`, `OneWaySyncAndReadOnlyProtectionTest.kt` | Full test coverage verifying interaction transitions, image decoding, sync protections, and updated UI test tags (90/90 passing). |
 
 ---
 
