@@ -1,5 +1,12 @@
 # Consolidated Learnings (Cline)
 
+## Behavioral Rules
+- **Workspace Scope & Destructive Ops**: codified as an active rule —
+  `.clinerules/rules/workspace-scope-and-destructive-ops.md`. Stay inside the
+  project workspace when exploring config; destructive/system operations require
+  audit-first numbers, tiered risk-labeled proposals, exact-scope execution, and
+  pause-on-interrupt.
+
 ## Environment
 - Java: `JAVA_HOME=/config/Applications/android-studio/jbr`; tests via `./gradlew testDebugUnitTest --no-daemon`.
 - **Container Gradle exports (required)**: `GRADLE_OPTS="-XX:-UsePerfData -Djava.io.tmpdir=$PWD/app/build/tmp"` — prevents launcher JVM SIGBUS and KSP tmpdir failures; `/tmp` is ephemeral per shell (redirect logs into `app/build/`).
