@@ -38,6 +38,20 @@ interface TotpItemDao {
     suspend fun deleteById(id: String)
 
     /**
+     * One-Way Sync guard at the SQL layer: only locally-owned rows may be deleted
+     * on device. Returns the number of rows actually removed (0 for remote mirrors).
+     */
+    @Query("DELETE FROM totp_items WHERE id = :id AND (is_local_only = 1 OR owner_uuid = 'local')")
+    suspend fun deleteByIdIfLocal(id: String): Int
+
+    /**
+     * Delta sync snapshot: current remote mirror rows for [ownerUuid], keyed for
+     * comparison against incoming server `updated_at` stamps.
+     */
+    @Query("SELECT * FROM totp_items WHERE is_local_only = 0 AND owner_uuid = :ownerUuid")
+    suspend fun getRemoteItemsOnce(ownerUuid: String): List<TotpItemEntity>
+
+    /**
      * Delta sync reconciliation: Deletes remote items that no longer exist on the server,
      * while strictly preserving user items created locally on device (is_local_only = 1).
      */

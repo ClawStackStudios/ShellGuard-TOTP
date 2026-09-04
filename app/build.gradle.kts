@@ -18,7 +18,7 @@ android {
     applicationId = "com.clawstack.shellguard.totp"
     minSdk = 24
     targetSdk = 36
-    versionCode = 9
+    versionCode = 8
     versionName = "0.0.1.2"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

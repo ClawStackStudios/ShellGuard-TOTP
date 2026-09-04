@@ -144,13 +144,22 @@ fun TotpCard(
                             maxLines = 1
                         )
                         Spacer(modifier = Modifier.width(6.dp))
-                        // Provenance Pill: 📱 Local vs ☁️ Synced
+                        // Provenance Pill: 📱 Local vs ☁️ Synced (Read-Only)
                         Icon(
                             imageVector = if (isLocalOnly) Icons.Default.PhoneAndroid else Icons.Default.CloudDone,
-                            contentDescription = if (isLocalOnly) "Local Only" else "Synced with Vault",
+                            contentDescription = if (isLocalOnly) "Local Only" else "Synced from Server (Read-Only)",
                             tint = if (isLocalOnly) shellColors.textMuted else shellColors.primaryAccent,
                             modifier = Modifier.size(13.dp)
                         )
+                        if (!isLocalOnly) {
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "Read-only",
+                                color = shellColors.textMuted,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
                     }
                     if (!username.isNullOrBlank()) {
                         Text(

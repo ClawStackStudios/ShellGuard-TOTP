@@ -72,11 +72,19 @@ class TotpRepository(
             // 2. Downstream Pull: Fetch remote pearls
             val remotePearls = client.fetchVault(token).getOrThrow()
 
-            // 3. Filter items that have a non-empty totp_secret
+            // 3. Client-side delta filter: skip re-decryption for pearls whose
+            //    remote `updated_at` stamp matches the local mirror (CPU/IO saving —
+            //    unchanged items are neither decrypted nor re-upserted).
+            val existingRemoteByUpdatedAt = totpItemDao.getRemoteItemsOnce(userUuid)
+                .associate { it.id to it.remoteUpdatedAt }
             val totpPearls = remotePearls.filter { !it.totp_secret.isNullOrBlank() }
+            val unchangedRemoteIds = totpPearls
+                .filter { existingRemoteByUpdatedAt[it.id] == it.updated_at }
+                .map { it.id }
+            val changedPearls = totpPearls.filter { existingRemoteByUpdatedAt[it.id] != it.updated_at }
 
-            // 4. Decrypt seeds and map to Room entities
-            val entities = totpPearls.mapNotNull { pearl ->
+            // 4. Decrypt seeds and map to Room entities (changed/new pearls only)
+            val entities = changedPearls.mapNotNull { pearl ->
                 try {
                     val decryptedSeed = ShellCryptionEngine.decryptField(
                         encryptedJson = pearl.totp_secret!!,
@@ -101,11 +109,14 @@ class TotpRepository(
                 }
             }
 
-            // 5. Upsert into Room DB and prune deleted remote items
+            // 5. Upsert into Room DB and prune deleted remote items.
+            //    Pruning spans ALL known remote ids (unchanged + changed) so rows are
+            //    only removed when they disappeared server-side, never for merely
+            //    unchanged mirrors.
             if (entities.isNotEmpty()) {
                 totpItemDao.upsertItems(entities)
             }
-            val remoteIds = entities.map { it.id }
+            val remoteIds = unchangedRemoteIds + entities.map { it.id }
             totpItemDao.pruneDeletedRemoteItems(userUuid, remoteIds)
 
             // 6. Update sync metadata

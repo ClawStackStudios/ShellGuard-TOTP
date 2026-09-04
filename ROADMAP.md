@@ -207,7 +207,7 @@ Description: Implement `VaultSecurityScreen.kt` and update `SpotlightOverlay.kt`
 
 ---
 
-## Phase 10: Expandable Floating Actions Speed Dial (QR, Image & Manual) [v0.0.1.2 (Build 9)]
+## Phase 10: Expandable Floating Actions Speed Dial (QR, Image & Manual) [v0.0.1.2 (Build 8)]
 
 > Phase Feature Set Overview:
 > Delivers an expandable speed dial Floating Action Button (FAB) on the main vault dashboard, providing one-tap access to CameraX live scanning, Gallery image QR decoding, and manual Base32 secret entry with animated icon pills and scrim dismissal.

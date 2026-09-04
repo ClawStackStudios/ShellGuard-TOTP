@@ -23,8 +23,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
@@ -48,6 +50,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -104,6 +107,7 @@ fun TotpListScreen(
     val syncMeta by viewModel.syncMetadata.collectAsStateWithLifecycle()
     val isServerConnected by viewModel.isServerConnected.collectAsStateWithLifecycle()
     val clipboardFeedback by viewModel.clipboardFeedback.collectAsStateWithLifecycle()
+    val isSyncing by viewModel.isSyncing.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
     val app = context.applicationContext as ShellGuardTotpApp
@@ -274,33 +278,62 @@ fun TotpListScreen(
                 
 
                 // ── Main Content: List or Empty State ────────────────────
-                if (localItems.isEmpty() && remoteItems.isEmpty() && searchQuery.isBlank() && selectedCategory == null) {
-                    TotpEmptyState(
-                        onScanQrClick = onScanQrClick,
-                        onManualAddClick = onAddSecretClick
-                    )
-                } else if (localItems.isEmpty() && remoteItems.isEmpty()) {
-                    // No search results
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(32.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "No matching 2FA tokens found.",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontSize = 14.sp
-                        )
-                    }
-                } else {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 20.dp),
-                        contentPadding = PaddingValues(top = 4.dp, bottom = 96.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
+                PullToRefreshBox(
+                    isRefreshing = isSyncing,
+                    onRefresh = {
+                        if (isServerConnected) {
+                            viewModel.refreshRemoteVault { success ->
+                                Toast.makeText(
+                                    context,
+                                    if (success) "Vault synchronized." else "Sync failed. Check connection.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "Local Mode: Remote sync requires server connection.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    },
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    if (localItems.isEmpty() && remoteItems.isEmpty() && searchQuery.isBlank() && selectedCategory == null) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(rememberScrollState()),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            TotpEmptyState(
+                                onScanQrClick = onScanQrClick,
+                                onManualAddClick = onAddSecretClick
+                            )
+                        }
+                    } else if (localItems.isEmpty() && remoteItems.isEmpty()) {
+                        // No search results
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(rememberScrollState())
+                                .padding(32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "No matching 2FA tokens found.",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontSize = 14.sp
+                            )
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 20.dp),
+                            contentPadding = PaddingValues(top = 4.dp, bottom = 96.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
                         // ── Proactive Encrypted Backup Prompt Card ───────────────
                         if (!isBackupPromptDismissed && searchQuery.isBlank() && selectedCategory == null) {
                             item(key = "backup_prompt_card") {
@@ -477,16 +510,17 @@ fun TotpListScreen(
                                         viewModel.copyToClipboard(item.title, rawCode)
                                     },
                                     onEdit = {
-                                        editingItem = item
+                                        Toast.makeText(context, "Synced codes are read-only. Manage from ShellGuard Web Server.", Toast.LENGTH_SHORT).show()
                                     },
                                     onDelete = {
-                                        itemPendingDeletion = item
+                                        // No-op: Remote synced codes cannot be deleted on device
                                     }
                                 )
                             }
                             }
                         }
                     }
+                }
                 }
             }
 
@@ -501,6 +535,10 @@ fun TotpListScreen(
 
     // ── Edit Account Modal Dialog ───────────────────────────────
     editingItem?.let { item ->
+        if (!item.isLocalOnly && item.ownerUuid != "local") {
+            editingItem = null
+            return@let
+        }
         var editTitle by remember(item) { mutableStateOf(item.title) }
         var editUsername by remember(item) { mutableStateOf(item.username ?: "") }
         var editCategory by remember(item) { mutableStateOf(item.category ?: "") }
@@ -617,6 +655,10 @@ fun TotpListScreen(
 
     // ── Delete Confirmation Modal Dialog ────────────────────────
     itemPendingDeletion?.let { item ->
+        if (!item.isLocalOnly && item.ownerUuid != "local") {
+            itemPendingDeletion = null
+            return@let
+        }
         AlertDialog(
             onDismissRequest = { itemPendingDeletion = null },
             icon = {

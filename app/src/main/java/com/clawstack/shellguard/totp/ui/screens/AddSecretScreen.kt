@@ -112,8 +112,8 @@ fun AddSecretScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = if (isServerConnected) "☁️ Synced Vault: Token will sync to connected server" else "🔒 Local Vault: Token stored encrypted on this device only",
-                    color = if (isServerConnected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    text = if (isServerConnected) "🔒 Local Vault: Added tokens are stored encrypted on this device only (remote codes are read-only)" else "🔒 Local Vault: Token stored encrypted on this device only",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium
                 )

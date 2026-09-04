@@ -16,7 +16,7 @@
 
 ## 🚀 The Core Summary
 
-Welcome to **v0.0.1.2 (Build 9)** of **ShellGuard-TOTP**! This release delivers **Phase 10: Expandable Floating Actions Speed Dial (QR, Image & Manual)**, replacing static dual floating action buttons with an animated, fluid Speed Dial controller.
+Welcome to **v0.0.1.2 (Build 8)** of **ShellGuard-TOTP**! This release delivers **Phase 10: Expandable Floating Actions Speed Dial (QR, Image & Manual)**, replacing static dual floating action buttons with an animated, fluid Speed Dial controller.
 
 This update introduces high-throughput image QR decoding using Google ML Kit on Android Storage Access Framework (SAF) image streams, allowing users to scan and import 2FA secret QR codes directly from screenshots and photos in their gallery without needing a secondary camera.
 

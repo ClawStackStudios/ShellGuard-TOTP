@@ -5,7 +5,7 @@
 
 ---
 
-## `v0.0.1.2` — Phase 10: Expandable Floating Actions Speed Dial (Build 9)
+## `v0.0.1.2` — Phase 10: Expandable Floating Actions Speed Dial (Build 8)
 
 ```xml
 <en-US>
