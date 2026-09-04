@@ -1,6 +1,27 @@
 # Raw Reflection Log
 
 ---
+Date: 2026-09-03
+TaskRef: "Release v0.0.1.2 (Build 8) Harmonization, Verification & Play Console Release Alignment"
+
+Learnings:
+- Validated all 8 stages of `.agents/workflows/play-console-release-workflow.md` prior to deployment: Target SDK 36, 16 KB uncompressed packaging (`jniLibs.useLegacyPackaging = false`), SQLCipher 4.6.1, `FLAG_SECURE` in release, cleartext restricted to local LAN/VPN, and Play Console `<en-US>` release notes character limit (350/500).
+- Harmonized monotonic `versionCode` progression: corrected from intermediate Build 9 to Build 8 (+1 monotonic increment over Build 7 `v0.0.1.0`), ensuring compliance with Google Play Console bundle upload requirements.
+- Confirmed test oracle metrics: 90/90 passing tests (including `OneWaySyncAndReadOnlyProtectionTest`, `SpeedDialStateTest`, and `ImageQrDecoderTest`).
+
+Difficulties:
+- Resolving documentation divergence where release notes referenced 86 tests while the actual codebase had 90 tests following the One-Way Sync protection test additions. Resolved through end-to-end documentation audit.
+
+Successes:
+- Pre-flight test gate verified 100% green (90/90 passing).
+- Pre-flight build compilation verified (`./gradlew assembleDebug` passed cleanly).
+- Harmonized `RELEASE-v0.0.1.2.md`, `CHANGELOG.md`, `activeContext.md`, `changelog.md`, and `progress.md`.
+- Clean non-fast-forward merge of `feat/phase-10-speed-dial` into `main`.
+- Created annotated release tag `v0.0.1.2`.
+
+Improvements_Identified_For_Consolidation:
+- Single-pass release pre-flight audit checklist (SDK + 16 KB + versionCode + test oracle + release notes length).
+---
 Date: 2026-09-02
 TaskRef: "One-Way Mirror Sync Hardening, Read-Only Protections & Pull-to-Refresh Dashboard Alignment"
 
