@@ -33,7 +33,7 @@ Before building a release artifact, run the full verification gate to ensure zer
 
 ### Invariants to Verify:
 - [ ] **Target SDK API 36**: Google Play Console strictly mandates `targetSdk = 36` (Android 16). Any bundle targeting API 35 or lower will be rejected during upload validation.
-- [ ] **Tests Passing**: 100% pass rate across all Robolectric and unit tests (46+ passing).
+- [ ] **Tests Passing**: 100% pass rate across all Robolectric and unit tests (101+ passing as of Phase 11; expect growth each phase — never regress).
 - [ ] **16 KB Alignment**: `gradle/libs.versions.toml` specifies `sqlcipher = "4.6.1"` and `app/build.gradle.kts` specifies `jniLibs.useLegacyPackaging = false`.
 - [ ] **Security Boundaries**: `FLAG_SECURE` active for production builds (`!BuildConfig.DEBUG` in `MainActivity.kt`).
 - [ ] **Network Security**: Cleartext permitted strictly for local LAN / VPN origins in `res/xml/network_security_config.xml`.
@@ -192,10 +192,11 @@ After rollout, tag the repository and update project history:
 
 ```bash
 # Tag the git commit matching the release version
-git tag -a v0.0.0.1 -m "Release v0.0.0.1 (Build 1) to Google Play Internal Testing"
-git push origin v0.0.0.1
+git tag -a vX.Y.Z.N -m "Release vX.Y.Z.N (Build N) to Google Play Internal Testing"
+git push origin vX.Y.Z.N
 ```
 
 ### Update Memory Bank:
-1. Append details to [`.agents/memory-bank/changelog.md`](file:///config/Documents/workspace-lucas/projects/Agents/ShellGuard-TOTP/.agents/memory-bank/changelog.md).
-2. Record the rollout event in [`.agents/memory-bank/activeContext.md`](file:///config/Documents/workspace-lucas/projects/Agents/ShellGuard-TOTP/.agents/memory-bank/activeContext.md).
+1. Append details to [`.clinerules/memory-bank/changelog.md`](../../.clinerules/memory-bank/changelog.md).
+2. Record the rollout event in [`.clinerules/memory-bank/activeContext.md`](../../.clinerules/memory-bank/activeContext.md) (slide window to 10).
+3. Release-notes source of truth: `RELEASE-PLAY.md` (Play `<en-US>` block) + `RELEASE-vX.Y.Z.N.md` (GitHub Release body, auto-mirrored by the Release Pipeline on tag push).
