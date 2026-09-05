@@ -14,12 +14,19 @@
 ```bash
 export JAVA_HOME="/config/Applications/android-studio/jbr"
 export PATH="$JAVA_HOME/bin:$PATH"
+export GRADLE_OPTS="-XX:-UsePerfData -Djava.io.tmpdir=$PWD/app/build/tmp"
 ./gradlew testDebugUnitTest --no-daemon
 ```
 - Gradle 9.3.1 wrapper committed; cached dists in `/config/.gradle/wrapper/dists/`.
 - `gradle.properties` carries `-XX:-UsePerfData`; test `java.io.tmpdir` → `app/build/tmp`.
 - Robolectric Room config must use `FrameworkSQLiteOpenHelperFactory` (detect via `Class.forName("org.robolectric.Robolectric")`).
 - KeyStore wrappers (AndroidKeyStoreHelper, EncryptedDeviceVault) have HMAC `SecretKeySpec` fallback for headless JVM tests.
+
+## Device & CI Tooling (added 2026-09-04)
+- **ADB**: `/config/Android/Sdk/platform-tools/adb` (not on PATH); Lucas's Pixel 8 connects via wireless ADB. On-device UI verification workflow: `.clinerules/workflows/android-device-adb-verification.md` (black-frame triage: display suspend ≠ FLAG_SECURE).
+- **gh CLI**: `/config/.local/bin/gh` (authenticated) — `gh run list/watch/view`, `gh release view` for Release Pipeline + artifact verification.
+- **GitHub**: `ClawStackStudios/ShellGuard-TOTP`; Release Pipeline 📦 workflow triggers on `main` push and `v*` tags, publishing signed .aab + .apk to GitHub Releases (mirrors `RELEASE-vX.Y.Z.N.md`).
+- Version-update workflow (`.clinerules/workflows/version-update.md`) now covers the 5-anchor release sync (Step 5) and push/CI verification (Step 6).
 
 ## Constraints
 - Client-side only app; cleartext HTTP is intentional (local networks / VPN).

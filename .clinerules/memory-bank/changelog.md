@@ -1,5 +1,17 @@
 # Changelog (Cline)
 
+## [session-3] - 2026-09-04 (v0.0.1.3 Hotfix Release)
+### Fixed
+- Remote sync regression + TotpCard badge wrap (see [session-2] below; shipped in v0.0.1.3).
+
+### Released
+- **v0.0.1.3 (Build 9) Hotfix** — commit 3e70fa9, tag pushed, Release Pipeline passed 3m46s (run 33939042244); signed `shellguard-totp-v0.0.1.3.aab` (35.2MB) + `.apk` (59.6MB) on GitHub Release. Version synced across all 5 anchors (versionCode 9, CHANGELOG, RELEASE-v0.0.1.3.md, RELEASE-PLAY.md, README badge).
+
+### Added
+- **Task 24 "Screen security toggle" (FLAG_SECURE) spec fully expanded** in ROADMAP.md + project/meta-prompt-ai-studio.md: `allowScreenshots` DataStore pref (default false), opt-in confirm dialog, StateFlow-driven immediate window flag apply, forced FLAG_SECURE when vault locked/backgrounded, debug exemption preserved, black-screencap QA note, `SCREEN_SECURITY_CHANGED` audit event, Task 23 controller dependency note.
+- `/learn` codifications (approved by Lucas): new workflow `android-device-adb-verification.md`; version-update.md Steps 5–6 (release anchor checklist + gh CI verification). Proposal artifact in `.clinerules/learning-proposals/2026-09-04-hotfix-session.md`.
+- Memory bank updates: progress.md refreshed to post-release state, techContext.md device/CI tooling section.
+
 ## [session-2] - 2026-09-04
 ### Fixed
 - **CRITICAL — Remote Sync Regression (v0.0.1.2)**: Delta filter in `TotpRepository.syncRemoteVault` compared nullable local `remoteUpdatedAt` against nullable remote `updated_at`; null==null classified all pearls (and especially fresh installs) as "unchanged" → never decrypted/upserted, prune-only reconciliation couldn't insert → zero codes synced with silent success. Extracted `classifyDeltaPearls` (unchanged requires existing local row + non-null equal stamps; null stamps always sync — self-healing).
