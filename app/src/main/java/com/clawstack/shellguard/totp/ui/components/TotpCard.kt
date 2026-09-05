@@ -41,6 +41,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.clawstack.shellguard.totp.ui.theme.LocalShellGuardColors
@@ -141,7 +142,8 @@ fun TotpCard(
                             color = shellColors.textMain,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.SemiBold,
-                            maxLines = 1
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         // Provenance Pill: 📱 Local vs ☁️ Synced (Read-Only)
@@ -151,15 +153,6 @@ fun TotpCard(
                             tint = if (isLocalOnly) shellColors.textMuted else shellColors.primaryAccent,
                             modifier = Modifier.size(13.dp)
                         )
-                        if (!isLocalOnly) {
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = "Read-only",
-                                color = shellColors.textMuted,
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
                     }
                     if (!username.isNullOrBlank()) {
                         Text(

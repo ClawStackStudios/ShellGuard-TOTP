@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - No unreleased changes yet.
 
+## [0.0.1.3] - 2026-09-04 (Build 9) — Hotfix
+### Fixed
+- **CRITICAL — Remote Sync Regression**: v0.0.1.2's delta sync classified pearls with a null/missing server `updated_at` stamp as "unchanged" (null-to-null comparison), silently skipping decryption and upsert so remote codes never synced while reporting success. Extracted `TotpRepository.classifyDeltaPearls`: a pearl is skipped only when a local mirror row exists AND the remote stamp is non-null AND equal — null stamps always sync, and devices stuck on the broken build self-heal on the next pull.
+- **Synced Card Badge Wrap**: Removed the wrapping "Read-only" text pill from `TotpCard` (rendered as "Rea/d-on/ly" and inflated card height); the pink cloud icon alone now denotes synced read-only codes (full meaning preserved in `contentDescription` and the "☁️ Synced from ShellGuard" group header). Card renders at standard single-line height.
+
+### Added
+- **Delta Sync Regression Suite**: Added `DeltaSyncClassificationTest` (6 cases including the exact repro) — first direct coverage of the sync delta path, bringing total passing unit tests to 96/96.
+
 ## [0.0.1.2] - 2026-09-03 (Build 8)
 ### Added
 - **Expandable Speed Dial FAB**: Replaced static dual action buttons with `ExpandableSpeedDialFab`, providing a spring-driven 45-degree morph from `+` to `✕`, semi-transparent dark dimming scrim, and 3 staggered animated action pills.

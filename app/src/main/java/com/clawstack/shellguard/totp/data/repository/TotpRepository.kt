@@ -8,6 +8,7 @@ import com.clawstack.shellguard.totp.data.local.entities.SyncMetadataEntity
 import com.clawstack.shellguard.totp.data.local.entities.TotpItemEntity
 import com.clawstack.shellguard.totp.data.remote.ApiClient
 import com.clawstack.shellguard.totp.data.remote.models.CreateVaultItemRequest
+import com.clawstack.shellguard.totp.data.remote.models.PearlDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -75,13 +76,13 @@ class TotpRepository(
             // 3. Client-side delta filter: skip re-decryption for pearls whose
             //    remote `updated_at` stamp matches the local mirror (CPU/IO saving —
             //    unchanged items are neither decrypted nor re-upserted).
+            //    NOTE: pearls with a null/missing server `updated_at` stamp are ALWAYS
+            //    treated as changed — comparing null-to-null would silently classify
+            //    brand-new pearls as "unchanged" and they would never be inserted.
             val existingRemoteByUpdatedAt = totpItemDao.getRemoteItemsOnce(userUuid)
                 .associate { it.id to it.remoteUpdatedAt }
             val totpPearls = remotePearls.filter { !it.totp_secret.isNullOrBlank() }
-            val unchangedRemoteIds = totpPearls
-                .filter { existingRemoteByUpdatedAt[it.id] == it.updated_at }
-                .map { it.id }
-            val changedPearls = totpPearls.filter { existingRemoteByUpdatedAt[it.id] != it.updated_at }
+            val (unchangedRemoteIds, changedPearls) = classifyDeltaPearls(existingRemoteByUpdatedAt, totpPearls)
 
             // 4. Decrypt seeds and map to Room entities (changed/new pearls only)
             val entities = changedPearls.mapNotNull { pearl ->
@@ -146,6 +147,35 @@ class TotpRepository(
                     lastErrorMessage = ex.message
                 )
             )
+        }
+    }
+
+    companion object {
+        /**
+         * Delta classification between the local mirror snapshot and incoming server pearls.
+         * A pearl is "unchanged" (safe to skip decryption/upsert) ONLY when:
+         *  1. A local mirror row exists for its id, AND
+         *  2. The server provided a non-null `updated_at` stamp, AND
+         *  3. Both stamps are equal.
+         * Everything else is "changed" and must be decrypted + upserted. This keeps the
+         * one-way mirror self-healing: servers that omit `updated_at` (or send it as null)
+         * always sync, instead of being silently swallowed by a null==null match.
+         */
+        internal fun classifyDeltaPearls(
+            localSnapshotById: Map<String, String?>,
+            pearls: List<PearlDto>
+        ): Pair<List<String>, List<PearlDto>> {
+            val unchangedIds = pearls
+                .filter { pearl ->
+                    val localStamp = localSnapshotById[pearl.id]
+                    pearl.updated_at != null && localStamp != null && localStamp == pearl.updated_at
+                }
+                .map { it.id }
+            val changed = pearls.filter { pearl ->
+                val localStamp = localSnapshotById[pearl.id]
+                !(pearl.updated_at != null && localStamp != null && localStamp == pearl.updated_at)
+            }
+            return Pair(unchangedIds, changed)
         }
     }
 }

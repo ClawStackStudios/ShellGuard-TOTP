@@ -270,12 +270,24 @@ Description: Implement modular Settings navigation:
 
 Description: Implement `AuditLogDao` and `AuditLogEntity` in Room to record security events (vault unlocked, biometric failed, backup created, secret added, panic triggered). Implement `PanicTriggerReceiver` (supporting broadcast/intent triggers to wipe encryption keys and purge Room DB on emergency). Implement configurable Tap-to-Reveal timeout timer (default 30s).
 
+> NOTE (Task 24 dependency): The `SecurityPreferenceController` (this task) owns the `allowScreenshots` DataStore preference consumed by the Task 24 FLAG_SECURE toggle — expose it as a `StateFlow<Boolean>` (default `false`) plus a setter that emits an `SCREEN_SECURITY_CHANGED` audit event. See the full toggle specification under Task 24 in `ROADMAP.md`.
+
 > Success Criteria: Audit events are safely recorded with millisecond timestamps. Panic trigger securely wipes all local encryption keys and databases within 50ms.
 
 - [ ]  Task 24: [UI Component] Security Sub-screen (Tap-to-Reveal, Screen Security, Panic Purge) & Audit Log Screen
 
 Description: Implement:
 - **`SettingsSecurityScreen.kt`**: Encryption status tile, Screen security toggle (`FLAG_SECURE`), Tap to reveal codes toggle with configurable timeout duration, Delete vault on panic trigger toggle.
+
+**Screen Security Toggle (FLAG_SECURE) — Full Specification** (context: validated live 2026-09-04 during a UI debugging session where FLAG_SECURE blocked ADB `screencap` verification of dashboard changes):
+- **Preference**: `allowScreenshots: Boolean` in `AuthPreferences/DataStore`, default `false` (secure-by-default; current behavior is the untouched default).
+- **Toggle semantics (opt-in)**: Enabling shows a confirmation dialog with explicit risk copy — "Other apps, screen recorders, and the task-switcher may capture your 2FA codes while this is enabled." Cancel reverts; accept persists and applies immediately.
+- **Runtime application**: `MainActivity` must react to the preference as a `StateFlow` (not just `onCreate`), calling `window.clearFlags(FLAG_SECURE)` / `setFlags(FLAG_SECURE)` on change so the effect is immediate without app restart.
+- **Forced-protection invariant**: When the vault is LOCKED (LockScreen/LoginScreen visible, or app backgrounded per `AppLifecycleObserver` pre-auto-lock), FLAG_SECURE is ALWAYS enforced regardless of the toggle — the lock screen and recents thumbnails must never leak. The toggle only governs the unlocked dashboard/session state.
+- **Debug exemption preserved**: `!BuildConfig.DEBUG` gate remains — debug builds never apply FLAG_SECURE so ADB `screencap` verification of UI work is possible (per `play-console-release-workflow.md` pre-flight checklist).
+- **Debug/QA distinction**: A 15KB uniform-black `screencap` PNG indicates the display was suspended at capture time (screen sleep), NOT FLAG_SECURE blocking — wake the display (`KEYCODE_WAKEUP`) immediately before capture when verifying UI over ADB.
+- **Audit integration**: Record `SCREEN_SECURITY_CHANGED` (old → new value) in the Audit Log alongside other security events.
+- **Settings copy**: Label "Allow screenshots"; subtitle "Disables anti-snoop protection for this device."
 - **`SettingsAuditLogScreen.kt`**: Chronological event list with status chips (Unlock, Export, Failed Attempt, Sync), search filter, export audit log action, and empty state illustration (`No reported events`).
 
 > Success Criteria: Security settings enforce immediate runtime protection. Audit log renders event timeline with zero UI stutter.

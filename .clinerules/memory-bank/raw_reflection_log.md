@@ -1,6 +1,34 @@
 # Raw Reflection Log
 
 ---
+---
+Date: 2026-09-04
+TaskRef: "Diagnose & fix v0.0.1.2 remote sync regression (no codes syncing from server)"
+
+Handoff_Context:
+- Session state: ~60% used
+- Active work: compare v0.0.1.0 vs v0.0.1.2 sync behavior; found + fixed root cause
+- Pending decisions: whether server SHOULD populate updated_at (server-side fix option); whether to cut v0.0.1.3 release with this fix
+- Unresolved issues: on-device sync verification (Lucas's Pixel 8); server-side confirmation that updated_at is null/missing in vault responses (inferred, not captured)
+
+Learnings:
+- NULL-VS-NULL DELTA TRAP: any "skip if unchanged" comparison against a nullable remote field must treat null remote stamps as always-changed. `localNull == remoteNull` silently swallows new records when reconciliation is delete-only (prune can't insert). Generalizable to every mirror/delta sync design.
+- The regression shipped because syncRemoteVault had zero direct test coverage — read-only tests inserted entities straight into Room. Extracting the classification into a pure `internal companion` function enabled plain-JVM regression tests without faking the ApiClient singleton.
+- Test-verification trap: long gradle runs (~13min) exceed the 300s tool timeout; partial XML results from prior runs persist in app/build/test-results and TOTAL counts can look "done" while the executor is still mid-suite. Always confirm the target suite's own XML exists and grep BUILD SUCCESSFUL before declaring green.
+
+Successes:
+- Diff-driven bisection (git diff v0.0.1.0 v0.0.1.2 on data/ + viewmodels) isolated the culprit to the 3 changed sync functions within minutes despite no logs.
+- Fix is self-healing: devices stuck with null-stamped mirror rows re-sync on next pull; no migration needed.
+
+Improvements_Identified_For_Consolidation:
+- Pattern: nullable-timestamp delta classification (null remote stamp ⇒ changed).
+- Pattern: extract pure classification functions from repository sync methods for testability.
+- Environment: background + poll long gradle runs; verify per-suite XML freshness (stale XML trap recurrence).
+
+Handoff_Package_Prepared: true
+---
+
+---
 Date: 2026-09-02
 TaskRef: "One-Way Mirror Sync Hardening, Read-Only Protections & Pull-to-Refresh Dashboard Alignment"
 

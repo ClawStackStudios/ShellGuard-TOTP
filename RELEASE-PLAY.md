@@ -5,6 +5,19 @@
 
 ---
 
+## `v0.0.1.3` — Hotfix: Remote Sync Restoration & Card Polish (Build 9)
+
+```xml
+<en-US>
+• Fixed: Remote 2FA codes not syncing from ShellGuard Server on v0.0.1.2 — delta sync now self-heals on first pull.
+• Fixed: Synced code cards rendering extra-tall due to badge text wrapping; cards are back to standard height.
+• New regression suite covering the one-way sync engine (96/96 tests green).
+• Full hardware-backed security unchanged: Android KeyStore, SQLCipher, FLAG_SECURE.
+</en-US>
+```
+
+---
+
 ## `v0.0.1.2` — Phase 10: Expandable Floating Actions Speed Dial (Build 8)
 
 ```xml

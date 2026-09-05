@@ -656,9 +656,21 @@ Execute Phase 11 adhering to the Functionality + UI Component pairing:
 - Implement `PanicTriggerReceiver` (supporting broadcast/intent triggers to wipe encryption keys and purge Room DB on emergency).
 - Implement configurable Tap-to-Reveal timeout timer (default 30s).
 
+> NOTE (Task 24 dependency): The `SecurityPreferenceController` (this task) owns the `allowScreenshots` DataStore preference consumed by the Task 24 FLAG_SECURE toggle — expose it as a `StateFlow<Boolean>` (default `false`) plus a setter that emits an `SCREEN_SECURITY_CHANGED` audit event. See the full toggle specification under Task 24 in `ROADMAP.md`.
+
 ### Task 24: [UI Component] Security Sub-screen (Tap-to-Reveal, Screen Security, Panic Purge) & Audit Log Screen
 - Implement `SettingsSecurityScreen.kt`:
   - Encryption status tile, Screen security toggle (`FLAG_SECURE`), Tap to reveal codes toggle with configurable timeout duration, Delete vault on panic trigger toggle.
+
+  **Screen Security Toggle (FLAG_SECURE) — Full Specification** (context: validated live 2026-09-04 during UI debugging when FLAG_SECURE blocked ADB `screencap` verification):
+  - **Preference**: `allowScreenshots: Boolean` in DataStore, default `false` (secure-by-default).
+  - **Opt-in confirmation dialog** with explicit risk copy: "Other apps, screen recorders, and the task-switcher may capture your 2FA codes while this is enabled." Cancel reverts; accept persists + applies immediately.
+  - **Immediate runtime apply**: `MainActivity` collects the preference as a `StateFlow` and toggles `window.setFlags/clearFlags(FLAG_SECURE)` on change — no app restart required.
+  - **Forced-protection invariant**: FLAG_SECURE is ALWAYS enforced when the vault is locked (LockScreen/LoginScreen) or app is backgrounded pre-auto-lock — the toggle only governs the unlocked session, never the lock screen or recents thumbnails.
+  - **Debug exemption preserved**: `!BuildConfig.DEBUG` gate stays so ADB `screencap` can verify UI work in debug builds.
+  - **QA note**: a uniform-black small `screencap` PNG means the display was suspended at capture time (screen sleep), NOT FLAG_SECURE — wake the display immediately before capture when verifying over ADB.
+  - **Audit integration**: record `SCREEN_SECURITY_CHANGED` (old → new) in the Audit Log.
+  - **Settings copy**: label "Allow screenshots"; subtitle "Disables anti-snoop protection for this device."
 - Implement `SettingsAuditLogScreen.kt`:
   - Chronological event list with status chips (Unlock, Export, Failed Attempt, Sync), search filter, export audit log action, and empty state illustration (`No reported events`).
 

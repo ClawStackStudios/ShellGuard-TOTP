@@ -1,5 +1,12 @@
 # Changelog (Cline)
 
+## [session-2] - 2026-09-04
+### Fixed
+- **CRITICAL — Remote Sync Regression (v0.0.1.2)**: Delta filter in `TotpRepository.syncRemoteVault` compared nullable local `remoteUpdatedAt` against nullable remote `updated_at`; null==null classified all pearls (and especially fresh installs) as "unchanged" → never decrypted/upserted, prune-only reconciliation couldn't insert → zero codes synced with silent success. Extracted `classifyDeltaPearls` (unchanged requires existing local row + non-null equal stamps; null stamps always sync — self-healing).
+
+### Added
+- `DeltaSyncClassificationTest` (6 regression cases including the exact repro) — first direct coverage of the sync delta path; suite now 96/96 green + assembleDebug verified.
+
 ## [session-1] - 2026-09-02
 ### Added
 - Initialized Cline memory bank at `.clinerules/memory-bank/` (7 core files), seeded from Antigravity's `.agents/memory-bank/` + codebase mapping. Distinct from Antigravity's bank — that directory remains untouched.

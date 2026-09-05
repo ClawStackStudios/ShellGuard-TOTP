@@ -1,7 +1,11 @@
 # Consolidated Learnings (Cline)
 
 ## Behavioral Rules
-- **Workspace Scope & Destructive Ops**: codified as an active rule —
+- **Nullable-Timestamp Delta Sync (CRITICAL pattern)**: In any "skip if unchanged" comparison, a null/missing remote stamp must classify as CHANGED — never compare nullable-to-nullable (`null == null` silently swallows new records when reconciliation is delete-only, since prune can't insert). Implemented in `TotpRepository.classifyDeltaPearls` (v0.0.1.2 regression fix, 2026-09-04).
+- **Sync testability seam**: extract delta/classification logic into pure `internal companion` functions on the repository — the ApiClient singleton can't be faked, but pure functions test on plain JVM. `syncRemoteVault` shipped untested and regressed; the delta path now has direct coverage (`DeltaSyncClassificationTest`).
+
+## Workspace Scope & Destructive Ops
+- codified as an active rule —
   `.clinerules/rules/workspace-scope-and-destructive-ops.md`. Stay inside the
   project workspace when exploring config; destructive/system operations require
   audit-first numbers, tiered risk-labeled proposals, exact-scope execution, and
