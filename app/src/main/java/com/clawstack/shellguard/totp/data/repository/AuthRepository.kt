@@ -6,6 +6,11 @@ import com.clawstack.shellguard.totp.crypto.ClawCrypto
 import com.clawstack.shellguard.totp.crypto.EncryptedDeviceVault
 import com.clawstack.shellguard.totp.data.remote.ApiClient
 import com.clawstack.shellguard.totp.data.remote.models.SessionData
+import com.clawstack.shellguard.totp.data.preferences.AppearancePreferences
+import com.clawstack.shellguard.totp.data.preferences.BehaviorPreferences
+import com.clawstack.shellguard.totp.data.preferences.EntryViewMode
+import com.clawstack.shellguard.totp.data.preferences.IssuerDisplayMode
+import com.clawstack.shellguard.totp.data.preferences.SearchScope
 import com.clawstack.shellguard.totp.ui.theme.AppThemeMode
 import com.clawstack.shellguard.totp.ui.theme.ThemeAccent
 import kotlinx.coroutines.Dispatchers
@@ -82,6 +87,13 @@ class AuthRepository(
 
     private val _tourStep = MutableStateFlow(if (prefs.getBoolean("pref_guided_tour_completed", false)) 0 else 1)
     val tourStep: StateFlow<Int> = _tourStep.asStateFlow()
+
+    // ── Phase 11 / Task 21: Structured preference stores ────────────────────
+    private val _appearancePrefs = MutableStateFlow(loadAppearancePrefs())
+    val appearancePrefs: StateFlow<AppearancePreferences> = _appearancePrefs.asStateFlow()
+
+    private val _behaviorPrefs = MutableStateFlow(loadBehaviorPrefs())
+    val behaviorPrefs: StateFlow<BehaviorPreferences> = _behaviorPrefs.asStateFlow()
 
     suspend fun <T> withSyncLock(block: suspend () -> T): T = mutex.withLock {
         block()
@@ -300,6 +312,93 @@ class AuthRepository(
     fun setAutoClearClipboard(enabled: Boolean) {
         _isAutoClearClipboard.value = enabled
         prefs.edit().putBoolean("pref_auto_clear_clipboard", enabled).apply()
+    }
+
+    // ── Phase 11 / Task 21: Appearance preference setters ───────────────────
+
+    private fun loadAppearancePrefs(): AppearancePreferences = AppearancePreferences(
+        themeMode = themeMode.value,
+        themeAccent = themeAccent.value,
+        viewMode = readEnum("pref_appearance_view_mode", EntryViewMode.NORMAL),
+        showIcons = prefs.getBoolean("pref_appearance_show_icons", true),
+        showNextCode = prefs.getBoolean("pref_appearance_show_next_code", false),
+        expireBlinkIndicator = prefs.getBoolean("pref_appearance_expire_blink", false),
+        digitGrouping = prefs.getBoolean("pref_appearance_digit_grouping", true),
+        issuerDisplayMode = readEnum("pref_appearance_issuer_display", IssuerDisplayMode.ISSUER_AND_ACCOUNT),
+        hiddenGroups = prefs.getStringSet("pref_appearance_hidden_groups", emptySet()) ?: emptySet()
+    )
+
+    private fun loadBehaviorPrefs(): BehaviorPreferences = BehaviorPreferences(
+        focusSearchOnStart = prefs.getBoolean("pref_behavior_focus_search_on_start", false),
+        searchScope = readEnum("pref_behavior_search_scope", SearchScope.ALL),
+        minimizeOnCopy = prefs.getBoolean("pref_behavior_minimize_on_copy", false),
+        copyOnTap = prefs.getBoolean("pref_behavior_copy_on_tap", true),
+        hapticFeedback = prefs.getBoolean("pref_behavior_haptic_feedback", true),
+        multiselectGroups = prefs.getBoolean("pref_behavior_multiselect_groups", false),
+        highlightTokensOnTap = prefs.getBoolean("pref_behavior_highlight_tokens_on_tap", false),
+        freezeTokensOnTap = prefs.getBoolean("pref_behavior_freeze_tokens_on_tap", false)
+    )
+
+    private inline fun <reified T : Enum<T>> readEnum(key: String, default: T): T =
+        try {
+            enumValueOf<T>(prefs.getString(key, default.name) ?: default.name)
+        } catch (_: Exception) {
+            default
+        }
+
+    fun setViewMode(mode: EntryViewMode) = updateAppearance { it.copy(viewMode = mode) }
+    fun setShowIcons(enabled: Boolean) = updateAppearance { it.copy(showIcons = enabled) }
+    fun setShowNextCode(enabled: Boolean) = updateAppearance { it.copy(showNextCode = enabled) }
+    fun setExpireBlinkIndicator(enabled: Boolean) = updateAppearance { it.copy(expireBlinkIndicator = enabled) }
+    fun setDigitGrouping(enabled: Boolean) = updateAppearance { it.copy(digitGrouping = enabled) }
+    fun setIssuerDisplayMode(mode: IssuerDisplayMode) = updateAppearance { it.copy(issuerDisplayMode = mode) }
+
+    /** Group Manager: hide/show dynamic category groups on the dashboard. */
+    fun setGroupHidden(group: String, hidden: Boolean) {
+        val groups = _appearancePrefs.value.hiddenGroups.toMutableSet()
+        if (hidden) groups.add(group) else groups.remove(group)
+        prefs.edit().putStringSet("pref_appearance_hidden_groups", groups).apply()
+        _appearancePrefs.value = _appearancePrefs.value.copy(hiddenGroups = groups.toSet())
+    }
+
+    private fun updateAppearance(transform: (AppearancePreferences) -> AppearancePreferences) {
+        val updated = transform(_appearancePrefs.value)
+        prefs.edit()
+            .putString("pref_appearance_view_mode", updated.viewMode.name)
+            .putBoolean("pref_appearance_show_icons", updated.showIcons)
+            .putBoolean("pref_appearance_show_next_code", updated.showNextCode)
+            .putBoolean("pref_appearance_expire_blink", updated.expireBlinkIndicator)
+            .putBoolean("pref_appearance_digit_grouping", updated.digitGrouping)
+            .putString("pref_appearance_issuer_display", updated.issuerDisplayMode.name)
+            .putStringSet("pref_appearance_hidden_groups", updated.hiddenGroups)
+            .apply()
+        _appearancePrefs.value = updated
+    }
+
+    // ── Phase 11 / Task 21: Behavior preference setters ─────────────────────
+
+    fun setFocusSearchOnStart(enabled: Boolean) = updateBehavior { it.copy(focusSearchOnStart = enabled) }
+    fun setSearchScope(scope: SearchScope) = updateBehavior { it.copy(searchScope = scope) }
+    fun setMinimizeOnCopy(enabled: Boolean) = updateBehavior { it.copy(minimizeOnCopy = enabled) }
+    fun setCopyOnTap(enabled: Boolean) = updateBehavior { it.copy(copyOnTap = enabled) }
+    fun setHapticFeedback(enabled: Boolean) = updateBehavior { it.copy(hapticFeedback = enabled) }
+    fun setMultiselectGroups(enabled: Boolean) = updateBehavior { it.copy(multiselectGroups = enabled) }
+    fun setHighlightTokensOnTap(enabled: Boolean) = updateBehavior { it.copy(highlightTokensOnTap = enabled) }
+    fun setFreezeTokensOnTap(enabled: Boolean) = updateBehavior { it.copy(freezeTokensOnTap = enabled) }
+
+    private fun updateBehavior(transform: (BehaviorPreferences) -> BehaviorPreferences) {
+        val updated = transform(_behaviorPrefs.value)
+        prefs.edit()
+            .putBoolean("pref_behavior_focus_search_on_start", updated.focusSearchOnStart)
+            .putString("pref_behavior_search_scope", updated.searchScope.name)
+            .putBoolean("pref_behavior_minimize_on_copy", updated.minimizeOnCopy)
+            .putBoolean("pref_behavior_copy_on_tap", updated.copyOnTap)
+            .putBoolean("pref_behavior_haptic_feedback", updated.hapticFeedback)
+            .putBoolean("pref_behavior_multiselect_groups", updated.multiselectGroups)
+            .putBoolean("pref_behavior_highlight_tokens_on_tap", updated.highlightTokensOnTap)
+            .putBoolean("pref_behavior_freeze_tokens_on_tap", updated.freezeTokensOnTap)
+            .apply()
+        _behaviorPrefs.value = updated
     }
 
     fun setThemeMode(mode: AppThemeMode) {

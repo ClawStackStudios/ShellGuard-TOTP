@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.clawstack.shellguard.totp.ShellGuardTotpApp
 import com.clawstack.shellguard.totp.data.local.entities.SyncMetadataEntity
 import com.clawstack.shellguard.totp.data.local.entities.TotpItemEntity
+import com.clawstack.shellguard.totp.data.preferences.SearchScope
 import com.clawstack.shellguard.totp.engine.TotpEngine
 import com.clawstack.shellguard.totp.engine.TotpTicker
 import com.clawstack.shellguard.totp.engine.TotpTickerState
@@ -125,6 +126,10 @@ class TotpViewModel(application: Application) : AndroidViewModel(application) {
             list.filter { (it.isLocalOnly || it.ownerUuid == "local") && 
                 (filterState.category == null || filterState.category == "All Accounts" || filterState.category == "All Tokens" || it.category.equals(filterState.category, ignoreCase = true)) }
         }
+    }.combine(authRepository.behaviorPrefs) { list, prefs ->
+        if (prefs.searchScope == SearchScope.REMOTE_ONLY) emptyList() else list
+    }.combine(authRepository.appearancePrefs) { list, prefs ->
+        list.filter { it.category == null || it.category !in prefs.hiddenGroups }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     // Filtered items flow for remote codes
@@ -147,8 +152,13 @@ class TotpViewModel(application: Application) : AndroidViewModel(application) {
             list.filter { !it.isLocalOnly && it.ownerUuid != "local" && 
                 (filterState.category == null || filterState.category == "All Accounts" || filterState.category == "All Tokens" || it.category.equals(filterState.category, ignoreCase = true)) }
         }
+    }.combine(authRepository.behaviorPrefs) { list, prefs ->
+        if (prefs.searchScope == SearchScope.LOCAL_ONLY) emptyList() else list
+    }.combine(authRepository.appearancePrefs) { list, prefs ->
+        list.filter { it.category == null || it.category !in prefs.hiddenGroups }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-fun onSearchQueryChanged(query: String) {
+
+    fun onSearchQueryChanged(query: String) {
         searchQuery.value = query
     }
 

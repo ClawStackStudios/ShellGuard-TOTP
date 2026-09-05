@@ -37,6 +37,10 @@ sealed class Screen(val route: String) {
     data object AddSecret : Screen("add_secret")
     data object QrScanner : Screen("qr_scanner")
     data object Settings : Screen("settings")
+    data object SettingsMeta : Screen("settings_meta")
+    data object SettingsAppearance : Screen("settings_appearance")
+    data object SettingsBehavior : Screen("settings_behavior")
+    data object SettingsPlaceholder : Screen("settings_placeholder")
 }
 
 @Composable
@@ -174,7 +178,7 @@ fun TotpNavHost(
                 viewModel = totpViewModel,
                 onAddSecretClick = { navController.navigate(Screen.AddSecret.route) },
                 onScanQrClick = { navController.navigate(Screen.QrScanner.route) },
-                onSettingsClick = { navController.navigate(Screen.Settings.route) }
+                onSettingsClick = { navController.navigate(Screen.SettingsMeta.route) }
             )
         }
 
@@ -227,5 +231,55 @@ fun TotpNavHost(
                 totpViewModel = totpViewModel
             )
         }
+
+    composable(
+        route = Screen.SettingsMeta.route,
+        enterTransition = { fadeIn() },
+        exitTransition = { fadeOut() }
+    ) {
+        com.clawstack.shellguard.totp.ui.screens.settings.SettingsMetaScreen(
+            onBackClick = { navController.popBackStack() },
+            onNavigateToAppearance = { navController.navigate(Screen.SettingsAppearance.route) },
+            onNavigateToBehavior = { navController.navigate(Screen.SettingsBehavior.route) },
+            onNavigateToPlaceholder = { title ->
+                navController.navigate("${Screen.SettingsPlaceholder.route}/${android.net.Uri.encode(title)}")
+            }
+        )
+    }
+
+    composable(
+        route = Screen.SettingsAppearance.route,
+        enterTransition = { fadeIn() },
+        exitTransition = { fadeOut() }
+    ) {
+        com.clawstack.shellguard.totp.ui.screens.settings.SettingsAppearanceScreen(
+            authViewModel = authViewModel,
+            onBackClick = { navController.popBackStack() }
+        )
+    }
+
+    composable(
+        route = Screen.SettingsBehavior.route,
+        enterTransition = { fadeIn() },
+        exitTransition = { fadeOut() }
+    ) {
+        com.clawstack.shellguard.totp.ui.screens.settings.SettingsBehaviorScreen(
+            authViewModel = authViewModel,
+            onBackClick = { navController.popBackStack() }
+        )
+    }
+
+    composable(
+        route = "${Screen.SettingsPlaceholder.route}/{title}",
+        enterTransition = { fadeIn() },
+        exitTransition = { fadeOut() }
+    ) { backStackEntry ->
+        val title = backStackEntry.arguments?.getString("title") ?: "Settings"
+        com.clawstack.shellguard.totp.ui.screens.settings.SettingsPlaceholderScreen(
+            categoryTitle = title,
+            onBackClick = { navController.popBackStack() },
+            onOpenLegacySettings = { navController.navigate(Screen.Settings.route) }
+        )
+    }
     }
 }

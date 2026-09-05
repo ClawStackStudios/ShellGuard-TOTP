@@ -45,6 +45,25 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     val vaultMode: StateFlow<VaultProtectionMode> = authRepository.vaultMode
         .stateIn(viewModelScope, SharingStarted.Eagerly, authRepository.vaultMode.value)
 
+    // ── Phase 11 / Task 21: structured preference streams ───────────────────
+    val appearancePrefs = authRepository.appearancePrefs
+    val behaviorPrefs = authRepository.behaviorPrefs
+
+    fun setViewMode(mode: com.clawstack.shellguard.totp.data.preferences.EntryViewMode) = authRepository.setViewMode(mode)
+    fun setShowIcons(enabled: Boolean) = authRepository.setShowIcons(enabled)
+    fun setShowNextCode(enabled: Boolean) = authRepository.setShowNextCode(enabled)
+    fun setExpireBlinkIndicator(enabled: Boolean) = authRepository.setExpireBlinkIndicator(enabled)
+    fun setDigitGrouping(enabled: Boolean) = authRepository.setDigitGrouping(enabled)
+    fun setIssuerDisplayMode(mode: com.clawstack.shellguard.totp.data.preferences.IssuerDisplayMode) = authRepository.setIssuerDisplayMode(mode)
+    fun setFocusSearchOnStart(enabled: Boolean) = authRepository.setFocusSearchOnStart(enabled)
+    fun setSearchScope(scope: com.clawstack.shellguard.totp.data.preferences.SearchScope) = authRepository.setSearchScope(scope)
+    fun setMinimizeOnCopy(enabled: Boolean) = authRepository.setMinimizeOnCopy(enabled)
+    fun setCopyOnTap(enabled: Boolean) = authRepository.setCopyOnTap(enabled)
+    fun setHapticFeedback(enabled: Boolean) = authRepository.setHapticFeedback(enabled)
+    fun setMultiselectGroups(enabled: Boolean) = authRepository.setMultiselectGroups(enabled)
+    fun setHighlightTokensOnTap(enabled: Boolean) = authRepository.setHighlightTokensOnTap(enabled)
+    fun setFreezeTokensOnTap(enabled: Boolean) = authRepository.setFreezeTokensOnTap(enabled)
+
     val isVaultHatched: StateFlow<Boolean> = authRepository.isVaultHatched
         .stateIn(viewModelScope, SharingStarted.Eagerly, authRepository.isVaultHatched.value)
 

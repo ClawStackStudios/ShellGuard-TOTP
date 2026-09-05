@@ -53,6 +53,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -108,10 +110,11 @@ fun TotpListScreen(
     val isServerConnected by viewModel.isServerConnected.collectAsStateWithLifecycle()
     val clipboardFeedback by viewModel.clipboardFeedback.collectAsStateWithLifecycle()
     val isSyncing by viewModel.isSyncing.collectAsStateWithLifecycle()
-
     val context = LocalContext.current
     val app = context.applicationContext as ShellGuardTotpApp
     val authRepo = app.authRepository
+    val appearancePrefs by authRepo.appearancePrefs.collectAsStateWithLifecycle()
+    val behaviorPrefs by authRepo.behaviorPrefs.collectAsStateWithLifecycle()
     val tourStep by authRepo.tourStep.collectAsStateWithLifecycle()
     val isBackupPromptDismissed by authRepo.isBackupPromptDismissed.collectAsStateWithLifecycle()
 
@@ -229,6 +232,10 @@ fun TotpListScreen(
                     }
                 }
 
+                val searchFocusRequester = androidx.compose.runtime.remember { FocusRequester() }
+                LaunchedEffect(behaviorPrefs.focusSearchOnStart) {
+                    if (behaviorPrefs.focusSearchOnStart) searchFocusRequester.requestFocus()
+                }
                 // ── Search Bar ──────────────────────────────────────────
                 OutlinedTextField(
                     value = searchQuery,
@@ -273,6 +280,7 @@ fun TotpListScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp, vertical = 6.dp)
                         .testTag("totp_search_bar")
+                        .focusRequester(searchFocusRequester)
                 )
 
                 
@@ -466,6 +474,8 @@ fun TotpListScreen(
                                     remainingSeconds = tickerState.remainingSeconds,
                                     progress = tickerState.progress,
                                     isLocalOnly = item.isLocalOnly,
+                                    digitGrouping = appearancePrefs.digitGrouping,
+                                    hapticsEnabled = behaviorPrefs.hapticFeedback,
                                     onCopy = { rawCode ->
                                         viewModel.copyToClipboard(item.title, rawCode)
                                     },
@@ -506,6 +516,8 @@ fun TotpListScreen(
                                     remainingSeconds = tickerState.remainingSeconds,
                                     progress = tickerState.progress,
                                     isLocalOnly = item.isLocalOnly,
+                                    digitGrouping = appearancePrefs.digitGrouping,
+                                    hapticsEnabled = behaviorPrefs.hapticFeedback,
                                     onCopy = { rawCode ->
                                         viewModel.copyToClipboard(item.title, rawCode)
                                     },

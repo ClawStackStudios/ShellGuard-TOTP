@@ -59,6 +59,8 @@ fun TotpCard(
     remainingSeconds: Int,
     progress: Float,
     isLocalOnly: Boolean = false,
+    digitGrouping: Boolean = true,
+    hapticsEnabled: Boolean = true,
     onCopy: (String) -> Unit,
     onEdit: () -> Unit = {},
     modifier: Modifier = Modifier
@@ -76,9 +78,10 @@ fun TotpCard(
     )
 
     // Formatted split display: "123456" -> "123 456", "12345678" -> "1234 5678"
-    val formattedCode = when (code.length) {
-        6 -> "${code.substring(0, 3)} ${code.substring(3)}"
-        8 -> "${code.substring(0, 4)} ${code.substring(4)}"
+    val formattedCode = when {
+        !digitGrouping -> code
+        code.length == 6 -> "${code.substring(0, 3)} ${code.substring(3)}"
+        code.length == 8 -> "${code.substring(0, 4)} ${code.substring(4)}"
         else -> code
     }
 
@@ -91,11 +94,11 @@ fun TotpCard(
                 interactionSource = interactionSource,
                 indication = null,
                 onClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    if (hapticsEnabled) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     onCopy(code)
                 },
                 onLongClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    if (hapticsEnabled) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     onEdit()
                 }
             ),

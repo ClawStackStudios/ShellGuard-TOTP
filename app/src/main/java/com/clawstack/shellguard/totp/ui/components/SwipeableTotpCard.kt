@@ -36,6 +36,8 @@ fun SwipeableTotpCard(
     remainingSeconds: Int,
     progress: Float,
     isLocalOnly: Boolean,
+    digitGrouping: Boolean = true,
+    hapticsEnabled: Boolean = true,
     onCopy: (String) -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
@@ -84,6 +86,8 @@ fun SwipeableTotpCard(
             remainingSeconds = remainingSeconds,
             progress = progress,
             isLocalOnly = isLocalOnly,
+            digitGrouping = digitGrouping,
+            hapticsEnabled = hapticsEnabled,
             onCopy = onCopy,
             onEdit = onEdit
         )
