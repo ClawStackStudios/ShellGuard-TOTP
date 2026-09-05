@@ -1,6 +1,17 @@
 # Raw Reflection Log
 
 ---
+Date: 2026-09-04
+TaskRef: "/learn — codify hotfix session behaviors (approved by Lucas)"
+
+Learnings:
+- Created `.clinerules/workflows/android-device-adb-verification.md` (Skill): on-device UI verification loop + black-frame triage (display suspend ≠ FLAG_SECURE; debug builds exempt via !BuildConfig.DEBUG).
+- Updated `.clinerules/workflows/version-update.md`: added Step 5 (5-anchor all-or-nothing release sync; ROADMAP Phase headings historical) and Step 6 (push + gh CLI CI/artifact verification chain).
+- Deliberately NOT codified: nullable-timestamp delta invariant (already in consolidated_learnings) — avoid redundant rules.
+
+Handoff_Package_Prepared: false
+---
+
 ---
 Date: 2026-09-04
 TaskRef: "v0.0.1.3 hotfix release shipped — sync regression fix + card polish + Task 24 spec expansion"

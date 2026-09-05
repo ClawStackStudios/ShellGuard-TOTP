@@ -60,6 +60,30 @@ Update all version anchors across the codebase:
 
 ---
 
+## 📦 Step 5: Release Anchor Checklist (all-or-nothing sync)
+
+Update ALL anchors in one commit; partial syncs drift:
+1. `app/build.gradle.kts` — versionCode (+1) & versionName
+2. `README.md` — version badge
+3. `CHANGELOG.md` — `## [X.Y.Z.N] - YYYY-MM-DD (Build N)` section
+4. `RELEASE-vX.Y.Z.N.md` — from `.agents/templates/release-template.md`
+5. `RELEASE-PLAY.md` — prepend `<en-US>` block (<500 chars)
+
+> ROADMAP.md Phase headings are HISTORICAL — do not touch them for hotfix
+> releases; future-phase version anchors (e.g. v0.0.2.1) must stay aligned.
+
+## ☁️ Step 6: Push & CI Verification (gh CLI)
+
+1. Commit + tag locally: `git tag vX.Y.Z.N`
+2. Push (triggers Release Pipeline): `git push origin main && git push origin vX.Y.Z.N`
+3. Verify: `gh run list --limit 2` → `gh run watch <id> --exit-status`
+4. Confirm artifacts: `gh release view vX.Y.Z.N --json assets --jq '{assets: [.assets[] | {name, size}]}'`
+   (expect signed .aab + .apk; gh at `/config/.local/bin/gh`, authenticated)
+5. Log release in memory-bank raw_reflection_log + activeContext.
+
+
+---
+
 ## 🚀 Step 5: Git Hygiene & Tagging
 
 1. **Stage Modified Files:**
