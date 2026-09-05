@@ -1,10 +1,10 @@
 ---
-roadmap_version: 2.2.0
-last_updated: 2026-09-01
-current_position: "Phase 6 Complete (v0.0.0.2 Launch Ready) — Transitioning to Phase 7: Architectural Refactor (v0.0.1.0)"
+roadmap_version: 2.3.0
+last_updated: 2026-09-04
+current_position: "Phase 10 Complete (v0.0.1.3 Hotfix Shipped) — Transitioning to Phase 11: Categorized Settings Hub (v0.0.2.0)"
 statistics:
   description: "Deterministic build roadmap for ShellGuard-TOTP Android Authenticator application. Engineered strictly in synergistic 2-task phases where Task A delivers core functionality and Task B delivers the corresponding UI/UX component."
-  features_completed: "██████████ 100%"
+  features_completed: "██████████░░░░░ 67%"
   features_in_progress: "░░░░░░░░░░ 0%"
 ---
 
@@ -139,6 +139,15 @@ Description: Create `ic_launcher_background.xml` (solid `#030712`) and `ic_launc
 
 ---
 
+> 🕸️ **Post-Hoc Interlude A — Shipped Release Record (2026-09-02 → 2026-09-03)**
+> Historical record of releases that landed around Phases 7–10, documented honestly because development zig-zagged relative to this file's listed order (intake wizard shipped *after* the sync refactor):
+> - **v0.0.0.2 (Build 4–6)** — Phase 8 intake work (Tasks 15/16) shipped under the pre-launch baseline version.
+> - **v0.0.1.0 (Build 7)** — Phase 7 (Tasks 13/14): One-Way Mirror Sync refactor, Grouped Dashboard, unified `sgtotp.bak` export.
+> - **v0.0.1.1 (Build 8)** — Phase 9 (Tasks 17/18): Vault Security Education, Protection Orchestrator, Enlarged Spotlight Tour.
+> - **v0.0.1.2 (Build 8)** — Phase 10 (Tasks 19/20): Expandable Speed Dial FAB, ImageQrDecoder, one-way sync hardening (delta sync + `deleteByIdIfLocal`), pull-to-refresh, read-only sync protections.
+>
+> Listed phase order below reflects the original plan, not ship order (7 → 9 → 10 with Phase 8 landing first under v0.0.0.2).
+
 ------------------ Next Horizon (Post-Launch Expansion) ------------------
 
 
@@ -147,12 +156,12 @@ Description: Create `ic_launcher_background.xml` (solid `#030712`) and `ic_launc
 > Phase Feature Set Overview:
 > Shifts the application from two-way bidirectional sync to a strict One-Way Mirror sync pattern. Codes added on Android remain exclusively local. The dashboard UI is overhauled to present Grouped Sections (Local Codes vs Remote Codes) eliminating cognitive load from the old Snackbar filter. Finally, imports/exports are simplified to strictly handle Local items using a unified `sgtotp.bak` format shared with the ShellGuard Web Server.
 
-- [ ]  Task 13: [Functionality] One-Way Sync Engine, Grouped Repository & Unified Export Schema
+- [x]  Task 13: [Functionality] One-Way Sync Engine, Grouped Repository & Unified Export Schema
 Description: Overhaul `TotpRepository` to only pull down remote codes as read-only mirror items. Remove upstream pushes completely. Modify `TotpItemDao` and `TotpViewModel` to expose explicitly grouped streams (Local vs Synced). Revamp `BackupManager` to only export local codes, adopting the canonical `sgtotp.bak` backup schema that aligns perfectly with the ShellGuard web server import pipeline. Add a `compatibility_layer.md` doc to the ShellGuard repo to detail this integration.
 
 > Success Criteria: Application pulls remote items correctly without ever pushing. ViewModels group the codes natively. Exports produce valid `sgtotp.bak` JSON structures representing only local elements.
 
-- [ ]  Task 14: [UI Component] Grouped Authenticator Dashboard & Simplified Import Flow
+- [x]  Task 14: [UI Component] Grouped Authenticator Dashboard & Simplified Import Flow
 Description: Refactor `TotpListScreen.kt` to present a unified vertically-scrollable list with clear sticky-headers/dividers grouping "📱 Local Vault" at the top and "☁️ Synced from ShellGuard" below. Remove the old connection Snackbar and top-bar filter chips for local/synced. Update the Add Secret and QR Scanner flows to strictly save to local vault.
 
 > Success Criteria: Dashboard renders two distinct grouped sections clearly. Creating new items automatically appends them to the Local Vault group.
@@ -229,6 +238,16 @@ Description: Implement `ExpandableSpeedDialFab.kt` on `TotpListScreen.kt`:
   3. `[ ✏️ Enter manually ]` (Navigates to manual secret entry form)
 
 > Success Criteria: FAB expands with smooth 60fps spring animations, presents clear pill buttons with high contrast, and navigates seamlessly to each intake modality.
+
+---
+
+> 🕸️ **Post-Hoc Interlude B — Hotfix Record (2026-09-04)**
+> **v0.0.1.3 (Build 9) — Hotfix: "The Self-Healing Mirror"** — shipped between Phase 10 and Phase 11; no phase tasks, pure patch:
+> - **CRITICAL FIX**: v0.0.1.2's delta sync classified pearls with a null/missing server `updated_at` stamp as "unchanged" (null-to-null comparison) — remote codes silently stopped syncing while sync reported success. Extracted `TotpRepository.classifyDeltaPearls` (skip ONLY when a local mirror row exists AND the remote stamp is non-null AND equal); null stamps always sync, and stuck devices self-heal on the next pull.
+> - **UI Fix**: Synced card "Read-only" badge wrap removed (cloud icon denotes synced read-only); cards restored to standard single-line height.
+> - **Regression armor**: `DeltaSyncClassificationTest` (6 cases) — first direct coverage of the sync delta path; suite at 96/96 green.
+> - **Spec expansion**: Task 24 "Screen security toggle" (FLAG_SECURE) fully specified with live-session context (see Phase 12).
+> - Full record: `CHANGELOG.md`, `RELEASE-v0.0.1.3.md`; CI run 33939042244.
 
 ---
 
@@ -347,7 +366,7 @@ Description: Implement:
 
 
 
-## Phase 15: ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.0.1.1 (Build 9)]
+## Phase 15: ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 14)]
 
 > Phase Feature Set Overview:
 > Introduces the ShellGuard sovereign `hu-` ClawKey as a third vault creation and import authentication method, bringing the Android identity model into parity with the ShellGuard web platform. Delivers a reusable dual-tab `ClawKeyInputForm` (Paste / Upload), consistent format validation, correct lock screen branching, proper export envelope stamping, and a pre-import duplicate resolution engine.

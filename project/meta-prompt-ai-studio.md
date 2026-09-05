@@ -19,13 +19,15 @@ flowchart TD
     Phase4["📷 Stage 5: Phase 4 — CameraX QR Scanner & Backup Engine<br/>(Task 07: UriParser & BackupManager · Task 08: Live Scanner & Manual Add)"]
     Phase5["🌐 Stage 6: Phase 5 — Self-Hosted Server Gateway & Bidirectional Sync<br/>(Task 09: Two-Way Delta Sync & WorkManager · Task 10: Spotlight Tour, Settings & Theme Picker)"]
     Phase6["🎨 Stage 7: Phase 6 — Adaptive Launcher Icon & Release Hardening<br/>(Task 11: ProGuard/R8 & Backup Rules · Task 12: Adaptive Icon, Splash & System Polish)"]
-    Phase7["📥 Stage 8: Phase 7 — Welcoming First-Run Wizard & 'Import Habitat'<br/>(Task 13: Habitat Pre-Validator · Task 14: Brand Hero Screen & SAF Import)"]
-    Phase8["💡 Stage 9: Phase 8 — Vault Security Education & Enlarged Spotlight Tour<br/>(Task 15: Protection Orchestrator · Task 16: Security Orientation & Spacious Spotlight)"]
-    Phase9["⚡ Stage 10: Phase 9 — Expandable Floating Actions Speed Dial<br/>(Task 17: Image QR Decoder · Task 18: Animated Speed Dial FAB & Pills)"]
-    Phase10["⚙️ Stage 11: Phase 10 — Categorized Settings Hub & Appearance/Behavior<br/>(Task 19: Preferences Store · Task 20: SettingsMetaScreen & Sub-screens)"]
-    Phase11["🛡️ Stage 12: Phase 11 — Security Suite, Panic Purge & Audit Logging<br/>(Task 21: Panic Trigger & Audit DAO · Task 22: Security Sub-screen & Audit Log)"]
-    Phase12["📦 Stage 13: Phase 12 — Advanced Import/Export & Google Auth Multi-QR<br/>(Task 23: MultiFormat Migration · Task 24: Import/Export Hub & QR Viewer)"]
-    Phase13["📱 Stage 14: Phase 13 — Home Screen Interactive Glance Widgets & Icon Packs<br/>(Task 25: Glance Widget Engine & Icon Store · Task 26: 2x2/4x2 Widgets & Icon Manager)"]
+    Phase7["📥 Stage 8: Phase 7 — Architectural Refactor: One-Way Mirror Sync & Grouped Dashboard<br/>(Task 13: One-Way Sync Engine & Unified Export · Task 14: Grouped Authenticator Dashboard)"]
+    Phase8["📥 Stage 9: Phase 8 — Welcoming First-Run Wizard & 'Import Habitat'<br/>(Task 15: Intake Engine & SAF Validator · Task 16: Brand Hero Screen & File Picker)"]
+    Phase9["💡 Stage 10: Phase 9 — Vault Security Education & Enlarged Spotlight Tour<br/>(Task 17: Protection Orchestrator · Task 18: VaultSecurityScreen & Spacious Spotlight)"]
+    Phase10["⚡ Stage 11: Phase 10 — Expandable Floating Actions Speed Dial<br/>(Task 19: Image QR Decoder & SpeedDialState · Task 20: Animated Speed Dial FAB & Pills)"]
+    Phase11["⚙️ Stage 12: Phase 11 — Categorized Settings Hub & Appearance/Behavior<br/>(Task 21: Preferences Store · Task 22: SettingsMetaScreen & Sub-screens)"]
+    Phase12["🛡️ Stage 13: Phase 12 — Security Suite, Panic Purge & Audit Logging<br/>(Task 23: Panic Trigger & Audit DAO · Task 24: Security Sub-screen & Audit Log)"]
+    Phase13["📦 Stage 14: Phase 13 — Advanced Import/Export & Google Auth Multi-QR<br/>(Task 25: MultiFormat Migration · Task 26: Import/Export Hub & QR Viewer)"]
+    Phase14["📱 Stage 15: Phase 14 — Home Screen Interactive Glance Widgets & Icon Packs<br/>(Task 27: Glance Widget Engine & Icon Store · Task 28: 2x2/4x2 Widgets & Icon Manager)"]
+    Phase15["🗝️ Stage 16: Phase 15 — ClawKey Vault Creation, Import Auth & Duplicate Resolution<br/>(Task 29: ClawKey Mode Engine · Task 30: ClawKeyInputForm & UI Integration)"]
 
     Step0 --> UploadContext
     UploadContext --> Phase1
@@ -41,6 +43,8 @@ flowchart TD
     Phase10 --> Phase11
     Phase11 --> Phase12
     Phase12 --> Phase13
+    Phase13 --> Phase14
+    Phase14 --> Phase15
 ```
 
 ---
@@ -475,19 +479,19 @@ Verify Dashboard renders two distinct grouped sections clearly, and creating new
 ---
 ## 📥 Stage 9: Phase 8 Prompt — Welcoming First-Run Wizard & "Import Habitat" Intake Flow [v0.0.0.2 (Build 4)]
 
-> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-7-welcoming-first-run-wizard--import-habitat-intake-flow-v0002-build-4) for complete specifications on **Task 15** and **Task 16**.  
-> **📖 Required Context Files for Phase 7**:  
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-8-welcoming-first-run-wizard--import-habitat-intake-flow-v0002-build-4) for complete specifications on **Task 15** and **Task 16**.  
+> **📖 Required Context Files for Phase 8**:  
 > 1. [`room-storage-schema.md`](./room-storage-schema.md) — BackupManager.kt & JSON schema.  
 > 2. [`DESIGN.md`](./DESIGN.md) — Section 10 (Onboarding & Hero Theme Tokens).  
 
-Copy and paste this prompt to execute **Phase 7 (Tasks 13 & 14)**:
+Copy and paste this prompt to execute **Phase 8 (Tasks 15 & 16)**:
 
 ```markdown
-# PHASE 7 EXECUTION: Welcoming First-Run Wizard & "Import Habitat" Intake Flow [v0.0.0.2 (Build 4)]
+# PHASE 8 EXECUTION: Welcoming First-Run Wizard & "Import Habitat" Intake Flow [v0.0.0.2 (Build 4)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:
-- `ROADMAP.md`: Phase 7 (Task 15: Intake Engine & SAF Validator · Task 16: IntakeWelcomeScreen).
+- `ROADMAP.md`: Phase 8 (Task 15: Intake Engine & SAF Validator · Task 16: IntakeWelcomeScreen).
 - `room-storage-schema.md`: Section 6 (BackupManager.kt).
 - `DESIGN.md`: Section 10 (First-Run Intake Experience).
 
@@ -513,17 +517,17 @@ Verify file picker imports valid habitats and Bitwarden vaults, presents passwor
 
 ---
 
-## 💡 Stage 10: Phase 9 Prompt — Vault Security Education, Enlarged Spotlight Tour & Empty Vault Landing [v0.0.1.0 (Build 5) — Milestone 1]
+## 💡 Stage 10: Phase 9 Prompt — Vault Security Education, Enlarged Spotlight Tour & Empty Vault Landing [v0.0.1.1 (Build 8) — Milestone 1]
 
-> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-8-vault-security-education-enlarged-spotlight-tour--empty-vault-landing-v0010-build-5--milestone-1) for complete specifications on **Task 17** and **Task 18**.  
-> **📖 Required Context Files for Phase 8**:  
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-9-vault-security-education-enlarged-spotlight-tour--empty-vault-landing-v0011-build-8--milestone-1) for complete specifications on **Task 17** and **Task 18**.  
+> **📖 Required Context Files for Phase 9**:  
 > 1. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — KeyStore Protection Orchestration.  
 > 2. [`DESIGN.md`](./DESIGN.md) — Section 11 (Spotlight Geometry & Spacious Cutouts).  
 
-Copy and paste this prompt to execute **Phase 8 (Tasks 15 & 16)**:
+Copy and paste this prompt to execute **Phase 9 (Tasks 17 & 18)**:
 
 ```markdown
-# PHASE 8 EXECUTION: Vault Security Education, Enlarged Spotlight Tour & Empty Vault Landing [v0.0.1.0 (Build 5)]
+# PHASE 9 EXECUTION: Vault Security Education, Enlarged Spotlight Tour & Empty Vault Landing [v0.0.1.1 (Build 8)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:
@@ -552,9 +556,9 @@ Verify security setup binds to KeyStore, spotlight cutouts are spacious and clea
 
 ---
 
-## ⚡ Stage 11: Phase 10 Prompt — Expandable Floating Actions Speed Dial (QR, Image & Manual) [v0.0.1.2 (Build 9)]
+## ⚡ Stage 11: Phase 10 Prompt — Expandable Floating Actions Speed Dial (QR, Image & Manual) [v0.0.1.2 (Build 8)]
 
-> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-10-expandable-floating-actions-speed-dial-qr-image--manual-v0012-build-9) for complete specifications on **Task 19** and **Task 20**.  
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-10-expandable-floating-actions-speed-dial-qr-image--manual-v0012-build-8) for complete specifications on **Task 19** and **Task 20**.  
 > **📖 Required Context Files for Phase 10**:  
 > 1. [`totp-engine-spec.md`](./totp-engine-spec.md) — ML Kit QrCodeAnalyzer.kt.  
 > 2. [`DESIGN.md`](./DESIGN.md) — Section 6 (ScannerFab & Speed Dial tokens).  
@@ -562,7 +566,7 @@ Verify security setup binds to KeyStore, spotlight cutouts are spacious and clea
 Copy and paste this prompt to execute **Phase 10 (Tasks 19 & 20)**:
 
 ```markdown
-# PHASE 10 EXECUTION: Expandable Floating Actions Speed Dial (QR, Image & Manual) [v0.0.1.2 (Build 9)]
+# PHASE 10 EXECUTION: Expandable Floating Actions Speed Dial (QR, Image & Manual) [v0.0.1.2 (Build 8)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:
@@ -631,21 +635,21 @@ Verify category navigation transitions smoothly and settings updates reflect imm
 
 ---
 
-## 🛡️ Stage 13: Phase 12 Prompt — Security Suite, Panic Purge & Security Audit Logging [v0.0.2.1 (Build 8)]
+## 🛡️ Stage 13: Phase 12 Prompt — Security Suite, Panic Purge & Security Audit Logging [v0.0.2.1 (Build 11)]
 
-> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-11-security-suite-panic-purge--security-audit-logging-v0021-build-8) for complete specifications on **Task 23** and **Task 24**.  
-> **📖 Required Context Files for Phase 11**:  
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-12-security-suite-panic-purge--security-audit-logging-v0021-build-11) for complete specifications on **Task 23** and **Task 24**.  
+> **📖 Required Context Files for Phase 12**:  
 > 1. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — KeyStore & Panic Purge.  
 > 2. [`room-storage-schema.md`](./room-storage-schema.md) — Audit Log Room Schema.  
 
-Copy and paste this prompt to execute **Phase 11 (Tasks 21 & 22)**:
+Copy and paste this prompt to execute **Phase 12 (Tasks 23 & 24)**:
 
 ```markdown
-# PHASE 11 EXECUTION: Security Suite, Panic Purge & Security Audit Logging [v0.0.2.1 (Build 8)]
+# PHASE 12 EXECUTION: Security Suite, Panic Purge & Security Audit Logging [v0.0.2.1 (Build 11)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:
-- `ROADMAP.md`: Phase 11 (Task 23: Panic Trigger & Audit DAO · Task 24: SecurityScreen & AuditLogScreen).
+- `ROADMAP.md`: Phase 12 (Task 23: Panic Trigger & Audit DAO · Task 24: SecurityScreen & AuditLogScreen).
 - `crypto-and-keystore.md`: Section 4 (Security Lifecycle).
 - `room-storage-schema.md`: Section 2 (Room Entities).
 
@@ -679,22 +683,22 @@ Verify security toggles enforce immediate runtime protection and audit log recor
 
 ---
 
-## 📦 Stage 14: Phase 13 Prompt — Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 9) — Milestone 3]
+## 📦 Stage 14: Phase 13 Prompt — Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 12) — Milestone 3]
 
-> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-12-advanced-importexport-bitwarden-migration--google-authenticator-multi-qr-v0030-build-9--milestone-3) for complete specifications on **Task 25** and **Task 26**.  
-> **📖 Required Context Files for Phase 12**:  
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-13-advanced-importexport-bitwarden-migration--google-authenticator-multi-qr-v0030-build-12--milestone-3) for complete specifications on **Task 25** and **Task 26**.  
+> **📖 Required Context Files for Phase 13**:  
 > 1. [`bitwarden-and-migration-spec.md`](./bitwarden-and-migration-spec.md) — Master Ingestion Pipeline, Schemas, Steam Guard & Dual Router.  
 > 2. [`room-storage-schema.md`](./room-storage-schema.md) — Section 6 (BackupManager.kt) & Section 7 (AuditLogDao).  
 > 3. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — Section 3 (ShellCryptionEngine AAD binding).  
 
-Copy and paste this prompt to execute **Phase 12 (Tasks 23 & 24)**:
+Copy and paste this prompt to execute **Phase 13 (Tasks 25 & 26)**:
 
 ```markdown
-# PHASE 12 EXECUTION: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 9)]
+# PHASE 13 EXECUTION: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 12)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:
-- `ROADMAP.md`: Phase 12 (Task 25: Bitwarden & MultiFormat Migration · Task 26: Bitwarden Migration Wizard & Backups Screen).
+- `ROADMAP.md`: Phase 13 (Task 25: Bitwarden & MultiFormat Migration · Task 26: Bitwarden Migration Wizard & Backups Screen).
 - `bitwarden-and-migration-spec.md`: Complete parsing schemas, Steam Guard 2FA, conflict policies, and dual persistence router.
 - `room-storage-schema.md`: Section 6 (BackupManager.kt) & Section 7 (AuditLogDao).
 - `crypto-and-keystore.md`: Section 3 (ShellCryptionEngine AAD binding).
@@ -728,21 +732,21 @@ Verify Bitwarden JSON exports parse accurately, zero passwords/notes leak into s
 
 ---
 
-## 📱 Stage 15: Phase 14 Prompt — Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.0.1.0 (Build 10) — Open Beta Candidate]
+## 📱 Stage 15: Phase 14 Prompt — Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 13) — Open Beta Candidate]
 
-> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-13-home-screen-interactive-glance-widgets--icon-pack-manager-v0100-build-10--open-beta-candidate) for complete specifications on **Task 27** and **Task 28**.  
-> **📖 Required Context Files for Phase 13**:  
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-14-home-screen-interactive-glance-widgets--icon-pack-manager-v0100-build-13--open-beta-candidate) for complete specifications on **Task 27** and **Task 28**.  
+> **📖 Required Context Files for Phase 14**:  
 > 1. [`totp-engine-spec.md`](./totp-engine-spec.md) — Background TOTP calculation.  
 > 2. [`DESIGN.md`](./DESIGN.md) — Section 4 (Widget Modernist Layout).  
 
-Copy and paste this prompt to execute **Phase 13 (Tasks 25 & 26)**:
+Copy and paste this prompt to execute **Phase 14 (Tasks 27 & 28)**:
 
 ```markdown
-# PHASE 13 EXECUTION: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.0.1.0 (Build 10)]
+# PHASE 14 EXECUTION: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 13)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:
-- `ROADMAP.md`: Phase 13 (Task 27: Glance Widget Engine & Icon Store · Task 28: Glance Widgets & Icon Manager).
+- `ROADMAP.md`: Phase 14 (Task 27: Glance Widget Engine & Icon Store · Task 28: Glance Widgets & Icon Manager).
 - `totp-engine-spec.md`: Section 1 (TotpEngine.kt).
 - `DESIGN.md`: Section 4 (TotpCard & Widget Tokens).
 
@@ -765,9 +769,9 @@ Verify widgets update reliably on home screens with tap-to-copy responsiveness, 
 
 ---
 
-## 📱 Stage 16: Phase 15 Prompt — ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.0.1.1 (Build 9)]
+## 📱 Stage 16: Phase 15 Prompt — ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 14)]
 
-> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-15-clawkey-vault-creation-import-authentication--duplicate-resolution-v0011-build-9) for complete specifications on **Task 29** and **Task 30**.
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-15-clawkey-vault-creation-import-authentication--duplicate-resolution-v0110-build-14) for complete specifications on **Task 29** and **Task 30**.
 > **📖 Required Context Files for Phase 15**:
 > 1. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — Section 2 (AndroidKeyStoreHelper patterns).
 > 2. [`room-storage-schema.md`](./room-storage-schema.md) — Section 6 (BackupManager.kt import/export).
@@ -777,7 +781,7 @@ Verify widgets update reliably on home screens with tap-to-copy responsiveness, 
 Copy and paste this prompt to execute **Phase 15 (Tasks 29 & 30)**:
 
 ```markdown
-# PHASE 15 EXECUTION: ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.0.1.1 (Build 9)]
+# PHASE 15 EXECUTION: ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 14)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:
