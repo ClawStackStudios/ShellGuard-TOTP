@@ -1,0 +1,1 @@
+Secure, offline-first 2FA authenticator with hardware-encrypted vault storage.

@@ -1,0 +1,48 @@
+ShellGuard-TOTP is a privacy-first, offline-autonomous two-factor authentication (2FA) companion built to protect your digital identity. Engineered with zero-knowledge hardware encryption and an offline-first architecture, ShellGuard-TOTP generates standard RFC 6238 verification codes directly on your device—with zero tracking, zero cloud telemetry, and zero mandatory accounts.
+
+Whether securing your personal email, developer accounts, cloud infrastructure, or gaming logins, ShellGuard-TOTP keeps your authentication secrets sealed behind Android KeyStore hardware protection.
+
+
+KEY FEATURES & CAPABILITIES
+
+ZERO-KNOWLEDGE HARDWARE ENCRYPTION
+• Hardware-Backed Protection: Master keys are generated and isolated using the Android KeyStore (StrongBox / TEE) with AES-256-GCM.
+• Encrypted At Rest: Secrets are stored inside a dedicated SQLCipher database with full disk encryption.
+• Privacy Shield: Built-in FLAG_SECURE window protection shields your 2FA tokens from task-switcher previews and unauthorized screen captures.
+• Biometric & PIN Vault Lock: Guard access to your codes with biometric authentication (fingerprint / face unlock) or custom Master PIN/Password.
+
+REAL-TIME COUNTDOWN & CLEAN ERGONOMICS
+• Dynamic Countdown Rings: Visual timer rings smoothly deplete and transition color as codes cycle, giving you instant situational awareness.
+• Fluid Speed Dial: Access live camera scanning, gallery screenshot import, and manual entry in a single tap.
+• Staggered Card View: Responsive cards with high-contrast split digits and one-tap clipboard copy with auto-clearing clipboard buffer.
+• Instant Search: Quickly locate tokens across your vault by account, issuer, or category.
+
+RAPID ONBOARDING & QR IMPORT
+• CameraX QR Scanner: High-performance camera scanner instantly detects and imports standard otpauth:// QR codes.
+• Gallery Screenshot QR Decoder: Import 2FA setup QR codes directly from screenshots saved in your device gallery using Google ML Kit.
+• Manual Secret Setup: Intuitive manual entry supporting custom issuers, accounts, digits, intervals, and algorithms.
+
+UNIVERSAL MIGRATION & BACKUP
+• One-Tap Habitat Import: Seamlessly migrate from Bitwarden Vaults, Aegis Authenticator, 2FAS, Google Authenticator, or Steam Guard with zero data leakage.
+• Encrypted Vault Backups: Export password-protected .sgtotp.bak backup archives for secure, offline device transfers.
+
+STEAM GUARD & ALGORITHM FLEXIBILITY
+• Steam Guard Authenticator: Built-in generation for Steam's 5-character alphanumeric TOTP codes and steam:// URI schemas.
+• Cryptographic Standards: Full support for HMAC-SHA1, HMAC-SHA256, and HMAC-SHA512 hashing algorithms.
+
+REEF MODERNIST DESIGN SYSTEM
+• Bioluminescent Marine Accents: Personalize your vault with 6 curated palette themes (Reef Pink, Cyan Vent, Purple Shell, Emerald Trench, Amber Flare, and Monochrome).
+• Deep Dark & Light Modes: Tailored contrast ratios built specifically for AMOLED displays and high-visibility environments.
+
+OPTIONAL SELF-HOSTED SYNC
+• Run your own server? ShellGuard-TOTP supports optional, read-only one-way mirror synchronization with self-hosted ShellGuard servers using end-to-end encrypted ShellCryption envelopes.
+• No cloud server required: 100% of all authenticator functions operate completely offline without any network dependency.
+
+
+YOUR PRIVACY IS ABSOLUTE
+• No account registration or email required.
+• No advertisements or tracking frameworks.
+• No internet access required for core authenticator functions.
+• Modern Android 16 (API 36) & 16 KB kernel page-size optimized.
+
+Take control of your account security with sovereign, hardware-grade two-factor authentication.
