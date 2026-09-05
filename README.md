@@ -1,9 +1,5 @@
 <div align="center">
 
-<img src="store-assets/play-store-feature-graphic-1024x500.png" width="100%" alt="ShellGuard-TOTP Feature Graphic" />
-
-<br/><br/>
-
 <img src="store-assets/play-store-icon-512.png" width="112" height="112" alt="ShellGuard-TOTP Icon" />
 
 # 🐚 ShellGuard-TOTP
@@ -15,6 +11,12 @@
 [![Security](https://img.shields.io/badge/Storage-SQLCipher%20AES--256-00BCD4?style=for-the-badge&logo=shield&logoColor=white)](project/crypto-and-keystore.md)
 [![16KB Ready](https://img.shields.io/badge/Kernel-16%20KB%20Page--Size-7952B3?style=for-the-badge)](project/16kb-page-size-alignment-guide.md)
 [![License](https://img.shields.io/badge/License-GPL%203.0-yellow.svg?style=for-the-badge)](LICENSE)
+
+<br/><br/>
+
+<img src="store-assets/play-store-feature-graphic-1024x500.png" width="100%" alt="ShellGuard-TOTP Feature Graphic" />
+
+<br/><br/>
 
 <p align="center">
   <a href="#-device-screenshots">Screenshots</a> •
