@@ -35,6 +35,12 @@
   - `ExpandableSpeedDialFab.kt`: Fluid 45° morph (+ to ✕), dark alpha dimming scrim, and 3 staggered elevated action pills (CameraX live scan, SAF gallery image decode, manual Base32 entry).
   - One-Way Sync Hardening: `TotpItemDao.deleteByIdIfLocal` conditional delete, client-side delta sync skipping unchanged decryption, pull-to-refresh integration.
   - 90/90 unit and Robolectric tests passing 100% green.
+- ✅ **Release v0.0.1.3 (Build 9) & Store Listing Package**:
+  - Hotfix resolving remote sync restoration and card height padding.
+  - Created complete Google Play Store asset package in `store-assets/` (512x512 app icon, 1024x500 banner, 6 native Pixel 1080x1920 device screenshots, clean plain-text descriptions).
+  - Fully redesigned `README.md` with visual asset hierarchy, screenshot gallery grid, tech stack, and documentation index.
+  - Added community Reddit post drafts in `.agents/internal/`.
+  - 96+ unit and Robolectric tests passing 100% green.
 
 ## What's Next
 - ⏳ **Phase 11: Categorized Settings Hub & Appearance/Behavior Customization [v0.0.2.0 (Build 10) — Milestone 2]**:

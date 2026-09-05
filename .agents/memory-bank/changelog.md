@@ -2,7 +2,24 @@
 
 All notable changes to the ShellGuard TOTP project will be documented in this file.
 
-## [0.0.1.2] - 2026-09-03 (Build 8)
+## [0.0.1.3] - 2026-09-04 (Build 9)
+### Added
+- **Official Google Play Store Asset Package (`store-assets/`)**:
+  - `play-store-icon-512.png`: 512 × 512 high-resolution 32-bit PNG app icon with transparency.
+  - `play-store-feature-graphic-1024x500.png`: 1024 × 500 banner graphic with bioluminescent shield crest and modern branding.
+  - `screenshot-01-welcome.png` through `screenshot-06-gateway.png`: 6 physical Google Pixel device screenshots (1080 × 1920) capturing onboarding welcome, vault security, empty state, active TOTP card with animated countdown ring, settings & marine themes, and authenticator gateway login.
+  - `play-store-full-description.txt` & `play-store-short-description.txt`: Formatted pure plain-text Play Store listing descriptions without markdown formatting for zero-leak Play Console compatibility.
+  - Community announcement drafts in `.agents/internal/` (`reddit-post-01-humorous-ai-slop.md`, `reddit-post-02-hobbyist-journey.md`, `reddit-post-03-clawstack-studios.md`).
+
+### Changed
+- **README Redesign**:
+  - Overhauled root `README.md` featuring a centered app icon header, SVG badges, full-width feature graphic banner, 2×3 native screenshot showcase table, system architecture topology, technology stack table, and verified links to project documentation.
+
+### Fixed
+- **Hotfix (Build 9)**:
+  - Resolved remote 2FA codes delta sync skipping on initial connection pull.
+  - Corrected synced card text wrapping preventing card vertical distortion.
+
 ### Added
 - **Expandable Floating Actions Speed Dial (Tasks 19 & 20)**:
   - Created `ExpandableSpeedDialFab.kt` with a fluid 45-degree morph from `+` to `✕`, semi-transparent dark dimming scrim, and 3 staggered animated action pills.
