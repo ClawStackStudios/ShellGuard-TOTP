@@ -1,5 +1,9 @@
 # Changelog (Cline)
 
+## [session-4] - 2026-09-05
+### Released
+- **v0.0.2.0 (Build 10) — Milestone 2**: Phase 11 (Tasks 21/22) shipped. Tag pushed, Release Pipeline green (run 33981002398), signed .aab/.apk on GitHub Release. Verified live on new test device (original Pixel sailfish/LineageOS); Hub + sub-screen screenshots captured into store-assets and README refreshed (slot 5 hub + new row 3; test count 101+).
+
 ## [session-3] - 2026-09-04 (v0.0.1.3 Hotfix Release)
 ### Fixed
 - Remote sync regression + TotpCard badge wrap (see [session-2] below; shipped in v0.0.1.3).
