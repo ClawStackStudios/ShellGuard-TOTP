@@ -3,6 +3,23 @@
 ---
 ---
 Date: 2026-09-04
+TaskRef: "v0.0.1.3 hotfix release shipped — sync regression fix + card polish + Task 24 spec expansion"
+
+Learnings:
+- RELEASE SHIPPED: commit 3e70fa9 pushed to origin/main + tag v0.0.1.3. Cloud Release Pipeline passed in 3m46s (run 33939042244): signed artifacts published — shellguard-totp-v0.0.1.3.aab (35.2MB) + .apk (59.6MB) on GitHub Release "ShellGuard TOTP v0.0.1.3". versionCode 9 / versionName 0.0.1.3 per version-update protocol REVISION increment rule.
+- gh CLI available at /config/.local/bin/gh and authenticated — `gh run list/watch/view` + `gh release view` beats raw API curl for CI verification.
+- Full verification stack this session: pure-function unit tests (6 delta cases) → full suite 96/96 → assembleDebug → on-device ADB screencap verification → CI green. Every layer agreed; no orphans.
+
+Successes:
+- Hotfix executed end-to-end in one session: diagnose → fix → test → device-verify → UI tweak → device-verify → spec expansion → version sync across 5 anchors → gate → commit → tag → push → CI-verified release.
+- Task 24 FLAG_SECURE toggle spec expanded with live-session context before implementation debt could accumulate.
+
+Handoff_Package_Prepared: true
+---
+
+---
+---
+Date: 2026-09-04
 TaskRef: "Diagnose & fix v0.0.1.2 remote sync regression (no codes syncing from server)"
 
 Handoff_Context:
