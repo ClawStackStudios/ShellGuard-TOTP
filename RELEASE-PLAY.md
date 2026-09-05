@@ -5,6 +5,21 @@
 
 ---
 
+## `v0.0.2.0` — Milestone 2: Categorized Settings Hub (Build 10)
+
+```xml
+<en-US>
+• All-New Settings Hub: 7 categorized preference sections with descriptive cards.
+• Appearance Studio: View mode, issuer icons, next-code preview, digit grouping & display rules.
+• Behavior Tuning: Search scope, haptic feedback, copy on tap, highlight & freeze tokens.
+• Live Application: Preference changes reflect instantly on your dashboard cards.
+• Honest Roadmap: Upcoming sections show clearly-labeled in-app placeholders.
+• Full hardware-backed security unchanged: Android KeyStore, SQLCipher, FLAG_SECURE.
+</en-US>
+```
+
+---
+
 ## `v0.0.1.3` — Hotfix: Remote Sync Restoration & Card Polish (Build 9)
 
 ```xml

@@ -40,6 +40,7 @@
   - Created complete Google Play Store asset package in `store-assets/` (512x512 app icon, 1024x500 banner, 6 native Pixel 1080x1920 device screenshots, clean plain-text descriptions).
   - Fully redesigned `README.md` with visual asset hierarchy, screenshot gallery grid, tech stack, and documentation index.
   - Added community Reddit post drafts in `.agents/internal/`.
+  - CI release pipeline optimization: Gated release jobs to tags/`--release` commits and chained release notes mirroring.
   - 96+ unit and Robolectric tests passing 100% green.
 
 ## What's Next

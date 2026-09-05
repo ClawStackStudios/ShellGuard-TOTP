@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - No unreleased changes yet.
 
+## [0.0.2.0] - 2026-09-05 (Build 10) — Milestone 2
+### Added
+- **Categorized Settings Hub**: `SettingsMetaScreen` presenting 7 preference categories (🎨 Appearance, ⚡ Behavior, 📦 Icon packs, 🔐 Security, ☁️ Backups, 🛠️ Import & Export, 📈 Audit log) with descriptive subtitles and Reef Modernist cards; categories shipping in later phases route to honest in-app placeholder screens.
+- **Appearance Sub-screen**: View mode (Normal/Compact), issuer icons, next-code preview, expiration blink indicator, issuer/account display rules (Both/Issuer/Account), digit grouping, and Group Manager hidden-groups — all live `StateFlow`-backed.
+- **Behavior Sub-screen**: Search scope (All/Local/Synced), focus search on start, minimize on copy, copy on tap, haptic feedback, multiselect groups, highlight & freeze tokens on tap.
+- **Preferences Store Architecture**: Structured `AppearancePreferences` / `BehaviorPreferences` stores with corrupt-value fallback, persistence across process recreation, and 14 setters; `UserPreferencesStoreTest` (5 cases) brings the suite to 101/101.
+
+### Changed
+- **Dashboard Preference Consumption**: Digit grouping & haptic feedback drive `TotpCard` rendering and interaction; search scope & hidden groups filter dashboard streams reactively; focus-search-on-start via `FocusRequester`.
+- **Settings Entry Point**: Dashboard ⚙️ now opens the categorized hub; legacy server/backup/biometric settings remain reachable from placeholder screens.
+
 ## [0.0.1.3] - 2026-09-04 (Build 9) — Hotfix
 ### Fixed
 - **CRITICAL — Remote Sync Regression**: v0.0.1.2's delta sync classified pearls with a null/missing server `updated_at` stamp as "unchanged" (null-to-null comparison), silently skipping decryption and upsert so remote codes never synced while reporting success. Extracted `TotpRepository.classifyDeltaPearls`: a pearl is skipped only when a local mirror row exists AND the remote stamp is non-null AND equal — null stamps always sync, and devices stuck on the broken build self-heal on the next pull.

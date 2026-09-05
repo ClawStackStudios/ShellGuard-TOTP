@@ -69,3 +69,29 @@
   ```
 - Pair with short polling loops (e.g. 20-50ms delays) inspecting in-memory SQLite tables to ensure IO continuations finish persisting state before making assertions.
 - *Rationale:* Eliminates race conditions between Compose UI event handlers and Room SQLite transactions in headless test runs.
+
+## Physical Device ADB Capture & Screencap Invariants
+**Pattern: Display Wake & Coordinate Alignment**
+- Physical Android devices subjected to screen capture via `adb exec-out screencap -p` must be explicitly awakened before capture:
+  ```bash
+  adb shell input keyevent KEYCODE_WAKEUP
+  ```
+- In Compose UI flows driven via `adb shell input tap`, active soft keyboards alter root coordinates; send `KEYCODE_BACK` to dismiss soft input before calculating tap coordinates or dumping hierarchy via `uiautomator`.
+- *Rationale:* Prevents 0-byte or black screen captures resulting from aggressive display sleep timeouts, and eliminates touch miss-clicks on obscured targets.
+
+## Google Play Console Listing Content Formatting
+**Pattern: Zero-Markdown Plain-Text Normalization**
+- Google Play Console full description fields (4,000 char max) reject markdown tags (no `*`, `**`, `#`, or backticks), displaying them verbatim to users.
+- Format all store listings using pure plain text with standard Unicode bullets (`•`), blank line delimiters, and clean uppercase headers (e.g., `CORE FEATURES`).
+- *Rationale:* Ensures professional visual rendering and zero formatting leakage on the Play Store web and mobile client.
+
+## CI/CD Selective Runner Allocation & Chained Mirroring
+**Pattern: Multi-Trigger Gating for Heavy Android Pipelines**
+- Android compilation (`bundleRelease`, `assembleRelease`) and signing workloads consume heavy CI runner minutes.
+- Gate compilation jobs with granular commit/ref checks:
+  ```yaml
+  if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '--release')
+  ```
+- Chain documentation mirroring jobs downstream using `needs: [release]` paired with `if: always() && ...` so that documentation edits (`RELEASE-v*.md`) mirror independently without compiling binaries, while full releases wait for successful compilation before mirroring release notes.
+- *Rationale:* Conserves GitHub Actions runner quota while maintaining automated continuous documentation parity.
+

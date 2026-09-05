@@ -25,3 +25,10 @@
 - **Phase 1 (Initial)**: CameraX live preview with ML Kit analyzer.
 - **Phase 10 (Current State)**: Shared `ImageQrDecoder` extracting QR codes from both camera buffers and SAF gallery image streams via unified ML Kit vision pipeline.
 - **Next Evolution**: High-density animated QR decoding (multi-frame chunk ingestion for bulk vault import).
+
+### Concept: CI/CD Build Gating & Runner Conservation
+- **Initial**: Automatic build and release attempts on every branch push.
+- **Phase 9 / 10**: Tag-based releases with separate mirror jobs triggering on all pushes to main.
+- **Phase 10+ (Current State)**: Granular multi-trigger gating (`v*` tags, `--release` commit flags, `workflow_dispatch`) with chained `always()` evaluation for release note mirroring, eliminating wasteful runner hours on routine commits.
+- **Next Evolution**: Selective Gradle task caching with remote build cache and automated Play Console draft deployment.
+

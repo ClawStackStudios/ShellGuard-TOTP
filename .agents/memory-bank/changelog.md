@@ -12,6 +12,9 @@ All notable changes to the ShellGuard TOTP project will be documented in this fi
   - Community announcement drafts in `.agents/internal/` (`reddit-post-01-humorous-ai-slop.md`, `reddit-post-02-hobbyist-journey.md`, `reddit-post-03-clawstack-studios.md`).
 
 ### Changed
+- **CI/CD Workflow Trigger Optimization**:
+  - Gated `jobs.release` in `.github/workflows/release.yml` to trigger exclusively on version tags (`v*`), `workflow_dispatch`, or commits containing `--release`, preventing unnecessary cloud runner execution on standard development commits.
+  - Chained `jobs.mirror` via `needs: [release]` with `always()` evaluation to ensure release notes mirror alongside release builds and on standalone `RELEASE-v*.md` edits, while skipping routine commits.
 - **README Redesign**:
   - Overhauled root `README.md` featuring a centered app icon header, SVG badges, full-width feature graphic banner, 2×3 native screenshot showcase table, system architecture topology, technology stack table, and verified links to project documentation.
 

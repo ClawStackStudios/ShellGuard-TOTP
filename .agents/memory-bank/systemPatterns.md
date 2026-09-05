@@ -75,10 +75,10 @@ AuthRepository.hatchVault() + TotpItemDao.upsertItems() → Screen.CodeList
    - Release workflows produce both signed `app-release.aab` (Google Play Console) and `app-release.apk` (Direct FOSS install).
 2. **Strict Release Notes Resolution**:
    - Releases mandate `RELEASE-vX.Y.Z.N.md` in repository root as the single source of truth for release notes.
-3. **Trigger Flexibility**:
-   - Supports both `--release vX.Y.Z.N` commit message flags and `v*` git tag pushes, with auto-tagging on commit flags.
-4. **Release Notes Mirroring**:
-   - Edits to `RELEASE-v*.md` files on `main` automatically sync to GitHub Release descriptions via a lightweight mirror job.
+3. **Trigger Flexibility & Runner Conservation**:
+   - Release jobs are strictly gated to run on `v*` tag pushes, `workflow_dispatch`, or commits containing `--release` to eliminate wasteful runner allocation on routine development pushes.
+4. **Chained Release Notes Mirroring**:
+   - Edits to `RELEASE-v*.md` files on `main`, as well as `--release` commits and tag pushes, trigger the mirror job (`needs: [release]`, `if: always() && ...`) to sync GitHub Release descriptions, while manual dispatch and routine commits skip mirror execution.
 
 ## Headless CI Gradle Provisioning Pattern
 1. **Setup Action**: Use `gradle/actions/setup-gradle@v4` to provide Gradle in `PATH` and configure dependency caching.

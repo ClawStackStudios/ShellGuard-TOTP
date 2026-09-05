@@ -1,10 +1,10 @@
 ---
-roadmap_version: 2.3.0
-last_updated: 2026-09-04
-current_position: "Phase 10 Complete (v0.0.1.3 Hotfix Shipped) — Transitioning to Phase 11: Categorized Settings Hub (v0.0.2.0)"
+roadmap_version: 2.4.0
+last_updated: 2026-09-05
+current_position: "Phase 11 Complete (v0.0.2.0 Milestone 2) — Transitioning to Phase 12: Security Suite & Audit Logging (v0.0.2.1)"
 statistics:
   description: "Deterministic build roadmap for ShellGuard-TOTP Android Authenticator application. Engineered strictly in synergistic 2-task phases where Task A delivers core functionality and Task B delivers the corresponding UI/UX component."
-  features_completed: "██████████░░░░░ 67%"
+  features_completed: "████████████░░░ 80%"
   features_in_progress: "░░░░░░░░░░ 0%"
 ---
 
@@ -256,13 +256,13 @@ Description: Implement `ExpandableSpeedDialFab.kt` on `TotpListScreen.kt`:
 > Phase Feature Set Overview:
 > Transforms the monolithic settings page into a modular multi-tier Settings Hub with dedicated sub-screens for Appearance styling (theme modes, dynamic colors, digit grouping, entry view modes) and Application Behavior (search focus, minimize on copy, token tap highlights, freeze on tap).
 
-- [ ]  Task 21: [Functionality] Preferences Store Architecture & Entry Formatting Engine
+- [x]  Task 21: [Functionality] Preferences Store Architecture & Entry Formatting Engine
 
 Description: Expand `AuthRepository` and `DataStore` / `SharedPreferences` to manage structured preferences for `AppearancePreferences` (view mode, show icons, show next code, expire blink indicator, digit grouping, issuer/account display rules) and `BehaviorPreferences` (search focus on start, search scope, minimize on copy, haptic feedback, multiselect categories, highlight tokens on tap, freeze tokens on tap).
 
 > Success Criteria: All user customization preferences persist reliably across app recreation and update reactive `StateFlow` streams synchronously.
 
-- [ ]  Task 22: [UI Component] Categorized Settings Hub (`SettingsMetaScreen`), Appearance & Behavior Sub-screens
+- [x]  Task 22: [UI Component] Categorized Settings Hub (`SettingsMetaScreen`), Appearance & Behavior Sub-screens
 
 Description: Implement modular Settings navigation:
 - **`SettingsMetaScreen.kt`**: Master category list with icons and descriptive subtitles:
