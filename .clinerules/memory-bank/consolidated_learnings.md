@@ -29,6 +29,7 @@
 ## Release Hotfix Retag Flow
 **Skill:** RELEASE-PLAY.md appendix
 - Hotfix under same `versionName`: bump `versionCode` only → push → `git tag -d` local + `git push origin :refs/tags/X` (delete FIRST — stale tag = pipeline runs old commit) → re-tag → verify `gh run list` + release assets + on-device APK. Proven Build 13→14.
+- Phase headings carry build *projections* only — re-point them at release time; never renumber phases to chase versionCode (codified in ROADMAP.md 2026-09-06 amendment).
 
 
 ## Inherited Durable Patterns (validated by Antigravity sessions)
