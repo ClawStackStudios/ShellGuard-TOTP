@@ -39,6 +39,7 @@ sealed class Screen(val route: String) {
     data object SettingsAppearance : Screen("settings_appearance")
     data object SettingsBehavior : Screen("settings_behavior")
     data object SettingsServerSync : Screen("settings_server_sync")
+    data object SettingsImportExport : Screen("settings_import_export")
     data object SettingsPlaceholder : Screen("settings_placeholder")
 }
 
@@ -242,6 +243,7 @@ fun TotpNavHost(
             onNavigateToAppearance = { navController.navigate(Screen.SettingsAppearance.route) },
             onNavigateToBehavior = { navController.navigate(Screen.SettingsBehavior.route) },
             onNavigateToServerSync = { navController.navigate(Screen.SettingsServerSync.route) },
+            onNavigateToImportExport = { navController.navigate(Screen.SettingsImportExport.route) },
             onNavigateToPlaceholder = { title ->
                 navController.navigate("${Screen.SettingsPlaceholder.route}/${android.net.Uri.encode(title)}")
             }

@@ -326,6 +326,16 @@ Description: Complete Task 22's Appearance spec and restore Server/Sync controls
 
 > Success Criteria: Every control present in v0.0.1.3's settings is reachable from the v0.0.2.1 hub (or explicitly retired with rationale). Full unit suite passes; on-device ADB verification confirms theme live-preview, Gateway roundtrip, Sync Now, and Disconnect flows.
 
+- [ ]  **Task 22d: [UI Component] Basic Import & Export Sub-screen (v0.0.2.1 scope extension — parity restoration)**
+
+Description: Restore the v0.0.1.3 "Encrypted Backup & Restore" card as a real hub sub-screen (added post-Task-22c verification session per Lucas's directive):
+- New `SettingsImportExportScreen.kt` (hub category "🛠️ Import & Export"): SAF `CreateDocument("application/octet-stream")` export launcher producing `shellguard-totp-backup.sgtotp.bak` via `BackupManager.exportEncryptedBackup`, and SAF `OpenDocument` restore launcher via `BackupManager.importEncryptedBackup`. Legacy test tags preserved (`export_backup_button`, `import_backup_button`) and legacy toast copy ("Exported N items securely (.sgtotp.bak).").
+- ViewModel-first: `AuthViewModel.exportVaultBackup(...)` / `importVaultBackup(...)` encapsulate `backupManager` + key resolution (`getVaultSecret() ?: session.rawHuKey`), `vaultMode.name`, `isBiometricEnabled`, `pinLength` — no secret handling in UI layer.
+- Educational copy: exports contain **Local Vault codes only** (Phase 7 one-way invariant — synced mirror items are never exported).
+- **Scope boundary**: automatic backups, Android cloud backup toggles, and the Bitwarden/Aegis/2FAS multi-format migration wizard remain Phase 13 (Tasks 25/26). The "☁️ Backups" hub card stays a placeholder.
+
+> Success Criteria: Export produces a valid `.sgtotp.bak` the ShellGuard web import pipeline accepts; restore roundtrips local codes; on-device ADB verification confirms both flows.
+
 ---
 
 ## Phase 12: Security Suite, Panic Purge & Security Audit Logging [v0.0.2.2 (Build 12)]

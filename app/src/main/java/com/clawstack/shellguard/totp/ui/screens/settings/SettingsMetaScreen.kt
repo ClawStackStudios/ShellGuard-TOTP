@@ -50,7 +50,7 @@ data class SettingsCategory(
     val destination: SettingsDestination
 )
 
-enum class SettingsDestination { APPEARANCE, BEHAVIOR, SERVER_SYNC, PLACEHOLDER }
+enum class SettingsDestination { APPEARANCE, BEHAVIOR, SERVER_SYNC, IMPORT_EXPORT, PLACEHOLDER }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,6 +59,7 @@ fun SettingsMetaScreen(
     onNavigateToAppearance: () -> Unit,
     onNavigateToBehavior: () -> Unit,
     onNavigateToServerSync: () -> Unit,
+    onNavigateToImportExport: () -> Unit,
     onNavigateToPlaceholder: (String) -> Unit
 ) {
     Scaffold(
@@ -93,6 +94,7 @@ fun SettingsMetaScreen(
                                 SettingsDestination.APPEARANCE -> onNavigateToAppearance()
                                 SettingsDestination.BEHAVIOR -> onNavigateToBehavior()
                                 SettingsDestination.SERVER_SYNC -> onNavigateToServerSync()
+                                SettingsDestination.IMPORT_EXPORT -> onNavigateToImportExport()
                                 SettingsDestination.PLACEHOLDER -> onNavigateToPlaceholder(category.title)
                             }
                         },
@@ -131,6 +133,6 @@ fun SettingsMetaScreen(
         SettingsCategory("📦 Icon packs", "Manage and import icon packs", Icons.Default.Image, SettingsDestination.PLACEHOLDER),
         SettingsCategory("🔐 Security", "Configure encryption, biometric unlock, auto lock", Icons.Default.Security, SettingsDestination.PLACEHOLDER),
         SettingsCategory("☁️ Backups", "Automatic backups & Android cloud backup system", Icons.Default.Backup, SettingsDestination.PLACEHOLDER),
-        SettingsCategory("🛠️ Import & Export", "Import from Aegis/Bitwarden/Google, export vault", Icons.Default.ImportExport, SettingsDestination.PLACEHOLDER),
+        SettingsCategory("🛠️ Import & Export", "Export encrypted .sgtotp.bak, restore vault backups", Icons.Default.ImportExport, SettingsDestination.IMPORT_EXPORT),
         SettingsCategory("📈 Audit log", "Security event audit trail", Icons.Default.History, SettingsDestination.PLACEHOLDER)
     )

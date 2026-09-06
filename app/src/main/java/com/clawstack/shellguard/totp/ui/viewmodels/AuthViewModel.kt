@@ -70,6 +70,41 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     fun logout() = authRepository.logout()
 
+    /** Phase 11.5 / Task 22d — ViewModel-first backup export/restore (no secret handling in UI layer). */
+    fun exportVaultBackup(
+        outputStream: java.io.OutputStream,
+        onResult: (Result<Int>) -> Unit
+    ) {
+        viewModelScope.launch {
+            val session = authRepository.currentSession.value
+            val rawKey = authRepository.getVaultSecret() ?: session?.rawHuKey ?: "shellguard_default_master_key"
+            val ownerUuid = session?.userUuid ?: "local"
+            val mode = authRepository.vaultMode.value
+            val result = app.backupManager.exportEncryptedBackup(
+                outputStream = outputStream,
+                rawKey = rawKey,
+                ownerUuid = ownerUuid,
+                protectionMode = mode.name,
+                isBiometricEnabled = authRepository.isBiometricEnabled.value,
+                pinLength = if (mode == VaultProtectionMode.PIN) rawKey.length else null
+            )
+            onResult(result)
+        }
+    }
+
+    fun importVaultBackup(
+        inputStream: java.io.InputStream,
+        onResult: (Result<Int>) -> Unit
+    ) {
+        viewModelScope.launch {
+            val session = authRepository.currentSession.value
+            val rawKey = authRepository.getVaultSecret() ?: session?.rawHuKey ?: "shellguard_default_master_key"
+            val ownerUuid = session?.userUuid ?: "local"
+            val result = app.backupManager.importEncryptedBackup(inputStream, rawKey, ownerUuid)
+            onResult(result)
+        }
+    }
+
     /** Phase 11.5 / Task 22c — Spotlight Tour step 2 host (migrated from legacy SettingsScreen). */
     val tourStep: StateFlow<Int> = authRepository.tourStep
 

@@ -60,7 +60,7 @@ fun SettingsPlaceholderScreen(
             Text("$categoryTitle is under construction", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                "This section arrives in an upcoming phase: Security & Audit Log in Phase 12 (v0.0.2.2), Backups & Import/Export in Phase 13 (v0.0.3.0), Icon Packs in Phase 14 (v0.1.0.0). Server connection, sync and theme settings are available now under their own categories.",
+                "This section arrives in an upcoming phase: Security & Audit Log in Phase 12 (v0.0.2.2), automatic backups in Phase 13 (v0.0.3.0), Icon Packs in Phase 14 (v0.1.0.0). Server connection, sync, theme and import/export settings are available now under their own categories.",
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

@@ -1027,7 +1027,7 @@ enum class SettingsDestination { APPEARANCE, BEHAVIOR, SERVER_SYNC, PLACEHOLDER 
 | 📦 Icon packs | `PLACEHOLDER` | 🚧 Phase 14 (`SettingsIconPacksScreen`) | Placeholder |
 | 🔐 Security | `PLACEHOLDER` | 🚧 Phase 12 (`SettingsSecurityScreen` — FLAG_SECURE toggle, tap-to-reveal, panic purge) | Placeholder |
 | ☁️ Backups | `PLACEHOLDER` | 🚧 Phase 13 (`SettingsBackupsScreen`) | Placeholder |
-| 🛠️ Import & Export | `PLACEHOLDER` | 🚧 Phase 13 (`SettingsImportExportScreen`) | Placeholder |
+| 🛠️ Import & Export | `IMPORT_EXPORT` | `SettingsImportExportScreen` — basic `.sgtotp.bak` Export/Restore (Task 22d); auto-backups & migration wizard remain Phase 13 | Phase 11.5 |
 | 📈 Audit log | `PLACEHOLDER` | 🚧 Phase 12 (`SettingsAuditLogScreen`) | Placeholder |
 
 **Invariants**:
