@@ -303,7 +303,7 @@ Description: Verify and expose the theme persistence pathway that Task 10 shippe
 
 > Success Criteria: Theme mode and accent changes apply instantly app-wide and persist across cold restarts. Unit tests cover stream emission and persistence roundtrip. *(Verification result 2026-09-05: all three criteria already satisfied by existing suite — `AuthVaultModeRepositoryTest.testThemeModeSwitching`, `.testThemeAccentSwitching` (all 6 palettes), `.testUserSettingsPersistenceAcrossRestarts`. Task 22b requires no new code or tests; it is marked complete by this verification record.)*
 
-- [ ]  **Task 22c: [UI Component] Appearance Theme Section, Server & Sync Sub-screen & Hub Category Re-home**
+- [x]  **Task 22c: [UI Component] Appearance Theme Section, Server & Sync Sub-screen & Hub Category Re-home**
 
 Description: Complete Task 22's Appearance spec and restore Server/Sync controls with a semantic home:
 - **`SettingsAppearanceScreen.kt` — new "Theme" section** rendered above the existing entry-formatting controls:
@@ -326,7 +326,7 @@ Description: Complete Task 22's Appearance spec and restore Server/Sync controls
 
 > Success Criteria: Every control present in v0.0.1.3's settings is reachable from the v0.0.2.1 hub (or explicitly retired with rationale). Full unit suite passes; on-device ADB verification confirms theme live-preview, Gateway roundtrip, Sync Now, and Disconnect flows.
 
-- [ ]  **Task 22d: [UI Component] Basic Import & Export Sub-screen (v0.0.2.1 scope extension — parity restoration)**
+- [x]  **Task 22d: [UI Component] Basic Import & Export Sub-screen (v0.0.2.1 scope extension — parity restoration)**
 
 Description: Restore the v0.0.1.3 "Encrypted Backup & Restore" card as a real hub sub-screen (added post-Task-22c verification session per Lucas's directive):
 - New `SettingsImportExportScreen.kt` (hub category "🛠️ Import & Export"): SAF `CreateDocument("application/octet-stream")` export launcher producing `shellguard-totp-backup.sgtotp.bak` via `BackupManager.exportEncryptedBackup`, and SAF `OpenDocument` restore launcher via `BackupManager.importEncryptedBackup`. Legacy test tags preserved (`export_backup_button`, `import_backup_button`) and legacy toast copy ("Exported N items securely (.sgtotp.bak).").

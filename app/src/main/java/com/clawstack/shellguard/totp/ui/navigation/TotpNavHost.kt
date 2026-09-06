@@ -273,6 +273,17 @@ fun TotpNavHost(
     }
 
     composable(
+        route = Screen.SettingsImportExport.route,
+        enterTransition = { fadeIn() },
+        exitTransition = { fadeOut() }
+    ) {
+        com.clawstack.shellguard.totp.ui.screens.settings.SettingsImportExportScreen(
+            authViewModel = authViewModel,
+            onBackClick = { navController.popBackStack() }
+        )
+    }
+
+    composable(
         route = "${Screen.SettingsPlaceholder.route}/{title}",
         enterTransition = { fadeIn() },
         exitTransition = { fadeOut() }
