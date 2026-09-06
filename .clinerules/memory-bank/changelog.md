@@ -1,5 +1,14 @@
 # Changelog (Cline)
 
+## [session-6] - 2026-09-05 (continued)
+### Shipped
+- **Build 13 (versionCode 13, versionName 0.0.2.1)** — speed-dial scrim fix: scrim was inside the Scaffold FAB slot (wrap-content, bottom-end) → only dimmed a patch, white edge gaps in light mode. Extracted `SpeedDialScrim`, rendered edge-to-edge above content/below FAB, state hoisted, padding moved off scrim parent. Pipeline run 34010289688 green.
+- **Build 12** — light-mode typography fix (theme-aware `shellGuardTypography(colors)`), confirmed readable by Lucas on device.
+- Root cleanup: removed retired RELEASE-v0.0.1.3.md / RELEASE-v0.0.2.0.md; ROADMAP build numbers shifted (Ph12→13, Ph13→14, Ph14→15, Ph15→16).
+
+### In Flight
+- **Dashboard FAB white in light mode (expected Reef Pink)** — under diagnosis via debug-build swap (screencaps black on release due to FLAG_SECURE). Device is disposable (dev-only LineageOS, FOSS target) — wipe authorized. No code changes until visual diagnosis (Lucas requested careful-edit mode).
+
 ## [session-6] - 2026-09-05
 ### Fixed
 - **CRITICAL — Light-mode typography (Ocean Mist)**: `Type.kt` `ShellGuardTypography` baked hard-coded dark tokens (`TextPearl` = DarkTextMain alias ≈ white, `TextMuted`, `ClawCyan`) into every text style — all `Text()` without explicit color rendered white on light backgrounds. Converted to `shellGuardTypography(colors: ShellGuardCustomColors)` factory resolving colors from the active palette (Theme.kt:156); dark mode pixel-identical. 101/101 tests green + assembleDebug.
