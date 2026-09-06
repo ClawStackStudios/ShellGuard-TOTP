@@ -20,7 +20,6 @@ import com.clawstack.shellguard.totp.ui.screens.GatewayScreen
 import com.clawstack.shellguard.totp.ui.screens.LockScreen
 import com.clawstack.shellguard.totp.ui.screens.LoginScreen
 import com.clawstack.shellguard.totp.ui.screens.QrScannerScreen
-import com.clawstack.shellguard.totp.ui.screens.SettingsScreen
 import com.clawstack.shellguard.totp.ui.screens.TotpListScreen
 import com.clawstack.shellguard.totp.ui.screens.onboarding.IntakeWelcomeScreen
 import com.clawstack.shellguard.totp.ui.viewmodels.AuthViewModel
@@ -36,10 +35,10 @@ sealed class Screen(val route: String) {
     data object CodeList : Screen("code_list")
     data object AddSecret : Screen("add_secret")
     data object QrScanner : Screen("qr_scanner")
-    data object Settings : Screen("settings")
     data object SettingsMeta : Screen("settings_meta")
     data object SettingsAppearance : Screen("settings_appearance")
     data object SettingsBehavior : Screen("settings_behavior")
+    data object SettingsServerSync : Screen("settings_server_sync")
     data object SettingsPlaceholder : Screen("settings_placeholder")
 }
 
@@ -221,14 +220,15 @@ fun TotpNavHost(
         }
 
         composable(
-            route = Screen.Settings.route,
-            enterTransition = { slideInHorizontally(initialOffsetX = { it }) + fadeIn() },
-            exitTransition = { slideOutHorizontally(targetOffsetX = { it }) + fadeOut() }
+            route = Screen.SettingsServerSync.route,
+            enterTransition = { fadeIn() },
+            exitTransition = { fadeOut() }
         ) {
-            SettingsScreen(
+            com.clawstack.shellguard.totp.ui.screens.settings.SettingsServerSyncScreen(
+                authViewModel = authViewModel,
+                totpViewModel = totpViewModel,
                 onBackClick = { navController.popBackStack() },
-                onNavigateToGateway = { navController.navigate(Screen.Gateway.route) },
-                totpViewModel = totpViewModel
+                onNavigateToGateway = { navController.navigate(Screen.Gateway.route) }
             )
         }
 
@@ -241,6 +241,7 @@ fun TotpNavHost(
             onBackClick = { navController.popBackStack() },
             onNavigateToAppearance = { navController.navigate(Screen.SettingsAppearance.route) },
             onNavigateToBehavior = { navController.navigate(Screen.SettingsBehavior.route) },
+            onNavigateToServerSync = { navController.navigate(Screen.SettingsServerSync.route) },
             onNavigateToPlaceholder = { title ->
                 navController.navigate("${Screen.SettingsPlaceholder.route}/${android.net.Uri.encode(title)}")
             }
@@ -277,8 +278,7 @@ fun TotpNavHost(
         val title = backStackEntry.arguments?.getString("title") ?: "Settings"
         com.clawstack.shellguard.totp.ui.screens.settings.SettingsPlaceholderScreen(
             categoryTitle = title,
-            onBackClick = { navController.popBackStack() },
-            onOpenLegacySettings = { navController.navigate(Screen.Settings.route) }
+            onBackClick = { navController.popBackStack() }
         )
     }
     }

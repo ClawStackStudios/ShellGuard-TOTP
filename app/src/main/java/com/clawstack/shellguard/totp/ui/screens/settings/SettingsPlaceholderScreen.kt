@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,8 +33,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun SettingsPlaceholderScreen(
     categoryTitle: String,
-    onBackClick: () -> Unit,
-    onOpenLegacySettings: () -> Unit
+    onBackClick: () -> Unit
 ) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -62,14 +60,11 @@ fun SettingsPlaceholderScreen(
             Text("$categoryTitle is under construction", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                "This section arrives in an upcoming phase. Server connection, backups and biometric settings remain available in the current settings screen.",
+                "This section arrives in an upcoming phase: Security & Audit Log in Phase 12 (v0.0.2.2), Backups & Import/Export in Phase 13 (v0.0.3.0), Icon Packs in Phase 14 (v0.1.0.0). Server connection, sync and theme settings are available now under their own categories.",
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(24.dp))
-            Button(onClick = onOpenLegacySettings) {
-                Text("Open Server & Backup Settings")
-            }
         }
     }
 }

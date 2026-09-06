@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Backup
+import androidx.compose.material.icons.filled.CloudSync
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.ImportExport
@@ -49,7 +50,7 @@ data class SettingsCategory(
     val destination: SettingsDestination
 )
 
-enum class SettingsDestination { APPEARANCE, BEHAVIOR, PLACEHOLDER }
+enum class SettingsDestination { APPEARANCE, BEHAVIOR, SERVER_SYNC, PLACEHOLDER }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,6 +58,7 @@ fun SettingsMetaScreen(
     onBackClick: () -> Unit,
     onNavigateToAppearance: () -> Unit,
     onNavigateToBehavior: () -> Unit,
+    onNavigateToServerSync: () -> Unit,
     onNavigateToPlaceholder: (String) -> Unit
 ) {
     Scaffold(
@@ -90,6 +92,7 @@ fun SettingsMetaScreen(
                             when (category.destination) {
                                 SettingsDestination.APPEARANCE -> onNavigateToAppearance()
                                 SettingsDestination.BEHAVIOR -> onNavigateToBehavior()
+                                SettingsDestination.SERVER_SYNC -> onNavigateToServerSync()
                                 SettingsDestination.PLACEHOLDER -> onNavigateToPlaceholder(category.title)
                             }
                         },
@@ -124,6 +127,7 @@ fun SettingsMetaScreen(
     val categories = listOf(
         SettingsCategory("🎨 Appearance", "Adjust theme, language, and other appearance settings", Icons.Default.Palette, SettingsDestination.APPEARANCE),
         SettingsCategory("⚡ Behavior", "Customize behavior when interacting with entry list", Icons.Default.Speed, SettingsDestination.BEHAVIOR),
+        SettingsCategory("☁️ Server & Sync", "Gateway connection, sync status, and vault link", Icons.Default.CloudSync, SettingsDestination.SERVER_SYNC),
         SettingsCategory("📦 Icon packs", "Manage and import icon packs", Icons.Default.Image, SettingsDestination.PLACEHOLDER),
         SettingsCategory("🔐 Security", "Configure encryption, biometric unlock, auto lock", Icons.Default.Security, SettingsDestination.PLACEHOLDER),
         SettingsCategory("☁️ Backups", "Automatic backups & Android cloud backup system", Icons.Default.Backup, SettingsDestination.PLACEHOLDER),

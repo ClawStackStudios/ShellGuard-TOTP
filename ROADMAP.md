@@ -1,7 +1,7 @@
 ---
-roadmap_version: 2.4.0
+roadmap_version: 2.5.0
 last_updated: 2026-09-05
-current_position: "Phase 11 Complete (v0.0.2.0 Milestone 2) — Transitioning to Phase 12: Security Suite & Audit Logging (v0.0.2.1)"
+current_position: "Phase 11 Complete (v0.0.2.0 Milestone 2) — Transitioning to Phase 11.5: Settings Continuity (v0.0.2.1), then Phase 12: Security Suite & Audit Logging (v0.0.2.2)"
 statistics:
   description: "Deterministic build roadmap for ShellGuard-TOTP Android Authenticator application. Engineered strictly in synergistic 2-task phases where Task A delivers core functionality and Task B delivers the corresponding UI/UX component."
   features_completed: "████████████░░░ 80%"
@@ -280,7 +280,55 @@ Description: Implement modular Settings navigation:
 
 ---
 
-## Phase 12: Security Suite, Panic Purge & Security Audit Logging [v0.0.2.1 (Build 11)]
+> 🕸️ **Post-Hoc Interlude C — Settings Continuity Gap Record (2026-09-05)**
+> **Parity audit conducted against release v0.0.1.3** immediately after the v0.0.2.0 Categorized Settings Hub shipped. Findings, documented honestly:
+> - **Task 22 shipped partially against its own spec**: the spec reads *"`SettingsAppearanceScreen.kt`: Theme mode, Dynamic Colors toggle, Language, View mode..."* — but the shipped Appearance screen omitted the **theme mode selector (Abyssal Dark / Contrast / System)** and the **6 `ThemeAccent` palette swatches** (both shipped in v0.0.1.3's legacy screen). These are completion items, not new scope.
+> - **Server & Sync controls orphaned**: the legacy screen's "Connect to Server" → Gateway login form, "Sync Now", connection status, and "Disconnect Vault" have **no hosting category in the new hub** — and no Phase 12–15 task claims them. The Spotlight Tour (Tasks 10/18) guides users to a "Connect to Server" button the hub no longer surfaces, breaking the tour's contract.
+> - **Biometric/PIN controls, Backups, Import/Export, Icon Packs, Audit Log**: confirmed on-schedule in Phases 12/13/14 — no action needed; placeholders remain honest for those.
+> - **Legacy escape hatch broken**: `SettingsPlaceholderScreen` copy claims server/backup settings "remain available in the current settings screen", but the legacy `SettingsScreen` route is unreachable from the hub's navigation flow.
+> - Resolution: **Phase 11.5** inserted below; Phase 12 renumbered `v0.0.2.1 → v0.0.2.2` (Build 11 → 12). versionCode stays monotonic; no released artifact ever claimed v0.0.2.1.
+
+## Phase 11.5: Settings Continuity — Theme Parity & Server/Sync Home [v0.0.2.1 (Build 11)]
+
+> Phase Feature Set Overview:
+> A continuity revision restoring v0.0.1.3 parity lost in the Phase 11 hub transition, and completing Task 22 to its original specification. Delivers theme mode + accent palette selection back into the Appearance sub-screen (Task 22b), and a first-class "Server & Sync" hub category hosting the Gateway connection, manual sync, connection status, and Disconnect Vault controls (Task 22c) — re-homing the Spotlight Tour's settings target. No new subsystems; every restored control gets a semantic home, and every hub card leads somewhere real.
+
+- [x]  **Task 22b: [Functionality] Theme Mode & ThemeAccent Preference Streams (Task 22 Spec Completion — Verified Existing)**
+
+Description: Verify and expose the theme persistence pathway that Task 10 shipped (`pref_theme_mode` / `pref_theme_accent` in `AuthRepository`) as reactive `StateFlow` streams consumed by the new settings UI:
+- `themeMode: StateFlow<AppThemeMode>` with values `DARK` ("Abyssal Dark"), `LIGHT` ("Ocean Mist" — surfaced in the UI as "Contrast", the High-Contrast Light mode), `SYSTEM` — plus setter `setThemeMode(AppThemeMode)` persisting immediately. *(Verified 2026-09-05: enum in `Theme.kt:27-31`; already exists.)*
+- `themeAccent: StateFlow<ThemeAccent>` over the 6 curated palettes (`REEF_DEFAULT`, `CYAN_VENT`, `PURPLE_SHELL`, `EMERALD_TRENCH`, `AMBER_FLARE`, `MONOCHROME`) — plus setter `setThemeAccent(ThemeAccent)`.
+- Do NOT re-derive storage: the enum + persistence already exist from Phase 5/Task 10; this task is verification, reactive exposure, and unit-test coverage of the streams.
+- Preserve existing behavior: live `LocalShellGuardColors` recomposition on accent change, theme applied without app restart.
+
+> Success Criteria: Theme mode and accent changes apply instantly app-wide and persist across cold restarts. Unit tests cover stream emission and persistence roundtrip. *(Verification result 2026-09-05: all three criteria already satisfied by existing suite — `AuthVaultModeRepositoryTest.testThemeModeSwitching`, `.testThemeAccentSwitching` (all 6 palettes), `.testUserSettingsPersistenceAcrossRestarts`. Task 22b requires no new code or tests; it is marked complete by this verification record.)*
+
+- [ ]  **Task 22c: [UI Component] Appearance Theme Section, Server & Sync Sub-screen & Hub Category Re-home**
+
+Description: Complete Task 22's Appearance spec and restore Server/Sync controls with a semantic home:
+- **`SettingsAppearanceScreen.kt` — new "Theme" section** rendered above the existing entry-formatting controls:
+  - Theme mode selector: `SettingsSelectorRow` with options Dark / Contrast / System (labels "Abyssal", "Contrast", "System").
+  - Accent palette picker: extract the legacy `AccentPaletteTile` into `SettingsControls.kt` as a shared control; render 6 swatches in a 2×3 grid with selected-state ring; preserve legacy test tags `theme_switcher_dark`, `theme_switcher_contrast`, `theme_switcher_system`, `accent_selector_<name>`.
+  - Section headers ("Theme" / "Entries") for scannability.
+- **New `SettingsServerSyncScreen.kt`** (hub category "☁️ Server & Sync", subtitle "Gateway connection, sync status, and vault link"):
+  - Connection status card: `Server: <url | "None (Standalone)">`, `User: <username | "Local User">`, mirroring legacy copy.
+  - Connected state: "Sync Now" button with in-flight progress indicator (disabled while syncing), and "Disconnect Vault" danger action with confirmation dialog.
+  - Disconnected state: prominent "Connect to Server" button navigating to the existing Gateway route — **this restores the Spotlight Tour's settings spotlight target** (verify tour + button test tags `settings_connect_button`, `settings_sync_button` still resolve).
+- **`SettingsMetaScreen.kt`**: add `SettingsDestination.SERVER_SYNC` and the "☁️ Server & Sync" category card (icon `Icons.Default.CloudSync` or equivalent); update `SettingsPlaceholderScreen` copy — it must no longer claim server settings "remain available in the current settings screen"; Backups / Import & Export placeholders now point to Phase 13 honestly.
+- **Retirement (documented, graceful)**: the legacy "Local Storage & Offline Codes" card is superseded by the Phase 7 grouped dashboard; its offline-codes count is not re-added. Remove the legacy `SettingsScreen` route from `TotpNavHost.kt` once parity is verified (file archived in git history).
+- **`TotpNavHost.kt`**: new route `settings_server_sync` wired with `AuthRepository` session state, `TotpRepository.syncRemoteVault`, and Gateway navigation.
+
+**Implementation ground-truth (verified 2026-09-05 — build against this, do not re-derive):**
+- `AuthRepository` already ships `themeMode`/`themeAccent` `StateFlow`s + setters (`pref_theme_mode`/`pref_theme_accent`); `AuthViewModel` already re-exposes both (`AuthViewModel.kt:39-43`). Task 22b = unit tests (persistence roundtrip + emission) only.
+- Legacy `ThemeOptionTile` + `AccentPaletteTile` composables survive as `private fun` in the unreachable legacy `SettingsScreen.kt` (lines ~935/1002) — extract them into `SettingsControls.kt`, don't rewrite.
+- **Spotlight Tour migration is mandatory**: the legacy screen hosts `SpotlightOverlay(visible = tourStep == 2)` targeting `settings_connect_button` (tour step 1 lives in `TotpListScreen`). Deleting the legacy route without porting step 2 into `SettingsServerSyncScreen` (including the `connectButtonCenter` onGloballyPositioned targeting) silently breaks the onboarding tour.
+- **AuthViewModel surface gap**: `currentSession` (server/user status) and `logout()` (Disconnect Vault) live only on `AuthRepository`/app-context access; expose them via `AuthViewModel` (e.g. `sessionState` + `logout()`) so `SettingsServerSyncScreen` follows the new-screen convention instead of the legacy app-context grab.
+
+> Success Criteria: Every control present in v0.0.1.3's settings is reachable from the v0.0.2.1 hub (or explicitly retired with rationale). Full unit suite passes; on-device ADB verification confirms theme live-preview, Gateway roundtrip, Sync Now, and Disconnect flows.
+
+---
+
+## Phase 12: Security Suite, Panic Purge & Security Audit Logging [v0.0.2.2 (Build 12)]
 
 > Phase Feature Set Overview:
 > Delivers advanced vault security controls (tap-to-reveal tokens, screen security toggle, emergency panic purge trigger integration) and a local append-only security Audit Log recording important cryptographic and access events.
@@ -313,7 +361,7 @@ Description: Implement:
 
 ---
 
-## Phase 13: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 12) — Milestone 3]
+## Phase 13: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 13) — Milestone 3]
 
 > Phase Feature Set Overview:
 > Delivers robust multi-format vault import with specialized Bitwarden vault parsing (extracting 2FA TOTP secrets while strictly stripping passwords and secure notes in-memory), dual persistence routing (Local SQLCipher vs Remote Gateway sync), and Google Authenticator multi-account migration QR export.
@@ -343,7 +391,7 @@ Description: Implement:
 
 ---
 
-## Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 13) — Open Beta Candidate]
+## Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 14) — Open Beta Candidate]
 
 > Phase Feature Set Overview:
 > Delivers Android Glance Compose home screen widgets for fast 2FA access with live countdown progress arcs, and a custom SVG/Vector Icon Pack management engine for branded account icons.
@@ -366,7 +414,7 @@ Description: Implement:
 
 
 
-## Phase 15: ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 14)]
+## Phase 15: ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 15)]
 
 > Phase Feature Set Overview:
 > Introduces the ShellGuard sovereign `hu-` ClawKey as a third vault creation and import authentication method, bringing the Android identity model into parity with the ShellGuard web platform. Delivers a reusable dual-tab `ClawKeyInputForm` (Paste / Upload), consistent format validation, correct lock screen branching, proper export envelope stamping, and a pre-import duplicate resolution engine.

@@ -128,3 +128,14 @@ Improvements_Identified_For_Consolidation:
 - Test Oracle Synchronization Invariant when architectural rules shift.
 - Pre-DAO normalized fingerprint deduplication pattern.
 ---
+---
+Date: 2026-09-05
+TaskRef: "Phase 11.5 Settings Continuity — corpus weave (ROADMAP v2.5.0, meta-prompt Stage 12.5)"
+
+Learnings:
+- Settings parity audit method: diff legacy release tag settings UI (git show v0.0.1.3:<file>) against new hub screens, then cross-check each control against roadmap phases BEFORE deciding anything is "lost" — 4 of 6 lost cards were already scheduled (Phases 12/13/14); only Theme (Task 22 spec drift) and Server & Sync (true orphan) needed corpus work.
+- Versioning: renumbering unshipped future phases is safe (no tags/releases reference them); must simultaneously update ROADMAP headers, meta-prompt stage headers + inline prompt blocks, and next-stop pointers in the previous release record.
+- Structural contracts belong in ui-ux-design-system.md (route maps, invariants); DESIGN.md gets a superseded-section pointer note, not a rewrite.
+
+Successes:
+- Interlude C pattern (honest gap record) keeps the deterministic roadmap trustworthy while inserting a revision phase.

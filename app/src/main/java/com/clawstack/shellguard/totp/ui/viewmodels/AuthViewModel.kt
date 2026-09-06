@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.clawstack.shellguard.totp.ShellGuardTotpApp
 import com.clawstack.shellguard.totp.crypto.AndroidKeyStoreHelper
 import com.clawstack.shellguard.totp.data.repository.AuthRepository
+import com.clawstack.shellguard.totp.data.repository.UserSession
 import com.clawstack.shellguard.totp.data.repository.VaultProtectionMode
 import com.clawstack.shellguard.totp.ui.theme.AppThemeMode
 import com.clawstack.shellguard.totp.ui.theme.ThemeAccent
@@ -63,6 +64,17 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     fun setMultiselectGroups(enabled: Boolean) = authRepository.setMultiselectGroups(enabled)
     fun setHighlightTokensOnTap(enabled: Boolean) = authRepository.setHighlightTokensOnTap(enabled)
     fun setFreezeTokensOnTap(enabled: Boolean) = authRepository.setFreezeTokensOnTap(enabled)
+
+    /** Phase 11.5 / Task 22c — session state & disconnect for SettingsServerSyncScreen (ViewModel-first wiring). */
+    val currentSession: StateFlow<UserSession?> = authRepository.currentSession
+
+    fun logout() = authRepository.logout()
+
+    /** Phase 11.5 / Task 22c — Spotlight Tour step 2 host (migrated from legacy SettingsScreen). */
+    val tourStep: StateFlow<Int> = authRepository.tourStep
+
+    fun setGuidedTourCompleted() = authRepository.setGuidedTourCompleted(true)
+
 
     val isVaultHatched: StateFlow<Boolean> = authRepository.isVaultHatched
         .stateIn(viewModelScope, SharingStarted.Eagerly, authRepository.isVaultHatched.value)

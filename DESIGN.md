@@ -938,6 +938,8 @@ fun TotpEmptyState(
 
 ## ⚙️ Secure Settings & Encrypted Backup Screen (`SettingsScreen.kt`)
 
+> **📌 Architecture Note (v0.0.2.1 — Phase 11.5)**: The monolithic screen specified in this section is superseded by the **Categorized Settings Hub** (`SettingsMetaScreen` — Phase 11/Task 22) with dedicated sub-screens. The **Appearance & Accessibility** card below (theme mode + accent swatches) now lives in `SettingsAppearanceScreen.kt`'s "Theme" section (Task 22b/22c); the **Server Sync / Backup / Biometric** cards map to `SettingsServerSyncScreen.kt` (Phase 11.5), Phase 13's `SettingsBackupsScreen`, and Phase 12's `SettingsSecurityScreen` respectively. The full hub route map and invariants are specified in [`ui-ux-design-system.md`](./ui-ux-design-system.md) §4.A.5. The token values, spacing, and interaction design in this section remain the canonical visual reference for those sub-screens.
+
 Provides vault synchronization status, hardware biometric toggles, secure encrypted JSON export/import, and **dynamic theme appearance & accent color selection**:
 
 ```kotlin

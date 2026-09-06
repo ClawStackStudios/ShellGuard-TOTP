@@ -54,4 +54,4 @@ Welcome to **v0.0.2.0** of **ShellGuard-TOTP** — **Milestone 2** of the post-l
 
 * `versionCode` 9 → 10 (monotonic Play Console invariant); `versionName` "0.0.2.0"
 * No schema migration required; existing preferences carry over untouched
-* Milestone 2 of the post-launch roadmap — next stop: Phase 12 Security Suite (v0.0.2.1)
+* Milestone 2 of the post-launch roadmap — next stop: Phase 11.5 Settings Continuity (v0.0.2.1), then Phase 12 Security Suite (v0.0.2.2)
