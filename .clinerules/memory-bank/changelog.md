@@ -1,5 +1,17 @@
 # Changelog (Cline)
 
+## [session-5] - 2026-09-05
+### Released
+- **v0.0.2.1 (Build 11) — Phase 11.5 Settings Continuity** prepped on `feat/phase-11.5-settings-continuity`: Tasks 22b (verify-only)/22c (Appearance theme section + SettingsServerSyncScreen + tour step 2 migration)/22d (Import & Export SAF screen) implemented and verified live on Pixel sailfish (hub nav, export/restore roundtrip, theme cold-restart persistence, tour cutout).
+
+### Fixed
+- **Gateway back-button clipping**: circular back button inset 10dp + border drawn outside `CircleShape` clip (top arc no longer shaved). Commit e469a1e.
+- **Missing route/screen in Task 22d commit**: `SettingsImportExportScreen.kt` was silently untracked and the nav-graph insertion had no-opped (python replace without assert) — committed and grep-verified (commit 25560c6).
+
+### Learned
+- python `str.replace` without `assert` silently no-ops — always assert anchors (bit twice now: nav graph, screen file).
+- Pre-flight flake: `IntakeOnboardingTest.testIntakeViewModelPinProtectionValidationAndHatching` failed on Robolectric timing poll once, passed clean on isolated re-run — treat single timing-poll failures as flake candidates before diagnosing.
+
 ## [session-4] - 2026-09-05
 ### Released
 - **v0.0.2.0 (Build 10) — Milestone 2**: Phase 11 (Tasks 21/22) shipped. Tag pushed, Release Pipeline green (run 33981002398), signed .aab/.apk on GitHub Release. Verified live on new test device (original Pixel sailfish/LineageOS); Hub + sub-screen screenshots captured into store-assets and README refreshed (slot 5 hub + new row 3; test count 101+).
