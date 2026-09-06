@@ -12,6 +12,7 @@
 • New Server & Sync section: connection status, Sync Now, connect to your ShellGuard Gateway, and Disconnect Vault.
 • New Import & Export section: export an encrypted .sgtotp.bak backup and restore your vault from a backup file.
 • Theme parity restored: mode (Dark/Light/System) and 6 accent palettes live in the Appearance section.
+• Fixed: Light mode (Ocean Mist) text readability — typography now follows the active theme.
 • Guided Tour updated to spotlight the new Server & Sync controls.
 • Navigation & UI polish across the Settings Hub and Gateway login.
 • Full hardware-backed security unchanged: Android KeyStore, SQLCipher, FLAG_SECURE.

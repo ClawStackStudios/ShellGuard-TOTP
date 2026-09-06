@@ -1,4 +1,6 @@
-# 🦞 ShellGuard TOTP — Release v0.0.2.1 (Build 11)
+# 🦞 ShellGuard TOTP — Release v0.0.2.1 (Build 12)
+
+> **Build 12 re-upload**: versionCode 12 (versionName unchanged). Fixes the light-mode (Ocean Mist) typography regression found during on-device testing — text style colors are now resolved from the active theme palette instead of hard-coded dark tokens. Install over the previous build in place; vault data is preserved.
 
 ## *Phase 11.5: Settings Continuity — Server & Sync, Import/Export & Theme Parity*
 
@@ -41,6 +43,8 @@ Welcome to **v0.0.2.1** of **ShellGuard-TOTP** — **Phase 11.5: Settings Contin
 
 ### 🔧 4. Polish & Fixes
 
+* **CRITICAL — Light-mode typography**: `ShellGuardTypography` had hard-coded dark-mode text colors (white `TextPearl`, `TextMuted`, `ClawCyan`) baked into every style — white-on-white text across the app in Ocean Mist mode. Typography is now a theme-aware factory (`shellGuardTypography(colors)`); dark mode renders pixel-identical.
+* **Accent swatch border**: 30%-white border replaced with `colorScheme.outline` at 60% — visible in both modes.
 * **Gateway back-button unclip**: circular back button inset 10dp with the border stroke drawn outside the `CircleShape` clip.
 * **Nav-graph integrity**: the `settings_import_export` composable is now verified present in the graph (grep-asserted, on-device walkthrough confirmed).
 

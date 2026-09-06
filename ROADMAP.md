@@ -1,7 +1,7 @@
 ---
 roadmap_version: 2.5.0
 last_updated: 2026-09-05
-current_position: "Phase 11.5: Settings Continuity (v0.0.2.1, Build 11) — Tasks 22b/22c/22d complete, releasing; next Phase 12: Security Suite & Audit Logging (v0.0.2.2)"
+current_position: "Phase 11.5: Settings Continuity (v0.0.2.1, Build 12 re-upload — light-mode typography fix) — released; next Phase 12: Security Suite & Audit Logging (v0.0.2.2)"
 statistics:
   description: "Deterministic build roadmap for ShellGuard-TOTP Android Authenticator application. Engineered strictly in synergistic 2-task phases where Task A delivers core functionality and Task B delivers the corresponding UI/UX component."
   features_completed: "████████████░░░ 80%"
@@ -287,8 +287,9 @@ Description: Implement modular Settings navigation:
 > - **Biometric/PIN controls, Backups, Import/Export, Icon Packs, Audit Log**: confirmed on-schedule in Phases 12/13/14 — no action needed; placeholders remain honest for those.
 > - **Legacy escape hatch broken**: `SettingsPlaceholderScreen` copy claims server/backup settings "remain available in the current settings screen", but the legacy `SettingsScreen` route is unreachable from the hub's navigation flow.
 > - Resolution: **Phase 11.5** inserted below; Phase 12 renumbered `v0.0.2.1 → v0.0.2.2` (Build 11 → 12). versionCode stays monotonic; no released artifact ever claimed v0.0.2.1.
+> - **Post-release amendment (2026-09-05)**: light-mode typography regression found during on-device testing → Build 12 re-upload (versionCode 12, versionName stays 0.0.2.1 per the durable-conflict-resolution SOP). Phase 12+ build numbers shifted +1 (Phase 12 → Build 13, Phase 13 → 14, Phase 14 → 15, Phase 15 → 16).
 
-## Phase 11.5: Settings Continuity — Theme Parity & Server/Sync Home [v0.0.2.1 (Build 11)]
+## Phase 11.5: Settings Continuity — Theme Parity & Server/Sync Home [v0.0.2.1 (Build 12)]
 
 > Phase Feature Set Overview:
 > A continuity revision restoring v0.0.1.3 parity lost in the Phase 11 hub transition, and completing Task 22 to its original specification. Delivers theme mode + accent palette selection back into the Appearance sub-screen (Task 22b), and a first-class "Server & Sync" hub category hosting the Gateway connection, manual sync, connection status, and Disconnect Vault controls (Task 22c) — re-homing the Spotlight Tour's settings target. No new subsystems; every restored control gets a semantic home, and every hub card leads somewhere real.
@@ -338,7 +339,7 @@ Description: Restore the v0.0.1.3 "Encrypted Backup & Restore" card as a real hu
 
 ---
 
-## Phase 12: Security Suite, Panic Purge & Security Audit Logging [v0.0.2.2 (Build 12)]
+## Phase 12: Security Suite, Panic Purge & Security Audit Logging [v0.0.2.2 (Build 13)]
 
 > Phase Feature Set Overview:
 > Delivers advanced vault security controls (tap-to-reveal tokens, screen security toggle, emergency panic purge trigger integration) and a local append-only security Audit Log recording important cryptographic and access events.
@@ -371,7 +372,7 @@ Description: Implement:
 
 ---
 
-## Phase 13: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 13) — Milestone 3]
+## Phase 13: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 14) — Milestone 3]
 
 > Phase Feature Set Overview:
 > Delivers robust multi-format vault import with specialized Bitwarden vault parsing (extracting 2FA TOTP secrets while strictly stripping passwords and secure notes in-memory), dual persistence routing (Local SQLCipher vs Remote Gateway sync), and Google Authenticator multi-account migration QR export.
@@ -401,7 +402,7 @@ Description: Implement:
 
 ---
 
-## Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 14) — Open Beta Candidate]
+## Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 15) — Open Beta Candidate]
 
 > Phase Feature Set Overview:
 > Delivers Android Glance Compose home screen widgets for fast 2FA access with live countdown progress arcs, and a custom SVG/Vector Icon Pack management engine for branded account icons.
@@ -424,7 +425,7 @@ Description: Implement:
 
 
 
-## Phase 15: ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 15)]
+## Phase 15: ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 16)]
 
 > Phase Feature Set Overview:
 > Introduces the ShellGuard sovereign `hu-` ClawKey as a third vault creation and import authentication method, bringing the Android identity model into parity with the ShellGuard web platform. Delivers a reusable dual-tab `ClawKeyInputForm` (Paste / Upload), consistent format validation, correct lock screen branching, proper export envelope stamping, and a pre-import duplicate resolution engine.

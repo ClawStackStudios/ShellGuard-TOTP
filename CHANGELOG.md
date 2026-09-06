@@ -8,7 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - No unreleased changes yet.
 
-## [0.0.2.1] - 2026-09-05 (Build 11) — Phase 11.5: Settings Continuity
+## [0.0.2.1] - 2026-09-05 (Build 12) — Phase 11.5: Settings Continuity
+> **Build 12 re-upload (versionCode 12, versionName unchanged)** — fixes the light-mode readability regression found during on-device testing before Play Console upload.
+
+### Fixed
+- **CRITICAL — Light Mode Typography (Ocean Mist)**: `ShellGuardTypography` baked hard-coded dark-mode text colors (`TextPearl` ≈ white, `TextMuted`, `ClawCyan`) into every headline/title/body style. Any `Text()` without an explicit color inherited white text on light backgrounds — nearly unreadable across the whole app in Ocean Mist mode. Typography is now a theme-aware factory (`shellGuardTypography(colors)`) resolving all style colors from the active `ShellGuardCustomColors` palette; dark mode rendering is pixel-identical to before.
+- **Accent Swatch Border**: `SettingsControls.kt` selected-accent swatch border used 30% white (invisible in light mode); now uses `colorScheme.outline` at 60% so it reads in both modes.
+
 ### Added
 - **Server & Sync Sub-screen** (Task 22c): new ☁️ hub category hosting connection status, manual **Sync Now**, **Connect → Gateway** navigation, and **Disconnect** with confirmation dialog; legacy `SettingsScreen.kt` deleted and its route removed.
 - **Import & Export Sub-screen** (Task 22d): SAF-based export of an encrypted `.sgtotp.bak` backup (CreateDocument) and vault restore (OpenDocument), wired through `AuthViewModel.exportVaultBackup`/`importVaultBackup`.

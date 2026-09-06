@@ -217,7 +217,7 @@ fun AccentPaletteTile(
                             listOf(accent.primaryColor, accent.secondaryColor)
                         )
                     )
-                    .border(1.dp, Color.White.copy(alpha = 0.3f), RoundedCornerShape(9.dp))
+                    .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.6f), RoundedCornerShape(9.dp))
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(

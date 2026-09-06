@@ -1,5 +1,14 @@
 # Changelog (Cline)
 
+## [session-6] - 2026-09-05
+### Fixed
+- **CRITICAL — Light-mode typography (Ocean Mist)**: `Type.kt` `ShellGuardTypography` baked hard-coded dark tokens (`TextPearl` = DarkTextMain alias ≈ white, `TextMuted`, `ClawCyan`) into every text style — all `Text()` without explicit color rendered white on light backgrounds. Converted to `shellGuardTypography(colors: ShellGuardCustomColors)` factory resolving colors from the active palette (Theme.kt:156); dark mode pixel-identical. 101/101 tests green + assembleDebug.
+- Accent swatch selected border: 30% white → `colorScheme.outline` 60% (visible in both modes).
+
+### Learned
+- **Debug screencaps went black mid-session**: root cause was the installed APK being the RELEASE v0.0.2.1 build (`dumpsys package` shows no DEBUGGABLE flag) — FLAG_SECURE production-only is working as designed. Diagnose via `dumpsys window <pkg> | grep -i secure` + `dumpsys package <pkg> | grep -E 'versionName|pkgFlags'` before blaming screencap logic.
+- **No local release signing** (keystore only in GitHub secrets) → on-device verification of release-build fixes must go through the pipeline; use the SOP's durable-conflict pattern: keep versionName, bump versionCode, retag (Play upload hadn't happened yet, so retag v0.0.2.1 is safe). Pipeline-signed APK installs over the installed release (same signature) preserving vault data.
+
 ## [session-5] - 2026-09-05
 ### Released
 - **v0.0.2.1 (Build 11) — Phase 11.5 Settings Continuity** prepped on `feat/phase-11.5-settings-continuity`: Tasks 22b (verify-only)/22c (Appearance theme section + SettingsServerSyncScreen + tour step 2 migration)/22d (Import & Export SAF screen) implemented and verified live on Pixel sailfish (hub nav, export/restore roundtrip, theme cold-restart persistence, tour cutout).
