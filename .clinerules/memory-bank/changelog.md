@@ -1,5 +1,15 @@
 # Changelog (Cline)
 
+## [session-6] - 2026-09-06 (final)
+### Shipped
+- **Build 14 (versionCode 14, versionName 0.0.2.1)** — system-bars fix: `isAppearanceLightStatusBars` followed SYSTEM theme → white status-bar icons unreadable in light mode. `DisposableEffect(effectiveDark)` in MainActivity re-asserts edge-to-edge icon appearance from the APP's effective theme. Retag flow; pipeline 34013317295 green; refreshed .aab/.apk published.
+- **Full light-mode sweep PASSED on device** (both modes, all screens, FAB + scrim confirmed fixed — earlier white-FAB report resolved as stale-build mix).
+
+### Learnings Codified (Lucas approved)
+- NEW skill `.agents/skills/adb-ui-input/SKILL.md` — ADB input/verify loop (append-quirk, clear-then-screenshot, keyboard covers bottom UI, install re-locks vault).
+- NEW rule `.clinerules/rules/theme-aware-compose-surfaces.md` — no hardcoded colors; app-theme status bars; full-screen scrims; border-before-clip modifier order.
+- `RELEASE-PLAY.md` appendix — hotfix retag flow under same versionName (Build 13→14 proven twice).
+
 ## [session-6] - 2026-09-05 (continued)
 ### Shipped
 - **Build 13 (versionCode 13, versionName 0.0.2.1)** — speed-dial scrim fix: scrim was inside the Scaffold FAB slot (wrap-content, bottom-end) → only dimmed a patch, white edge gaps in light mode. Extracted `SpeedDialScrim`, rendered edge-to-edge above content/below FAB, state hoisted, padding moved off scrim parent. Pipeline run 34010289688 green.

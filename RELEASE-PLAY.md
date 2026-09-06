@@ -114,3 +114,33 @@ When releasing version `vX.Y.Z.N`, prepend a new section above with `<en-US>` ta
 1. Keep the character count **strictly under 500 characters**.
 2. Use bullet points (`•`) for readability on mobile screens.
 3. Focus on user-facing benefits (features, performance, battery life, security improvements).
+
+---
+
+## 🔥 Appendix: Hotfix Under the Same Version Name (Retag Flow)
+
+For hotfixes shipped under an unchanged `versionName` (e.g. the v0.0.2.1
+light-mode fixes, Build 13→14). Proven flow — use exactly this order:
+
+1. **Fix + bump `versionCode` only** (`N → N+1`); keep `versionName` unchanged.
+2. Commit and push the release branch.
+3. **Retag** (deleting the remote tag re-triggers the Release Pipeline):
+   ```bash
+   git tag -d vX.Y.Z
+   git push origin :refs/tags/vX.Y.Z
+   git tag -a vX.Y.Z -m "Release vX.Y.Z (Build N+1) — <hotfix summary>"
+   git push origin vX.Y.Z
+   ```
+4. **Verify pipeline + artifacts** (wait ~5 min):
+   ```bash
+   gh run list --limit 2
+   gh release view vX.Y.Z --json assets --jq '.assets[].name'
+   ```
+5. **Verify on-device**: `gh release download vX.Y.Z --pattern '*.apk'` →
+   `adb install -r` → functional sweep (note: reinstall locks a PIN vault).
+6. Keep `CHANGELOG.md` / `RELEASE-PLAY.md` updated under the same `vX.Y.Z`
+   heading with the hotfix note.
+
+> **Anti-pattern:** pushing a new tag while the old tag still exists locally and
+> remotely — the pipeline may run against the stale commit. Always delete first.
+
