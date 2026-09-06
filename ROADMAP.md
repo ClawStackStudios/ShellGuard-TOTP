@@ -287,7 +287,7 @@ Description: Implement modular Settings navigation:
 > - **Biometric/PIN controls, Backups, Import/Export, Icon Packs, Audit Log**: confirmed on-schedule in Phases 12/13/14 — no action needed; placeholders remain honest for those.
 > - **Legacy escape hatch broken**: `SettingsPlaceholderScreen` copy claims server/backup settings "remain available in the current settings screen", but the legacy `SettingsScreen` route is unreachable from the hub's navigation flow.
 > - Resolution: **Phase 11.5** inserted below; Phase 12 renumbered `v0.0.2.1 → v0.0.2.2` (Build 11 → 12). versionCode stays monotonic; no released artifact ever claimed v0.0.2.1.
-> - **Post-release amendment (2026-09-05)**: light-mode typography regression found during on-device testing → Build 12 re-upload (versionCode 12, versionName stays 0.0.2.1 per the durable-conflict-resolution SOP). Phase 12+ build numbers shifted +1 (Phase 12 → Build 13, Phase 13 → 14, Phase 14 → 15, Phase 15 → 16).
+> - **Post-release amendment (2026-09-05)**: light-mode typography + speed-dial scrim regressions found during on-device testing → Build 12/13 re-uploads (versionCode 12→13, versionName stays 0.0.2.1 per the durable-conflict-resolution SOP). Phase 12+ build numbers shifted +1 (Phase 12 → Build 13, Phase 13 → 14, Phase 14 → 15, Phase 15 → 16).
 
 ## Phase 11.5: Settings Continuity — Theme Parity & Server/Sync Home [v0.0.2.1 (Build 12)]
 

@@ -8,10 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - No unreleased changes yet.
 
-## [0.0.2.1] - 2026-09-05 (Build 12) — Phase 11.5: Settings Continuity
-> **Build 12 re-upload (versionCode 12, versionName unchanged)** — fixes the light-mode readability regression found during on-device testing before Play Console upload.
+## [0.0.2.1] - 2026-09-05 (Build 13) — Phase 11.5: Settings Continuity
+> **Build 13 re-upload (versionCode 13, versionName unchanged)** — fixes the speed-dial scrim coverage bug found during on-device light-mode testing. Build 12 fixed the light-mode typography regression.
 
 ### Fixed
+- **Speed-Dial Scrim Coverage**: the dashboard scrim lived inside the Scaffold's `floatingActionButton` slot — a wrap-content Box anchored bottom-end — so its `fillMaxSize` only dimmed a small off-center patch, leaving white gaps at the right/bottom screen edges (glaring in light mode). Scrim extracted to `SpeedDialScrim` and rendered as a full-screen edge-to-edge overlay above the dashboard content but below the FAB; state hoisted out of the FAB slot.
 - **CRITICAL — Light Mode Typography (Ocean Mist)**: `ShellGuardTypography` baked hard-coded dark-mode text colors (`TextPearl` ≈ white, `TextMuted`, `ClawCyan`) into every headline/title/body style. Any `Text()` without an explicit color inherited white text on light backgrounds — nearly unreadable across the whole app in Ocean Mist mode. Typography is now a theme-aware factory (`shellGuardTypography(colors)`) resolving all style colors from the active `ShellGuardCustomColors` palette; dark mode rendering is pixel-identical to before.
 - **Accent Swatch Border**: `SettingsControls.kt` selected-accent swatch border used 30% white (invisible in light mode); now uses `colorScheme.outline` at 60% so it reads in both modes.
 
