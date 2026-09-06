@@ -212,7 +212,7 @@ fun GatewayScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp),
+                .padding(top = 10.dp, bottom = 8.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -220,9 +220,9 @@ fun GatewayScreen(
                 onClick = onBackClick,
                 modifier = Modifier
                     .size(44.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
                     .border(1.dp, MaterialTheme.colorScheme.outline, CircleShape)
+                    .clip(CircleShape)
                     .testTag("gateway_back_button")
             ) {
                 Icon(

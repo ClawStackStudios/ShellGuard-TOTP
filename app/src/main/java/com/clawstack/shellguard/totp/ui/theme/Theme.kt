@@ -153,7 +153,7 @@ fun ShellGuardTheme(
     CompositionLocalProvider(LocalShellGuardColors provides customColors) {
         MaterialTheme(
             colorScheme = materialColors,
-            typography = ShellGuardTypography,
+            typography = shellGuardTypography(customColors),
             content = content
         )
     }

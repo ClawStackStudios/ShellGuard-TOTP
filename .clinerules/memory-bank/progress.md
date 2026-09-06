@@ -16,11 +16,10 @@
 - ✅ Task 24 "Screen security toggle" (FLAG_SECURE) spec fully expanded in ROADMAP.md + meta-prompt (live-session context).
 
 ## In Progress
-- None — clean state after v0.0.1.3 hotfix.
+- Phase 11.5: Settings Continuity (v0.0.2.1, Build 11) — spec woven into ROADMAP.md v2.5.0 + meta-prompt Stage 12.5 + ui-ux-design-system §4.A.5 + DESIGN.md §9 note. Implementation NOT started. Tasks 22b (theme prefs streams) + 22c (Appearance Theme section, SettingsServerSyncScreen, hub re-home, legacy route retirement).
 
 ## Backlog (Roadmap)
-- Phase 11: Categorized Settings Hub (v0.0.2.0)
-- Phase 12: Security Suite, Panic Purge & Audit Logging (v0.0.2.1) — includes the spec'd Screen Security toggle (Task 24)
+- Phase 12: Security Suite, Panic Purge & Audit Logging (v0.0.2.2, Build 12 — renumbered from v0.0.2.1; see ROADMAP Post-Hoc Interlude C) — includes the spec'd Screen Security toggle (Task 24)
 - Phase 13: Advanced Import/Export & Multi-QR (v0.0.3.0)
 - Phase 14: Glance Widgets & Icon Packs (v0.1.0.0)
 - Phase 15: ClawKey Vault Creation (v0.1.1.0) — spec'd, Tasks 29 & 30.

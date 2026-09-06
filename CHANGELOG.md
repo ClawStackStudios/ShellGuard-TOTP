@@ -8,6 +8,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - No unreleased changes yet.
 
+## [0.0.2.1] - 2026-09-05 (Build 13) — Phase 11.5: Settings Continuity
+> **Build 13 re-upload (versionCode 13, versionName unchanged)** — fixes the speed-dial scrim coverage bug found during on-device light-mode testing. Build 12 fixed the light-mode typography regression.
+
+### Fixed
+- **Speed-Dial Scrim Coverage**: the dashboard scrim lived inside the Scaffold's `floatingActionButton` slot — a wrap-content Box anchored bottom-end — so its `fillMaxSize` only dimmed a small off-center patch, leaving white gaps at the right/bottom screen edges (glaring in light mode). Scrim extracted to `SpeedDialScrim` and rendered as a full-screen edge-to-edge overlay above the dashboard content but below the FAB; state hoisted out of the FAB slot.
+- **CRITICAL — Light Mode Typography (Ocean Mist)**: `ShellGuardTypography` baked hard-coded dark-mode text colors (`TextPearl` ≈ white, `TextMuted`, `ClawCyan`) into every headline/title/body style. Any `Text()` without an explicit color inherited white text on light backgrounds — nearly unreadable across the whole app in Ocean Mist mode. Typography is now a theme-aware factory (`shellGuardTypography(colors)`) resolving all style colors from the active `ShellGuardCustomColors` palette; dark mode rendering is pixel-identical to before.
+- **Accent Swatch Border**: `SettingsControls.kt` selected-accent swatch border used 30% white (invisible in light mode); now uses `colorScheme.outline` at 60% so it reads in both modes.
+
+### Added
+- **Server & Sync Sub-screen** (Task 22c): new ☁️ hub category hosting connection status, manual **Sync Now**, **Connect → Gateway** navigation, and **Disconnect** with confirmation dialog; legacy `SettingsScreen.kt` deleted and its route removed.
+- **Import & Export Sub-screen** (Task 22d): SAF-based export of an encrypted `.sgtotp.bak` backup (CreateDocument) and vault restore (OpenDocument), wired through `AuthViewModel.exportVaultBackup`/`importVaultBackup`.
+- **Appearance Theme Section** (Task 22c): theme mode tiles (Dark/Light/System) extracted to `SettingsControls.kt`; v0.0.1.3 theme parity restored into the hub's Appearance section.
+- **Gateway Back-Button Polish**: circular back button inset 10dp from the status-bar boundary with the border stroke drawn outside the `CircleShape` clip — no more top-arc clipping.
+
+### Changed
+- **Spotlight Tour Step 2 Re-homed**: the `tourStep == 2` cutout (`settings_connect_button`) migrated from the deleted legacy screen to `SettingsServerSyncScreen`; onboarding continuity preserved.
+- **AuthViewModel Surface**: gained `currentSession`/`logout`/`tourStep`/`setGuidedTourCompleted` plus export/import backup wrappers — secret/key resolution stays ViewModel-first, never in UI.
+- **Release Verification**: Tasks 22b/22c/22d verified live on device (Pixel sailfish/LineageOS); nav graph, tour cutout, export/restore roundtrip, theme persistence across cold restart. 101/101 unit tests green.
+
 ## [0.0.2.0] - 2026-09-05 (Build 10) — Milestone 2
 ### Added
 - **Categorized Settings Hub**: `SettingsMetaScreen` presenting 7 preference categories (🎨 Appearance, ⚡ Behavior, 📦 Icon packs, 🔐 Security, ☁️ Backups, 🛠️ Import & Export, 📈 Audit log) with descriptive subtitles and Reef Modernist cards; categories shipping in later phases route to honest in-app placeholder screens.

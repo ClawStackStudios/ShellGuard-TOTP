@@ -18,6 +18,19 @@
 ## Compose Animation on Plain JVM
 - **Pattern: Advancing MonotonicFrameClock**: `Animatable.animateTo` needs a `MonotonicFrameClock` context element. On JVM tests supply `object : MonotonicFrameClock, CoroutineContext.Element { override val key get() = MonotonicFrameClock; withFrameNanos = onFrame(t += 16ms) }`. A zero-delta clock hangs springs forever (dt=0 never converges).
 
+## ADB Device UI Automation
+**Skill:** `.agents/skills/adb-ui-input/SKILL.md`
+- `input text` APPENDS; clear = `keyevent 123` + `keyevent 67`×N, then screenshot-verify empty before typing. Keyboard (dismiss: `keyevent 4`) covers bottom-third buttons — prefer tapping the visible submit over `keyevent 66`. Every `adb install -r` re-locks a PIN vault. Screenshot-verify every step; never act on assumed field state.
+
+## Theme-Aware Compose Surfaces
+**Rule:** `.clinerules/rules/theme-aware-compose-surfaces.md`
+- Root cause of all three light-mode defects (Build 12–14): hardcoded appearance. Never hardcode White/Black — resolve via colorScheme; `isAppearanceLightStatusBars` follows the APP's effective theme via `DisposableEffect`, not the system; scrims/sheets behind dynamic content must be full-screen; draw `background`+`border` BEFORE `clip` (border-before-clip). Verify every theme change with a live two-mode sweep.
+
+## Release Hotfix Retag Flow
+**Skill:** RELEASE-PLAY.md appendix
+- Hotfix under same `versionName`: bump `versionCode` only → push → `git tag -d` local + `git push origin :refs/tags/X` (delete FIRST — stale tag = pipeline runs old commit) → re-tag → verify `gh run list` + release assets + on-device APK. Proven Build 13→14.
+
+
 ## Inherited Durable Patterns (validated by Antigravity sessions)
 - **Test Oracle Audit**: layout/data-filter changes require auditing `app/src/test` fixtures (semantic tags, entity flags) before push.
 - **Pre-DAO Fingerprint Dedup**: `normalizedSecret + "_" + normalizedTitle` filter before `upsertItems()`.

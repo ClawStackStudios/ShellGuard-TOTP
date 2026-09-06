@@ -1,11 +1,14 @@
 package com.clawstack.shellguard.totp
 
+import android.graphics.Color as AndroidColor
 import android.os.Bundle
 import android.view.WindowManager
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -66,6 +69,33 @@ class MainActivity : FragmentActivity() {
             val isVaultHatched by authViewModel.isVaultHatched.collectAsStateWithLifecycle()
             val isBiometricEnabled by authViewModel.isBiometricEnabled.collectAsStateWithLifecycle()
             val isLocked by authViewModel.isLocked.collectAsStateWithLifecycle()
+
+            // Resolve the effective dark/light state and re-assert system bar icon
+            // appearance reactively — the one-shot enableEdgeToEdge() in onCreate()
+            // follows the SYSTEM theme, not the app theme, which left white icons
+            // over the light status bar in Ocean Mist mode.
+            val isDarkTheme = when (themeMode) {
+                com.clawstack.shellguard.totp.ui.theme.AppThemeMode.DARK -> true
+                com.clawstack.shellguard.totp.ui.theme.AppThemeMode.LIGHT -> false
+                com.clawstack.shellguard.totp.ui.theme.AppThemeMode.SYSTEM -> isSystemInDarkTheme()
+            }
+            val statusBarStyle = if (isDarkTheme) {
+                SystemBarStyle.dark(AndroidColor.TRANSPARENT)
+            } else {
+                SystemBarStyle.light(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT)
+            }
+            val navigationBarStyle = if (isDarkTheme) {
+                SystemBarStyle.dark(AndroidColor.TRANSPARENT)
+            } else {
+                SystemBarStyle.light(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT)
+            }
+            androidx.compose.runtime.DisposableEffect(isDarkTheme) {
+                enableEdgeToEdge(
+                    statusBarStyle = statusBarStyle,
+                    navigationBarStyle = navigationBarStyle
+                )
+                onDispose { }
+            }
 
             ShellGuardTheme(
                 themeMode = themeMode,

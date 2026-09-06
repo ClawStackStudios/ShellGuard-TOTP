@@ -83,6 +83,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.clawstack.shellguard.totp.ui.components.ClipboardToastPill
 import com.clawstack.shellguard.totp.ui.components.ExpandableSpeedDialFab
+import com.clawstack.shellguard.totp.ui.components.SpeedDialScrim
 import com.clawstack.shellguard.totp.ui.components.PodFilterChips
 import com.clawstack.shellguard.totp.ui.components.SpotlightOverlay
 import com.clawstack.shellguard.totp.ui.components.SpeedDialState
@@ -123,11 +124,12 @@ fun TotpListScreen(
     var itemPendingDeletion by remember { mutableStateOf<TotpItemEntity?>(null) }
     val isOnlineSynced = syncMeta?.lastSyncStatus == "SUCCESS"
 
+    val speedDialState = rememberSpeedDialState()
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
-            val speedDialState = rememberSpeedDialState()
             ExpandableSpeedDialFab(
                 speedDialState = speedDialState,
                 onScanQrClick = onScanQrClick,
@@ -146,8 +148,12 @@ fun TotpListScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
         ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 // ── Header Bar ──────────────────────────────────────────
                 Row(
@@ -541,6 +547,13 @@ fun TotpListScreen(
                 visible = clipboardFeedback.isVisible,
                 message = clipboardFeedback.message,
                 modifier = Modifier.align(Alignment.BottomCenter)
+            )
+            }
+
+            // ── Speed Dial scrim: full-screen overlay, above content, below FAB ──
+            SpeedDialScrim(
+                speedDialState = speedDialState,
+                modifier = Modifier.matchParentSize()
             )
         }
     }

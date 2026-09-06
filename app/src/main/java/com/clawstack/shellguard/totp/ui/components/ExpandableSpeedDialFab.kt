@@ -98,21 +98,6 @@ fun ExpandableSpeedDialFab(
     }
 
     Box(modifier = modifier) {
-        // ── Background Scrim (dismissible by tapping anywhere outside) ──
-        if (speedDialState.fraction > 0f) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer { alpha = speedDialState.fraction }
-                    .background(androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.45f))
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) { speedDialState.dismissOnOutsideTouch(scope) }
-                    .testTag("speed_dial_scrim")
-            )
-        }
-
         // ── Elevated Action Pills (bottom → top staggered) ──────────────
         Column(
             horizontalAlignment = Alignment.End,
@@ -184,6 +169,35 @@ fun ExpandableSpeedDialFab(
                     .rotate(iconRotation)
             )
         }
+    }
+}
+
+/**
+ * Full-screen dimming scrim for the Speed Dial.
+ *
+ * IMPORTANT: render this as a sibling ABOVE the dashboard content but BELOW the
+ * [ExpandableSpeedDialFab] host (e.g. last child of the Scaffold content root Box).
+ * It must NOT live inside the Scaffold's `floatingActionButton` slot — that slot is
+ * wrap-content anchored bottom-end, so a fillMaxSize scrim there only covers a small
+ * off-center patch, leaving white gaps at the screen edges (light-mode regression).
+ */
+@Composable
+fun SpeedDialScrim(
+    speedDialState: SpeedDialState,
+    modifier: Modifier = Modifier
+) {
+    val scope = rememberCoroutineScope()
+    if (speedDialState.fraction > 0f) {
+        Box(
+            modifier = modifier
+                .graphicsLayer { alpha = speedDialState.fraction }
+                .background(androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.45f))
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) { speedDialState.dismissOnOutsideTouch(scope) }
+                .testTag("speed_dial_scrim")
+        )
     }
 }
 

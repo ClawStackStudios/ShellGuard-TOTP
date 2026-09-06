@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.clawstack.shellguard.totp.ShellGuardTotpApp
 import com.clawstack.shellguard.totp.crypto.AndroidKeyStoreHelper
 import com.clawstack.shellguard.totp.data.repository.AuthRepository
+import com.clawstack.shellguard.totp.data.repository.UserSession
 import com.clawstack.shellguard.totp.data.repository.VaultProtectionMode
 import com.clawstack.shellguard.totp.ui.theme.AppThemeMode
 import com.clawstack.shellguard.totp.ui.theme.ThemeAccent
@@ -63,6 +64,52 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     fun setMultiselectGroups(enabled: Boolean) = authRepository.setMultiselectGroups(enabled)
     fun setHighlightTokensOnTap(enabled: Boolean) = authRepository.setHighlightTokensOnTap(enabled)
     fun setFreezeTokensOnTap(enabled: Boolean) = authRepository.setFreezeTokensOnTap(enabled)
+
+    /** Phase 11.5 / Task 22c — session state & disconnect for SettingsServerSyncScreen (ViewModel-first wiring). */
+    val currentSession: StateFlow<UserSession?> = authRepository.currentSession
+
+    fun logout() = authRepository.logout()
+
+    /** Phase 11.5 / Task 22d — ViewModel-first backup export/restore (no secret handling in UI layer). */
+    fun exportVaultBackup(
+        outputStream: java.io.OutputStream,
+        onResult: (Result<Int>) -> Unit
+    ) {
+        viewModelScope.launch {
+            val session = authRepository.currentSession.value
+            val rawKey = authRepository.getVaultSecret() ?: session?.rawHuKey ?: "shellguard_default_master_key"
+            val ownerUuid = session?.userUuid ?: "local"
+            val mode = authRepository.vaultMode.value
+            val result = app.backupManager.exportEncryptedBackup(
+                outputStream = outputStream,
+                rawKey = rawKey,
+                ownerUuid = ownerUuid,
+                protectionMode = mode.name,
+                isBiometricEnabled = authRepository.isBiometricEnabled.value,
+                pinLength = if (mode == VaultProtectionMode.PIN) rawKey.length else null
+            )
+            onResult(result)
+        }
+    }
+
+    fun importVaultBackup(
+        inputStream: java.io.InputStream,
+        onResult: (Result<Int>) -> Unit
+    ) {
+        viewModelScope.launch {
+            val session = authRepository.currentSession.value
+            val rawKey = authRepository.getVaultSecret() ?: session?.rawHuKey ?: "shellguard_default_master_key"
+            val ownerUuid = session?.userUuid ?: "local"
+            val result = app.backupManager.importEncryptedBackup(inputStream, rawKey, ownerUuid)
+            onResult(result)
+        }
+    }
+
+    /** Phase 11.5 / Task 22c — Spotlight Tour step 2 host (migrated from legacy SettingsScreen). */
+    val tourStep: StateFlow<Int> = authRepository.tourStep
+
+    fun setGuidedTourCompleted() = authRepository.setGuidedTourCompleted(true)
+
 
     val isVaultHatched: StateFlow<Boolean> = authRepository.isVaultHatched
         .stateIn(viewModelScope, SharingStarted.Eagerly, authRepository.isVaultHatched.value)

@@ -24,6 +24,7 @@ flowchart TD
     Phase9["💡 Stage 10: Phase 9 — Vault Security Education & Enlarged Spotlight Tour<br/>(Task 17: Protection Orchestrator · Task 18: VaultSecurityScreen & Spacious Spotlight)"]
     Phase10["⚡ Stage 11: Phase 10 — Expandable Floating Actions Speed Dial<br/>(Task 19: Image QR Decoder & SpeedDialState · Task 20: Animated Speed Dial FAB & Pills)"]
     Phase11["⚙️ Stage 12: Phase 11 — Categorized Settings Hub & Appearance/Behavior<br/>(Task 21: Preferences Store · Task 22: SettingsMetaScreen & Sub-screens)"]
+    Phase115["🔗 Stage 12.5: Phase 11.5 — Settings Continuity: Theme Parity & Server/Sync Home<br/>(Task 22b: Theme Preference Streams · Task 22c: Theme Section, Server & Sync Sub-screen)"]
     Phase12["🛡️ Stage 13: Phase 12 — Security Suite, Panic Purge & Audit Logging<br/>(Task 23: Panic Trigger & Audit DAO · Task 24: Security Sub-screen & Audit Log)"]
     Phase13["📦 Stage 14: Phase 13 — Advanced Import/Export & Google Auth Multi-QR<br/>(Task 25: MultiFormat Migration · Task 26: Import/Export Hub & QR Viewer)"]
     Phase14["📱 Stage 15: Phase 14 — Home Screen Interactive Glance Widgets & Icon Packs<br/>(Task 27: Glance Widget Engine & Icon Store · Task 28: 2x2/4x2 Widgets & Icon Manager)"]
@@ -41,7 +42,8 @@ flowchart TD
     Phase8 --> Phase9
     Phase9 --> Phase10
     Phase10 --> Phase11
-    Phase11 --> Phase12
+    Phase11 --> Phase115
+    Phase115 --> Phase12
     Phase12 --> Phase13
     Phase13 --> Phase14
     Phase14 --> Phase15
@@ -635,7 +637,49 @@ Verify category navigation transitions smoothly and settings updates reflect imm
 
 ---
 
-## 🛡️ Stage 13: Phase 12 Prompt — Security Suite, Panic Purge & Security Audit Logging [v0.0.2.1 (Build 11)]
+## 🔗 Stage 12.5: Phase 11.5 Prompt — Settings Continuity: Theme Parity & Server/Sync Home [v0.0.2.1 (Build 11)]
+
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-115-settings-continuity--theme-parity--serversync-home-v0021-build-11) for complete specifications on **Task 22b** and **Task 22c**.  
+> **📖 Required Context Files for Phase 11.5**:  
+> 1. [`DESIGN.md`](./DESIGN.md) — Section 2 (Theme Tokens & Accent Palettes) & Section 9 (Settings Navigation).  
+> 2. [`ui-ux-design-system.md`](./ui-ux-design-system.md) — Section 4 (Settings Architecture & Navigation Routes).  
+
+Copy and paste this prompt to execute **Phase 11.5 (Tasks 22b & 22c)**:
+
+```markdown
+# PHASE 11.5 EXECUTION: Settings Continuity — Theme Parity & Server/Sync Home [v0.0.2.1 (Build 11)]
+
+## 📖 Reference Documentation & Roadmap
+Before writing code, inspect:
+- `ROADMAP.md`: Phase 11.5 (Task 22b: Theme Preference Streams · Task 22c: Theme Section, Server & Sync Sub-screen & Hub Re-home).
+- `DESIGN.md`: Section 2 (ThemeAccent palettes, LocalShellGuardColors) & Section 9 (Settings).
+- `ui-ux-design-system.md`: Section 4 (TotpNavHost routes; Settings Hub navigation).
+
+Execute Phase 11.5 adhering to the Functionality + UI Component pairing:
+
+### Task 22b: [Functionality] Theme Mode & ThemeAccent Preference Streams (Task 22 Spec Completion)
+- Verify the Task 10 persistence pathway (`pref_theme_mode` / `pref_theme_accent` in `AuthRepository`) — do NOT re-derive storage.
+- Expose `themeMode: StateFlow<AppThemeMode>` (`DARK`, `CONTRAST`, `SYSTEM`) + `setThemeMode(AppThemeMode)`; expose `themeAccent: StateFlow<ThemeAccent>` (6 palettes) + `setThemeAccent(ThemeAccent)`.
+- Live recomposition via `LocalShellGuardColors`; theme applies without app restart.
+- Unit tests: stream emission + persistence roundtrip.
+
+### Task 22d: [UI Component] Basic Import & Export Sub-screen (v0.0.2.1 scope extension)
+- New `SettingsImportExportScreen.kt` (hub category "🛠️ Import & Export"): SAF `CreateDocument` export → `shellguard-totp-backup.sgtotp.bak` via `BackupManager.exportEncryptedBackup`; SAF `OpenDocument` restore via `importEncryptedBackup`. Legacy tags `export_backup_button` / `import_backup_button`; ViewModel-first wrappers `AuthViewModel.exportVaultBackup` / `importVaultBackup` (key resolution + vaultMode/pinLength inside the VM). Copy states exports contain Local Vault codes only (one-way invariant). **Scope boundary**: auto-backups, cloud-backup toggles, and the multi-format migration wizard remain Phase 13 — the "☁️ Backups" hub card stays a placeholder.
+
+### Task 22c: [UI Component] Appearance Theme Section, Server & Sync Sub-screen & Hub Category Re-home
+> **Ground truth (verified 2026-09-05)**: `AuthRepository.themeMode`/`themeAccent` StateFlows + setters AND `AuthViewModel` re-exposure already exist — Task 22b is tests-only. Legacy `ThemeOptionTile`/`AccentPaletteTile` are private composables in legacy `SettingsScreen.kt` — extract to `SettingsControls.kt`, don't rewrite. **Mandatory**: migrate `SpotlightOverlay(tourStep == 2)` + `settings_connect_button` targeting from the legacy screen into `SettingsServerSyncScreen`, or the onboarding tour breaks. Expose `AuthRepository.currentSession` + `logout()` through `AuthViewModel` for the new screen's convention.
+- `SettingsAppearanceScreen.kt`: new "Theme" section above entry controls — `SettingsSelectorRow` (Abyssal/Contrast/System) + 6-swatch accent grid (extract legacy `AccentPaletteTile` into `SettingsControls.kt`); preserve test tags `theme_switcher_*`, `accent_selector_*`; add "Theme"/"Entries" section headers.
+- New `SettingsServerSyncScreen.kt` (hub category "☁️ Server & Sync"): connection status (Server/User or "None (Standalone)"/"Local User"), "Sync Now" with progress state, "Connect to Server" → Gateway route (restores the Spotlight Tour target), "Disconnect Vault" with confirmation dialog.
+- `SettingsMetaScreen.kt`: add `SettingsDestination.SERVER_SYNC` + category card; fix `SettingsPlaceholderScreen` copy (no more false "remain available in the current settings screen" claim).
+- `TotpNavHost.kt`: route `settings_server_sync`; remove legacy `SettingsScreen` route after parity verification.
+- Graceful retirement: legacy "Local Storage & Offline Codes" card superseded by Phase 7 grouped dashboard — not re-added.
+
+Verify every v0.0.1.3 settings control is reachable from the hub (or retired with rationale), the full unit suite passes, and on-device ADB checks confirm theme live-preview, Gateway roundtrip, Sync Now, and Disconnect!
+```
+
+---
+
+## 🛡️ Stage 13: Phase 12 Prompt — Security Suite, Panic Purge & Security Audit Logging [v0.0.2.2 (Build 12)]
 
 > 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-12-security-suite-panic-purge--security-audit-logging-v0021-build-11) for complete specifications on **Task 23** and **Task 24**.  
 > **📖 Required Context Files for Phase 12**:  
@@ -645,7 +689,7 @@ Verify category navigation transitions smoothly and settings updates reflect imm
 Copy and paste this prompt to execute **Phase 12 (Tasks 23 & 24)**:
 
 ```markdown
-# PHASE 12 EXECUTION: Security Suite, Panic Purge & Security Audit Logging [v0.0.2.1 (Build 11)]
+# PHASE 12 EXECUTION: Security Suite, Panic Purge & Security Audit Logging [v0.0.2.2 (Build 12)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:
@@ -683,7 +727,7 @@ Verify security toggles enforce immediate runtime protection and audit log recor
 
 ---
 
-## 📦 Stage 14: Phase 13 Prompt — Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 12) — Milestone 3]
+## 📦 Stage 14: Phase 13 Prompt — Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 13) — Milestone 3]
 
 > 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-13-advanced-importexport-bitwarden-migration--google-authenticator-multi-qr-v0030-build-12--milestone-3) for complete specifications on **Task 25** and **Task 26**.  
 > **📖 Required Context Files for Phase 13**:  
@@ -694,7 +738,7 @@ Verify security toggles enforce immediate runtime protection and audit log recor
 Copy and paste this prompt to execute **Phase 13 (Tasks 25 & 26)**:
 
 ```markdown
-# PHASE 13 EXECUTION: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 12)]
+# PHASE 13 EXECUTION: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 13)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:
@@ -732,7 +776,7 @@ Verify Bitwarden JSON exports parse accurately, zero passwords/notes leak into s
 
 ---
 
-## 📱 Stage 15: Phase 14 Prompt — Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 13) — Open Beta Candidate]
+## 📱 Stage 15: Phase 14 Prompt — Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 14) — Open Beta Candidate]
 
 > 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-14-home-screen-interactive-glance-widgets--icon-pack-manager-v0100-build-13--open-beta-candidate) for complete specifications on **Task 27** and **Task 28**.  
 > **📖 Required Context Files for Phase 14**:  
@@ -742,7 +786,7 @@ Verify Bitwarden JSON exports parse accurately, zero passwords/notes leak into s
 Copy and paste this prompt to execute **Phase 14 (Tasks 27 & 28)**:
 
 ```markdown
-# PHASE 14 EXECUTION: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 13)]
+# PHASE 14 EXECUTION: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 14)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:
@@ -769,7 +813,7 @@ Verify widgets update reliably on home screens with tap-to-copy responsiveness, 
 
 ---
 
-## 📱 Stage 16: Phase 15 Prompt — ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 14)]
+## 📱 Stage 16: Phase 15 Prompt — ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 15)]
 
 > 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-15-clawkey-vault-creation-import-authentication--duplicate-resolution-v0110-build-14) for complete specifications on **Task 29** and **Task 30**.
 > **📖 Required Context Files for Phase 15**:
@@ -781,7 +825,7 @@ Verify widgets update reliably on home screens with tap-to-copy responsiveness, 
 Copy and paste this prompt to execute **Phase 15 (Tasks 29 & 30)**:
 
 ```markdown
-# PHASE 15 EXECUTION: ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 14)]
+# PHASE 15 EXECUTION: ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 15)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:

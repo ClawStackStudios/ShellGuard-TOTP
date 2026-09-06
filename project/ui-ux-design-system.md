@@ -1001,6 +1001,45 @@ fun TotpNavHost(
 
 ---
 
+#### A.5 Categorized Settings Hub Route Map (Phase 11 + Phase 11.5 — `SettingsMetaScreen` & Sub-screens)
+
+> **Structural contract (v0.0.2.1+)**: the legacy monolithic `SettingsScreen` route is superseded by the hub. All settings navigation flows through these routes in `TotpNavHost.kt`; any new settings surface MUST be added here before implementation.
+
+```kotlin
+// Screen objects (TotpNavHost.kt)
+data object SettingsMeta : Screen("settings_meta")
+data object SettingsAppearance : Screen("settings_appearance")
+data object SettingsBehavior : Screen("settings_behavior")
+data object SettingsServerSync : Screen("settings_server_sync")     // Phase 11.5 / Task 22c
+data object SettingsPlaceholder : Screen("settings_placeholder/{title}") // Icon packs (Phase 14), Backups & Import/Export (Phase 13)
+
+// SettingsDestination enum (SettingsMetaScreen.kt)
+enum class SettingsDestination { APPEARANCE, BEHAVIOR, SERVER_SYNC, PLACEHOLDER }
+```
+
+**Hub category → destination contract** (`SettingsMetaScreen` `categories` list):
+
+| Category card | Destination | Screen | Status |
+|---|---|---|---|
+| 🎨 Appearance | `APPEARANCE` | `SettingsAppearanceScreen` — "Theme" section (theme mode selector + 6-swatch `ThemeAccent` grid, Task 22b/22c) + "Entries" section (view mode, icons, next code, blink, issuer display, digit grouping) | Phase 11 / 11.5 |
+| ⚡ Behavior | `BEHAVIOR` | `SettingsBehaviorScreen` (search scope/focus, minimize on copy, copy on tap, haptics, multiselect, highlight/freeze on tap) | Phase 11 |
+| ☁️ Server & Sync | `SERVER_SYNC` | `SettingsServerSyncScreen` — connection status (`Server:` / `User:` or "None (Standalone)"/"Local User"), **Connect to Server** → `Screen.Gateway.route` (Spotlight Tour target — tags `settings_connect_button`, `settings_sync_button`), Sync Now w/ progress, Disconnect Vault w/ confirm dialog | Phase 11.5 |
+| 📦 Icon packs | `PLACEHOLDER` | 🚧 Phase 14 (`SettingsIconPacksScreen`) | Placeholder |
+| 🔐 Security | `PLACEHOLDER` | 🚧 Phase 12 (`SettingsSecurityScreen` — FLAG_SECURE toggle, tap-to-reveal, panic purge) | Placeholder |
+| ☁️ Backups | `PLACEHOLDER` | 🚧 Phase 13 (`SettingsBackupsScreen`) | Placeholder |
+| 🛠️ Import & Export | `IMPORT_EXPORT` | `SettingsImportExportScreen` — basic `.sgtotp.bak` Export/Restore (Task 22d); auto-backups & migration wizard remain Phase 13 | Phase 11.5 |
+| 📈 Audit log | `PLACEHOLDER` | 🚧 Phase 12 (`SettingsAuditLogScreen`) | Placeholder |
+
+**Invariants**:
+- Every legacy (pre-hub) settings control must be reachable from a hub sub-screen or explicitly retired with rationale in `ROADMAP.md` (see Post-Hoc Interlude C — "Local Storage & Offline Codes" retired in favor of the Phase 7 grouped dashboard).
+- `SettingsPlaceholderScreen` copy must NEVER claim functionality "remains available" elsewhere unless that location is actually reachable from hub navigation.
+- Shared controls live in `SettingsControls.kt` (`SettingsSwitchRow`, `SettingsSelectorRow`, `AccentPaletteTile`); theme controls preserve legacy test tags `theme_switcher_*` / `accent_selector_*`.
+- **Spotlight Tour step 2** (`tourStep == 2` spotlight on `settings_connect_button`) MUST be hosted by `SettingsServerSyncScreen` — it previously lived in the legacy screen; step 1 remains in `TotpListScreen`.
+- **ViewModel-first wiring**: new settings sub-screens consume state via `AuthViewModel` (theme streams, appearance/behavior prefs, session state, logout) — never via direct app-context repository grabs (legacy pattern, do not replicate).
+
+---
+
+
 ### B. "Hatch New Vault" Initial Launch Onboarding Wizard (`HatchVaultScreen.kt`)
 
 Guides users through initializing their standalone vault with a master passphrase or 4-8 digit PIN code and optional biometrics:

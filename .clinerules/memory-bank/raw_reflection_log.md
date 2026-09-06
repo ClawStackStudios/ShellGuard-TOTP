@@ -1,6 +1,24 @@
 # Raw Reflection Log
 
 ---
+Date: 2026-09-06
+TaskRef: "/learn — codify light-mode polish + ADB automation learnings (approved by Lucas)"
+
+Learnings:
+- Created `.agents/skills/adb-ui-input/SKILL.md` (Skill): ADB UI input cheatsheet — `input text` appends; clear = keyevent 123 + 67×N then screenshot-verify empty; keyboard (keyevent 4 to dismiss) covers bottom-third buttons; prefer tapping visible submit over keyevent 66; every `adb install -r` re-locks the PIN vault. Cost this session: ~10 round-trips on PIN entry alone.
+- Created `.clinerules/rules/theme-aware-compose-surfaces.md` (Rule): root cause of all 3 light-mode defects was hardcoded appearance — (a) Type.kt static dark tokens, (b) status-bar icons following system theme, (c) scrim confined to FAB slot; plus modifier-order lesson (background+border BEFORE clip).
+- Extended `RELEASE-PLAY.md` appendix (Skill): hotfix retag flow under unchanged versionName — proven twice (Build 13→14). Always delete remote tag before re-pushing or pipeline may run stale commit.
+- FAB white-in-light-mode regression CLOSED: was stale-build mix on device, not a code defect; final Build 14 sweep confirmed pink FAB + correct scrim both modes.
+
+Successes:
+- Pipeline retag + on-device APK verification loop executed cleanly twice; full two-mode live sweep passed.
+
+Consolidation: 3 items transferred to consolidated_learnings.md; learning_proposal.md consumed and deleted.
+
+Handoff_Package_Prepared: false
+---
+
+---
 Date: 2026-09-04
 TaskRef: "/learn — codify hotfix session behaviors (approved by Lucas)"
 
@@ -128,3 +146,14 @@ Improvements_Identified_For_Consolidation:
 - Test Oracle Synchronization Invariant when architectural rules shift.
 - Pre-DAO normalized fingerprint deduplication pattern.
 ---
+---
+Date: 2026-09-05
+TaskRef: "Phase 11.5 Settings Continuity — corpus weave (ROADMAP v2.5.0, meta-prompt Stage 12.5)"
+
+Learnings:
+- Settings parity audit method: diff legacy release tag settings UI (git show v0.0.1.3:<file>) against new hub screens, then cross-check each control against roadmap phases BEFORE deciding anything is "lost" — 4 of 6 lost cards were already scheduled (Phases 12/13/14); only Theme (Task 22 spec drift) and Server & Sync (true orphan) needed corpus work.
+- Versioning: renumbering unshipped future phases is safe (no tags/releases reference them); must simultaneously update ROADMAP headers, meta-prompt stage headers + inline prompt blocks, and next-stop pointers in the previous release record.
+- Structural contracts belong in ui-ux-design-system.md (route maps, invariants); DESIGN.md gets a superseded-section pointer note, not a rewrite.
+
+Successes:
+- Interlude C pattern (honest gap record) keeps the deterministic roadmap trustworthy while inserting a revision phase.

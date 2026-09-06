@@ -6,7 +6,15 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-val ShellGuardTypography = Typography(
+/**
+ * Theme-aware typography factory.
+ *
+ * Style shapes are fixed; COLORS are resolved from the active [ShellGuardCustomColors]
+ * palette so text follows the active theme mode (Abyssal Dark / Ocean Mist) and accent.
+ * Never hard-code a color here — a static `TextPearl` here is what made light-mode
+ * text render white-on-white (v0.0.2.1 regression).
+ */
+fun shellGuardTypography(colors: ShellGuardCustomColors): Typography = Typography(
     // ── Headlines ────────────────────────────────
     headlineLarge = TextStyle(
         fontFamily = FontFamily.SansSerif,
@@ -14,14 +22,14 @@ val ShellGuardTypography = Typography(
         fontSize = 28.sp,
         lineHeight = 34.sp,
         letterSpacing = (-0.5).sp,
-        color = TextPearl
+        color = colors.textMain
     ),
     headlineMedium = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Bold,
         fontSize = 22.sp,
         lineHeight = 28.sp,
-        color = TextPearl
+        color = colors.textMain
     ),
 
     // ── Titles ──────────────────────────────────
@@ -31,7 +39,7 @@ val ShellGuardTypography = Typography(
         fontSize = 20.sp,
         lineHeight = 26.sp,
         letterSpacing = 0.sp,
-        color = TextPearl
+        color = colors.textMain
     ),
     titleMedium = TextStyle(
         fontFamily = FontFamily.SansSerif,
@@ -39,7 +47,7 @@ val ShellGuardTypography = Typography(
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.15.sp,
-        color = TextPearl
+        color = colors.textMain
     ),
 
     // ── Body ─────────────────────────────────────
@@ -48,14 +56,14 @@ val ShellGuardTypography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 22.sp,
-        color = TextPearl
+        color = colors.textMain
     ),
     bodyMedium = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
         lineHeight = 20.sp,
-        color = TextMuted
+        color = colors.textMuted
     ),
     labelSmall = TextStyle(
         fontFamily = FontFamily.SansSerif,
@@ -63,7 +71,7 @@ val ShellGuardTypography = Typography(
         fontSize = 11.sp,
         lineHeight = 14.sp,
         letterSpacing = 0.5.sp,
-        color = TextMuted
+        color = colors.textMuted
     ),
 
     // ── Monospace (2FA Codes & Keys) ───────────────
@@ -73,7 +81,7 @@ val ShellGuardTypography = Typography(
         fontSize = 32.sp,
         lineHeight = 36.sp,
         letterSpacing = 3.sp,
-        color = ClawCyan
+        color = colors.secondaryAccent
     ),
     displayMedium = TextStyle(
         fontFamily = FontFamily.Monospace,
@@ -81,6 +89,6 @@ val ShellGuardTypography = Typography(
         fontSize = 24.sp,
         lineHeight = 28.sp,
         letterSpacing = 2.sp,
-        color = ClawCyan
+        color = colors.secondaryAccent
     )
 )
