@@ -247,7 +247,7 @@ Description: Implement `ExpandableSpeedDialFab.kt` on `TotpListScreen.kt`:
 > - **UI Fix**: Synced card "Read-only" badge wrap removed (cloud icon denotes synced read-only); cards restored to standard single-line height.
 > - **Regression armor**: `DeltaSyncClassificationTest` (6 cases) — first direct coverage of the sync delta path; suite at 96/96 green.
 > - **Spec expansion**: Task 24 "Screen security toggle" (FLAG_SECURE) fully specified with live-session context (see Phase 12).
-> - Full record: `CHANGELOG.md`, `RELEASE-v0.0.1.3.md`; CI run 33939042244.
+> - Full record: `CHANGELOG.md`; GitHub Release `v0.0.1.3` (CI run 33939042244).
 
 ---
 
