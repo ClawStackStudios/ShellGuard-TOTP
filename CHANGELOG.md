@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - No unreleased changes yet.
 
+## [0.0.2.1] - 2026-09-05 (Build 11) — Phase 11.5: Settings Continuity
+### Added
+- **Server & Sync Sub-screen** (Task 22c): new ☁️ hub category hosting connection status, manual **Sync Now**, **Connect → Gateway** navigation, and **Disconnect** with confirmation dialog; legacy `SettingsScreen.kt` deleted and its route removed.
+- **Import & Export Sub-screen** (Task 22d): SAF-based export of an encrypted `.sgtotp.bak` backup (CreateDocument) and vault restore (OpenDocument), wired through `AuthViewModel.exportVaultBackup`/`importVaultBackup`.
+- **Appearance Theme Section** (Task 22c): theme mode tiles (Dark/Light/System) extracted to `SettingsControls.kt`; v0.0.1.3 theme parity restored into the hub's Appearance section.
+- **Gateway Back-Button Polish**: circular back button inset 10dp from the status-bar boundary with the border stroke drawn outside the `CircleShape` clip — no more top-arc clipping.
+
+### Changed
+- **Spotlight Tour Step 2 Re-homed**: the `tourStep == 2` cutout (`settings_connect_button`) migrated from the deleted legacy screen to `SettingsServerSyncScreen`; onboarding continuity preserved.
+- **AuthViewModel Surface**: gained `currentSession`/`logout`/`tourStep`/`setGuidedTourCompleted` plus export/import backup wrappers — secret/key resolution stays ViewModel-first, never in UI.
+- **Release Verification**: Tasks 22b/22c/22d verified live on device (Pixel sailfish/LineageOS); nav graph, tour cutout, export/restore roundtrip, theme persistence across cold restart. 101/101 unit tests green.
+
 ## [0.0.2.0] - 2026-09-05 (Build 10) — Milestone 2
 ### Added
 - **Categorized Settings Hub**: `SettingsMetaScreen` presenting 7 preference categories (🎨 Appearance, ⚡ Behavior, 📦 Icon packs, 🔐 Security, ☁️ Backups, 🛠️ Import & Export, 📈 Audit log) with descriptive subtitles and Reef Modernist cards; categories shipping in later phases route to honest in-app placeholder screens.

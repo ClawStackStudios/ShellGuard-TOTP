@@ -5,6 +5,21 @@
 
 ---
 
+## `v0.0.2.1` — Settings Continuity: Server & Sync, Import/Export & Theme Parity (Build 11)
+
+```xml
+<en-US>
+• New Server & Sync section: connection status, Sync Now, connect to your ShellGuard Gateway, and Disconnect Vault.
+• New Import & Export section: export an encrypted .sgtotp.bak backup and restore your vault from a backup file.
+• Theme parity restored: mode (Dark/Light/System) and 6 accent palettes live in the Appearance section.
+• Guided Tour updated to spotlight the new Server & Sync controls.
+• Navigation & UI polish across the Settings Hub and Gateway login.
+• Full hardware-backed security unchanged: Android KeyStore, SQLCipher, FLAG_SECURE.
+</en-US>
+```
+
+---
+
 ## `v0.0.2.0` — Milestone 2: Categorized Settings Hub (Build 10)
 
 ```xml
