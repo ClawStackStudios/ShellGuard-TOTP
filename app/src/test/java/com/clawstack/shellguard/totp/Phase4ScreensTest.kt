@@ -1,9 +1,12 @@
 package com.clawstack.shellguard.totp
 
+import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import com.clawstack.shellguard.totp.ui.screens.AddSecretScreen
 import org.junit.Assert.assertEquals
@@ -51,6 +54,11 @@ class Phase4ScreensTest {
         // Enter Valid Base32 Secret
         composeTestRule.onNodeWithTag("add_secret_key_input").performTextReplacement("JBSWY3DPEHPK3PXP")
         composeTestRule.mainClock.advanceTimeBy(300)
+
+        // Visibility toggle exists, is displayed, and can be clicked
+        composeTestRule.onNodeWithTag("toggle_secret_visibility").assertIsDisplayed().assertHasClickAction()
+        composeTestRule.onNodeWithTag("toggle_secret_visibility").performClick()
+        composeTestRule.mainClock.advanceTimeBy(100)
 
         // Button should now be enabled
         composeTestRule.onNodeWithTag("save_secret_button").assertIsEnabled()

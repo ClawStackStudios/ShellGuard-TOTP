@@ -679,9 +679,9 @@ Verify every v0.0.1.3 settings control is reachable from the hub (or retired wit
 
 ---
 
-## 🛡️ Stage 13: Phase 12 Prompt — Security Suite, Panic Purge & Security Audit Logging [v0.0.2.2 (Build 12)]
+## 🛡️ Stage 13: Phase 12 Prompt — Security Suite, Panic Purge & Security Audit Logging [v0.0.2.3 (Build 16)]
 
-> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-12-security-suite-panic-purge--security-audit-logging-v0021-build-11) for complete specifications on **Task 23** and **Task 24**.  
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-12-security-suite-panic-purge--security-audit-logging-v0023-build-16) for complete specifications on **Task 23** and **Task 24**.  
 > **📖 Required Context Files for Phase 12**:  
 > 1. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — KeyStore & Panic Purge.  
 > 2. [`room-storage-schema.md`](./room-storage-schema.md) — Audit Log Room Schema.  
@@ -689,7 +689,7 @@ Verify every v0.0.1.3 settings control is reachable from the hub (or retired wit
 Copy and paste this prompt to execute **Phase 12 (Tasks 23 & 24)**:
 
 ```markdown
-# PHASE 12 EXECUTION: Security Suite, Panic Purge & Security Audit Logging [v0.0.2.2 (Build 12)]
+# PHASE 12 EXECUTION: Security Suite, Panic Purge & Security Audit Logging [v0.0.2.3 (Build 16)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:
@@ -697,7 +697,7 @@ Before writing code, inspect:
 - `crypto-and-keystore.md`: Section 4 (Security Lifecycle).
 - `room-storage-schema.md`: Section 2 (Room Entities).
 
-Execute Phase 11 adhering to the Functionality + UI Component pairing:
+Execute Phase 12 adhering to the Functionality + UI Component pairing:
 
 ### Task 23: [Functionality] Security Preference Controller, Panic Trigger Handler & Room Audit Log DAO
 - Implement `AuditLogDao` and `AuditLogEntity` in Room recording chronological security events (vault unlocked, biometric failed, backup created, secret added, panic triggered).

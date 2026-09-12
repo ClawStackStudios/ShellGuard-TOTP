@@ -9,3 +9,5 @@ Traditional 2FA authenticator apps lack end-to-end cryptographic integration wit
 - **Zero-Latency Offline Mode**: Immediate display of cached vault items on launch.
 - **Seamless Setup**: QR scanner supporting CameraX + ML Kit and 1:1 ClawStack Gateway identity login.
 - **Anti-Snoop Protection**: Clipboard auto-clearing after 30 seconds and FLAG_SECURE screenshot protection.
+- **Sensitive Key Input Masking & IME Protection**: Base32 secrets masked with bullet characters (`••••••••`), interactive visibility eye toggle, and hardened IME options suppressing keyboard predictive dictionary learning (CWE-359).
+

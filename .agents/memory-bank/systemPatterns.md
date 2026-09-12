@@ -65,6 +65,11 @@ AuthRepository.hatchVault() + TotpItemDao.upsertItems() → Screen.CodeList
 1. **IME Insets**: Form and onboarding screens must declare `.imePadding()` and `.verticalScroll(rememberScrollState())` on root columns.
 2. **Floating Actions**: Prevents soft keyboards from obscuring password inputs, Base32 fields, and submit buttons on small devices.
 
+## Sensitive Input Masking & Keyboard Hardening Pattern (CWE-359)
+1. **Visual Obfuscation**: Sensitive 2FA seed inputs default to bullet masking (`••••••••`) using `PasswordVisualTransformation()`, paired with an accessible visibility eye toggle (`toggle_secret_visibility`).
+2. **Keyboard Hardening**: All secret/seed fields supply `KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrectEnabled = false)` to prevent system keyboards (e.g. Gboard) from caching cryptographic seeds in predictive learning dictionaries.
+
+
 ## Dynamic Release Versioning Pattern
 1. **Single Source of Truth**: `versionCode` (strictly monotonic integer) and `versionName` in `app/build.gradle.kts` match Google Play Console tracks.
 2. **UI Dynamic Binding**: Settings footers read directly from `BuildConfig.VERSION_NAME` to automatically reflect version bumps.

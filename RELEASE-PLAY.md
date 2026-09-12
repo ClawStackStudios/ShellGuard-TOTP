@@ -3,6 +3,17 @@
 > **Single Source of Truth for Google Play Store What's New Notes**  
 > *Google Play enforces a strict 500-character limit per localized language block.*
 
+## `v0.0.2.2` — Hotfix: Secret Key Masking & IME Hardening (Build 15)
+
+```xml
+<en-US>
+• Security Hardening: Base32 secret key input in manual entry is now masked with PasswordVisualTransformation.
+• Virtual Keyboard Protection: Disabled predictive text learning and dictionary caching for 2FA secret entry.
+• Visibility Toggle: Added toggle button to view or hide the secret key during manual typing.
+• Full hardware-backed security unchanged: Android KeyStore, SQLCipher, FLAG_SECURE.
+</en-US>
+```
+
 ---
 
 ## `v0.0.2.1` — Settings Continuity: Server & Sync, Import/Export & Theme Parity (Build 11)

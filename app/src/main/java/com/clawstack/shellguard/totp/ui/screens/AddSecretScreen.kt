@@ -14,12 +14,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -45,6 +48,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -63,6 +69,7 @@ fun AddSecretScreen(
     var selectedAlgorithm by remember { mutableStateOf("SHA1") }
     var selectedPeriod by remember { mutableIntStateOf(30) }
     var selectedDigits by remember { mutableIntStateOf(6) }
+    var isSecretVisible by remember { mutableStateOf(false) }
 
     val cleanSecret = secretKey.replace(" ", "").replace("-", "").uppercase()
     val isSecretValidBase32 = cleanSecret.isNotEmpty() && cleanSecret.all { it in "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567=" }
@@ -82,7 +89,7 @@ fun AddSecretScreen(
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
                             tint = MaterialTheme.colorScheme.onSurface
                         )
@@ -175,21 +182,42 @@ fun AddSecretScreen(
                 label = { Text("Base32 Secret Key *") },
                 placeholder = { Text("e.g. JBSWY3DPEHPK3PXP") },
                 singleLine = true,
+                visualTransformation = if (isSecretVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    autoCorrectEnabled = false
+                ),
                 trailingIcon = {
-                    if (secretKey.isNotBlank()) {
-                        if (isSecretValidBase32) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(end = 4.dp)
+                    ) {
+                        if (secretKey.isNotBlank()) {
+                            if (isSecretValidBase32) {
+                                Icon(
+                                    imageVector = Icons.Default.CheckCircle,
+                                    contentDescription = "Valid Base32",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Default.ErrorOutline,
+                                    contentDescription = "Invalid Base32",
+                                    tint = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(4.dp))
+                        }
+                        IconButton(
+                            onClick = { isSecretVisible = !isSecretVisible },
+                            modifier = Modifier.testTag("toggle_secret_visibility")
+                        ) {
                             Icon(
-                                imageVector = Icons.Default.CheckCircle,
-                                contentDescription = "Valid Base32",
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        } else {
-                            Icon(
-                                imageVector = Icons.Default.ErrorOutline,
-                                contentDescription = "Invalid Base32",
-                                tint = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.size(20.dp)
+                                imageVector = if (isSecretVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                contentDescription = if (isSecretVisible) "Hide secret key" else "Show secret key",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }

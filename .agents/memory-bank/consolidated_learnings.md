@@ -95,3 +95,31 @@
 - Chain documentation mirroring jobs downstream using `needs: [release]` paired with `if: always() && ...` so that documentation edits (`RELEASE-v*.md`) mirror independently without compiling binaries, while full releases wait for successful compilation before mirroring release notes.
 - *Rationale:* Conserves GitHub Actions runner quota while maintaining automated continuous documentation parity.
 
+## Automated Bot PR Forensic Verification
+**Pattern: Tree-Hash & Byte Diff Auditing for Automated Patches**
+- Automated bots (e.g. Sentinel, Dependabot, AI PR agents) can create commits that appear to resolve security vulnerabilities in their title and description, but contain empty tree changes (`0 files changed`).
+- Before accepting or branching from automated security PRs:
+  - Run `git show --stat <commit>` and `git diff <base>...<head>` to verify actual changed code bytes.
+  - Verify tree hash divergence: `git rev-parse HEAD^{tree}` vs `git rev-parse <base>^{tree}`.
+- *Rationale:* Prevents false-sense-of-security closures where vulnerabilities remain unpatched despite merged "fix" commits.
+
+## Sensitive Key Masking & IME Dictionary Protection (CWE-359)
+**Pattern: Keyboard Hardening for Cryptographic Secrets in Jetpack Compose**
+- In Android Jetpack Compose, sensitive credential inputs (Base32 2FA secrets, master passwords, recovery keys) must not only be masked visually but also isolated from IME dictionary recording.
+- Apply two-layer protection:
+  1. **Visual Obfuscation**: Apply `PasswordVisualTransformation()` by default, paired with an accessible visibility toggle `IconButton` that toggles `VisualTransformation.None`.
+  2. **IME Dictionary Hardening**: Explicitly supply `KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrectEnabled = false)` to instruct the soft keyboard (e.g. Gboard) not to cache cryptographic seed characters in predictive learning dictionaries.
+- *Rationale:* Eliminates CWE-359 privacy leakage where sensitive keys appear in future keyboard autocomplete suggestions.
+
+## Physical Device Coordinate Resolution via UIAutomator
+**Pattern: Deterministic Hardware Coordinates via XML Tree Hierarchy**
+- Avoid estimating touch coordinates from scaled image screenshots or relative proportions, especially on screens using `.imePadding()` or dynamic scroll containers.
+- Extract deterministic bounding boxes:
+  ```bash
+  adb shell uiautomator dump /sdcard/window_dump.xml
+  # Parse [x1,y1][x2,y2] bounds and calculate center: x=(x1+x2)//2, y=(y1+y2)//2
+  ```
+- In Android ash shell, characters like `(`, `)`, `&`, `;`, `<`, `>`, `*`, `|` trigger syntax errors in `input text`. Replace whitespace with `%s` and escape shell metacharacters.
+- *Rationale:* Ensures 100% reliable automated UI testing without flakiness across varying display resolutions or keyboard states.
+
+
