@@ -1,7 +1,7 @@
 ---
-roadmap_version: 2.5.0
-last_updated: 2026-09-06
-current_position: "Phase 11.5: Settings Continuity (v0.0.2.1, Build 14 — light-mode polish complete, merged to main) — released; next Phase 12: Security Suite & Audit Logging (v0.0.2.2)"
+roadmap_version: 2.5.1
+last_updated: 2026-09-12
+current_position: "v0.0.2.2 (Build 15) — Hotfix: Compose Secret Key Masking & IME Hardening; next Phase 12: Security Suite & Audit Logging (v0.0.2.3)"
 statistics:
   description: "Deterministic build roadmap for ShellGuard-TOTP Android Authenticator application. Engineered strictly in synergistic 2-task phases where Task A delivers core functionality and Task B delivers the corresponding UI/UX component."
   features_completed: "████████████░░░ 80%"
@@ -340,7 +340,17 @@ Description: Restore the v0.0.1.3 "Encrypted Backup & Restore" card as a real hu
 
 ---
 
-## Phase 12: Security Suite, Panic Purge & Security Audit Logging [v0.0.2.2 (Build 15)]
+> 🕸️ **Post-Hoc Interlude D — Hotfix Record (2026-09-12)**
+> **v0.0.2.2 (Build 15) — Hotfix: "Compose Secret Key Masking & IME Hardening"** — shipped between Phase 11.5 and Phase 12; pure patch:
+> - **Security Hardening**: Manual 2FA entry (`AddSecretScreen.kt`) now wraps the Base32 Secret Key in `PasswordVisualTransformation` and sets `KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrectEnabled = false)` to prevent system keyboards (GBoard/SwiftKey) from caching secret keys in predictive learning dictionaries (CWE-359 mitigation).
+> - **UI/UX Parity**: Added toggleable eye icon (`toggle_secret_visibility`) alongside the Base32 validation badge so users can verify character accuracy when typing 16–32 character keys.
+> - **Icon Modernization**: Upgraded deprecated `Icons.Default.ArrowBack` to `Icons.AutoMirrored.Filled.ArrowBack`.
+> - **Regression Armor**: `Phase4ScreensTest` expanded to assert visibility toggle behavior; full unit suite at 100% green.
+> - **Projection adjustment**: Phase 12 forward projection re-pointed `v0.0.2.2 (Build 15)` → `v0.0.2.3 (Build 16)`.
+
+---
+
+## Phase 12: Security Suite, Panic Purge & Security Audit Logging [v0.0.2.3 (Build 16)]
 
 > Phase Feature Set Overview:
 > Delivers advanced vault security controls (tap-to-reveal tokens, screen security toggle, emergency panic purge trigger integration) and a local append-only security Audit Log recording important cryptographic and access events.

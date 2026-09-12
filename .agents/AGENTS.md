@@ -215,6 +215,8 @@ Android 15+ (API 35/36) mandates 16 KB page-aligned native binaries:
 - Never hardcode static brand color tokens (e.g. `ClawCyan`) in screen composables; bind strictly to `MaterialTheme.colorScheme` and `LocalShellGuardColors`.
 - The canonical default theme accent is `ThemeAccent.REEF_DEFAULT` (Reef Pink `#E4048A`).
 - All interactive input/form screens must apply `.imePadding()` and `.verticalScroll(rememberScrollState())` to prevent the soft keyboard from obscuring inputs or actions.
+- **Sensitive Key Masking & IME Dictionary Protection (CWE-359)**: All cryptographic, seed, or secret input fields (e.g. Base32 secret keys, master passwords, PINs) MUST apply `PasswordVisualTransformation()` (paired with an accessible visibility eye toggle) and configure `KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrectEnabled = false)` to prevent predictive dictionary learning and third-party keyboard telemetry caching.
+
 
 
 ### One-Way Mirror Sync & Export Invariants

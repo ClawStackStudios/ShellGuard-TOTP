@@ -2,6 +2,34 @@
 
 All notable changes to the ShellGuard TOTP project will be documented in this file.
 
+## [0.0.2.2] - 2026-09-12 (Build 15)
+### Fixed
+- **Plaintext Secret Key Exposure (CWE-359)**: Secured `AddSecretScreen.kt` with `PasswordVisualTransformation` and `KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrectEnabled = false)` to stop soft keyboards (Gboard/SwiftKey) from caching sensitive Base32 keys in predictive text dictionaries.
+- **Secret Visibility Toggle**: Added eye icon button (`toggle_secret_visibility`) alongside the Base32 validation indicator, allowing user verification of 16–32 character codes during manual entry.
+- **Icon Modernization**: Replaced deprecated `Icons.Default.ArrowBack` with `Icons.AutoMirrored.Filled.ArrowBack`.
+
+### Added
+- **Test Oracle Coverage**: Expanded `Phase4ScreensTest` to verify toggle visibility and form submission.
+- **Roadmap Harmonization**: Inserted Interlude D hotfix record and re-pointed Phase 12 projection to `v0.0.2.3 (Build 16)`.
+
+## [0.0.2.1] - 2026-09-05 (Build 14) — Phase 11.5: Settings Continuity
+### Fixed
+- **Speed-Dial Scrim Coverage**: Full-screen edge-to-edge overlay extracted to `SpeedDialScrim` fixing dark dimming gaps in light mode.
+- **Light Mode Typography (Ocean Mist)**: Theme-aware factory `shellGuardTypography(colors)` resolving style colors from `ShellGuardCustomColors` for crisp readability in light mode.
+- **Accent Swatch Border**: High-contrast outline in `SettingsControls.kt`.
+
+### Added
+- **Server & Sync Sub-screen** (Task 22c): Gateway connection, manual sync, and disconnect vault confirmation. Spotlight tour step 2 re-homed to `settings_connect_button`.
+- **Import & Export Sub-screen** (Task 22d): SAF-based `.sgtotp.bak` export and restore.
+- **Appearance Theme Section** (Task 22c): Restored theme mode selector and 6 accent swatches into Settings Hub.
+
+## [0.0.2.0] - 2026-09-05 (Build 10) — Milestone 2
+### Added
+- **Categorized Settings Hub**: Modular 7-category `SettingsMetaScreen` (Appearance, Behavior, Icon packs, Security, Backups, Import & Export, Audit log).
+- **Appearance Sub-screen**: View mode (Normal/Compact), issuer icons, next-code preview, expiration indicator, digit grouping, and Group Manager.
+- **Behavior Sub-screen**: Search scope, focus on start, minimize on copy, copy on tap, haptic feedback, multiselect groups, token freeze/highlight.
+- **Preferences Store Architecture**: Persistent `AppearancePreferences` and `BehaviorPreferences`.
+
 ## [0.0.1.3] - 2026-09-04 (Build 9)
 ### Added
 - **Official Google Play Store Asset Package (`store-assets/`)**:

@@ -42,12 +42,29 @@
   - Added community Reddit post drafts in `.agents/internal/`.
   - CI release pipeline optimization: Gated release jobs to tags/`--release` commits and chained release notes mirroring.
   - 96+ unit and Robolectric tests passing 100% green.
+- ✅ **Phase 11: Categorized Settings Hub & Appearance/Behavior Customization [v0.0.2.0 (Build 10) — Milestone 2]**:
+  - `SettingsMetaScreen.kt`: Modular master category list with icons and descriptions (Appearance, Behavior, Icon packs, Security, Backups, Import & Export, Audit log).
+  - `SettingsAppearanceScreen.kt`: View mode (Normal/Compact), issuer icons, next-code preview, expiration blink indicator, issuer/account display rules, digit grouping, and Group Manager hidden-groups.
+  - `SettingsBehaviorScreen.kt`: Search scope (All/Local/Synced), focus search on start, minimize on copy, copy on tap, haptic feedback, multiselect groups, highlight & freeze tokens on tap.
+  - `UserPreferencesStore`: Structured `AppearancePreferences` and `BehaviorPreferences` backed by persistent storage.
+  - 101/101 unit and Robolectric tests passing 100% green.
+- ✅ **Phase 11.5: Settings Continuity — Theme Parity & Server/Sync Home [v0.0.2.1 (Build 14)]**:
+  - `SettingsAppearanceScreen.kt`: Theme section restored with Theme mode selector (Abyssal Dark, Contrast, System) and 6 `ThemeAccent` palette swatches (`REEF_DEFAULT`, `CYAN_VENT`, etc.).
+  - `SettingsServerSyncScreen.kt`: Dedicated "☁️ Server & Sync" sub-screen hosting connection status, manual "Sync Now", Gateway navigation, and "Disconnect Vault" confirmation. Spotlight tour step 2 re-homed to `settings_connect_button`.
+  - `SettingsImportExportScreen.kt`: Basic SAF-backed encrypted `.sgtotp.bak` backup export and restore restored into hub.
+  - Light mode typography (`shellGuardTypography(colors)`) and speed-dial edge-to-edge scrim fixes.
+- ✅ **Post-Hoc Interlude D: Compose Secret Key Masking & IME Hardening [v0.0.2.2 (Build 15)]**:
+  - `AddSecretScreen.kt`: Base32 secret key input field secured with `PasswordVisualTransformation()`, `KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrectEnabled = false)` to prevent predictive dictionary learning and clipboard leaks (CWE-359).
+  - Trailing compound icon row with interactive eye toggle (`toggle_secret_visibility`) and Base32 validity indicator.
+  - Deprecated icon replaced with `Icons.AutoMirrored.Filled.ArrowBack`.
+  - Tested on live Google Pixel over ADB TLS; captured `screenshot-09-add-secret.png` (Abyssal Dark mode); expanded `README.md` to 3×3 screenshot grid.
+  - Test suite passing 100% green (33 test tasks, 101+ unit tests).
 
 ## What's Next
-- ⏳ **Phase 11: Categorized Settings Hub & Appearance/Behavior Customization [v0.0.2.0 (Build 10) — Milestone 2]**:
-  - Task 21: [Functionality] Preferences Store Architecture & Entry Formatting Engine.
-  - Task 22: [UI Component] Categorized Settings Hub (`SettingsMetaScreen`), Appearance & Behavior Sub-screens.
-- ⏳ **Phase 12: Security Suite, Panic Purge & Security Audit Logging [v0.0.2.1 (Build 11)]**
-- ⏳ **Phase 13: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 12)]**
-- ⏳ **Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 13)]**
-- ⏳ **Phase 15: Sovereign ClawKey (`hu-`) Vault Creation & Import Integration [v0.1.1.0 (Build 14)]**
+- ⏳ **Phase 12: Security Suite, Panic Purge & Security Audit Logging [v0.0.2.3 (Build 16)]**:
+  - Task 23: [Functionality] Security Preference Controller, Panic Trigger Handler & Room Audit Log DAO (`AuditLogDao`, `AuditLogEntity`, `PanicTriggerReceiver`, `allowScreenshots` preference stream, tap-to-reveal timeout).
+  - Task 24: [UI Component] Security Sub-screen (`SettingsSecurityScreen.kt`: Tap-to-Reveal, Screen Security `FLAG_SECURE`, Panic Purge) & Security Audit Log Sub-screen (`SettingsAuditLogScreen.kt`).
+- ⏳ **Phase 13: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 17)]**
+- ⏳ **Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 18)]**
+- ⏳ **Phase 15: Sovereign ClawKey (`hu-`) Vault Creation & Import Integration [v0.1.1.0 (Build 19)]**
+

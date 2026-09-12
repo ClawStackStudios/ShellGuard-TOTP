@@ -6,7 +6,7 @@
 
 ### Secure, offline-first 2FA authenticator with hardware-encrypted vault storage.
 
-[![Version](https://img.shields.io/badge/version-v0.0.2.1%20(Build%2013)-E4048A?style=for-the-badge&logo=android&logoColor=white)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-v0.0.2.2%20(Build%2015)-E4048A?style=for-the-badge&logo=android&logoColor=white)](CHANGELOG.md)
 [![Android](https://img.shields.io/badge/Android-API%2024%E2%80%9336-3DDC84?style=for-the-badge&logo=android&logoColor=white)](app/build.gradle.kts)
 [![Security](https://img.shields.io/badge/Storage-SQLCipher%20AES--256-00BCD4?style=for-the-badge&logo=shield&logoColor=white)](project/crypto-and-keystore.md)
 [![16KB Ready](https://img.shields.io/badge/Kernel-16%20KB%20Page--Size-7952B3?style=for-the-badge)](project/16kb-page-size-alignment-guide.md)
@@ -45,6 +45,12 @@ Captured natively from physical Google Pixel hardware running Android 16 (API 36
 |:---:|:---:|:---:|
 | <img src="store-assets/screenshot-04-dashboard-active.png" width="280" alt="Active TOTP Dashboard" /> | <img src="store-assets/screenshot-05-settings.png" width="280" alt="Settings & Appearance" /> | <img src="store-assets/screenshot-06-gateway.png" width="280" alt="Authenticator Gateway Login" /> |
 | **Active 2FA Dashboard**<br/>Split digits & animated countdown ring | **Appearance & Themes**<br/>AMOLED dark, light & marine palettes | **Authenticator Gateway**<br/>Zero-knowledge ShellKey identity sync |
+
+| 7. Secure Manual Entry | 8. Appearance & Layout | 9. Security & Interaction |
+|:---:|:---:|:---:|
+| <img src="store-assets/screenshot-09-add-secret.png" width="280" alt="Secure Manual 2FA Secret Entry" /> | <img src="store-assets/screenshot-07-appearance.png" width="280" alt="Appearance and View Modes" /> | <img src="store-assets/screenshot-08-behavior.png" width="280" alt="Behavior and Interaction Settings" /> |
+| **Masked Secret Input**<br/>Bullet obfuscation, eye toggle & IME hardening | **Appearance & View Modes**<br/>Compact cards, issuer tags & digit grouping | **Interaction & Behavior**<br/>Search scope, haptic touch & token freeze |
+
 
 ---
 

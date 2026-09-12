@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - No unreleased changes yet.
 
+## [0.0.2.2] - 2026-09-12 (Build 15) — Hotfix: Compose Secret Key Masking & IME Hardening
+### Fixed
+- **Security Hardening — Plaintext 2FA Secret Key Exposure (CWE-359)**: `AddSecretScreen.kt` previously exposed the Base32 Secret Key via plaintext input without password semantics, leaving sensitive seeds susceptible to system keyboard predictive learning, word caching, and shoulder-surfing. Applied `PasswordVisualTransformation`, enforced `KeyboardType.Password`, and explicitly disabled predictive text learning via `autoCorrectEnabled = false`.
+- **UI/UX — Secret Visibility Toggle**: Paired the Base32 input field with a toggleable eye icon button (`toggle_secret_visibility`) displaying `Icons.Default.Visibility` / `VisibilityOff` alongside the Base32 validation indicator (`CheckCircle` / `ErrorOutline`), allowing users to verify 16–32 character codes during manual entry.
+- **Icon Modernization**: Upgraded deprecated `Icons.Default.ArrowBack` to `Icons.AutoMirrored.Filled.ArrowBack` in `AddSecretScreen`.
+
+### Added
+- **Test Oracle Coverage**: Expanded `Phase4ScreensTest` with assertions verifying the visibility toggle button rendering and interaction behavior.
+
 ## [0.0.2.1] - 2026-09-05 (Build 13) — Phase 11.5: Settings Continuity
 > **Build 13 re-upload (versionCode 13, versionName unchanged)** — fixes the speed-dial scrim coverage bug found during on-device light-mode testing. Build 12 fixed the light-mode typography regression.
 

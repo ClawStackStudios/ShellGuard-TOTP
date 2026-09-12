@@ -8,6 +8,8 @@ trigger: always_on
 - Never work directly on the default branch (`main`/`master`). Start every task on a fresh branch or worktree: `git checkout -b <type>/<short-desc>`.
 - One task = one branch. Don't mix unrelated architectural changes into the same branch or working tree.
 - Before starting, snapshot state: `git status` and `git diff --stat`. If the tree is dirty with work you didn't author, stop and ask.
+- **Automated Bot & Security PR Forensic Verification**: Never trust commit messages, PR descriptions, or bot summaries claiming vulnerabilities are fixed. Always inspect the physical tree diff (`git show --stat <commit>` or `git diff <base>...<head>`) to confirm actual code modifications before accepting or branching from automated security fixes.
+
 
 ## Commits & Conventions
 - Keep changes small and self-contained; one logical change per commit. No mega-commits, no unrelated refactors bundled in.

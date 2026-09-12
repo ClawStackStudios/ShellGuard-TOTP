@@ -24,6 +24,27 @@ $ADB exec-out screencap -p > /tmp/screen.png   # screenshot for verification
 6. **Prefer tapping the visible submit button** over `keyevent 66` (Enter) — Enter behavior varies per field type (some insert a newline instead of submitting).
 7. **Every `adb install -r` re-locks a PIN-protected vault** (backgrounding invariant / FLAG_SECURE). Budget an unlock step after every reinstall.
 8. Slow animations / first-launch: add `sleep 2–5` after navigation taps before screencap, or the screenshot races the transition.
+9. **Never guess tap coordinates from screenshots.** Dynamic Compose layouts and IME scrolling shift views. Extract exact hardware bounds via `uiautomator`:
+   ```bash
+   $ADB shell uiautomator dump /sdcard/window_dump.xml
+   $ADB shell cat /sdcard/window_dump.xml | python3 -c "
+   import sys, xml.etree.ElementTree as ET
+   for n in ET.fromstring(sys.stdin.read()).iter('node'):
+       t, d, b = n.attrib.get('text',''), n.attrib.get('content-desc',''), n.attrib.get('bounds','')
+       if any(k in (t+d).lower() for k in ['target_keyword']):
+           print(f'{t} | {d} | {b}')
+   "
+   # Parse bounds [x1,y1][x2,y2] and tap center: x=(x1+x2)//2, y=(y1+y2)//2
+   ```
+10. **`input text` shell escaping**: Characters like `(`, `)`, `&`, `;`, `<`, `>`, `*`, `|` trigger `sh: syntax error` in Android ash shell. Escape special characters or replace spaces with `%s` (`input text "My%sAccount"`).
+11. **System & App Dark Theme Toggling**:
+    ```bash
+    # OS level night mode:
+    $ADB shell cmd uimode night yes  # or 'no'
+    # App-level override when persisted to SharedPreferences:
+    $ADB shell "run-as com.clawstack.shellguard.totp sed -i 's/pref_theme_mode\">LIGHT/pref_theme_mode\">DARK/' /data/data/com.clawstack.shellguard.totp/shared_prefs/shellguard_auth_prefs.xml"
+    $ADB shell am force-stop com.clawstack.shellguard.totp && $ADB shell am start -n com.clawstack.shellguard.totp/.MainActivity
+    ```
 
 ## Recipe: Reliable Field Entry
 ```bash
@@ -36,3 +57,4 @@ $ADB shell input keyevent 4      # dismiss keyboard
 $ADB shell input tap <submit-btn>
 # screenshot -> verify result
 ```
+
