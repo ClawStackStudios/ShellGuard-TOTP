@@ -144,5 +144,7 @@ mindmap
 
 1. **Hardware-Backed Cryptographic Isolation**: Master keys never live in plaintext in shared preferences. Key derivation utilizes `AndroidKeyStore` with `setUserAuthenticationRequired(true)`.
 2. **Memory Cleansing (`Zeroize`)**: Kotlin strings are immutable; sensitive secrets must be processed as `CharArray` or `ByteArray` and overwritten with zeros immediately following TOTP generation or database persistence.
-3. **Screen Capture Defense (`FLAG_SECURE`)**: Every Activity applies `window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)` to block screen recorders, malicious overlay malware, and task switcher snapshots.
+3. **Screen Capture Defense (`FLAG_SECURE`)**: Enforced by default via `SecurityPreferenceController`, blocking screen recorders, malicious overlay malware, and task switcher snapshots (can be toggled in Security preferences).
 4. **LAN / Insecure Origin Handling**: If the user connects to a local HTTP Unraid/LAN instance without SSL, the app warns the user and requires explicit confirmation, while maintaining cryptographic integrity through client-side HKDF and AES-GCM envelope verification.
+5. **Emergency Panic Purge (`ACTION_PANIC_WIPE`)**: `PanicTriggerReceiver` provides instant cryptographic zeroization of KeyStore aliases, EncryptedSharedPreferences vault, Room SQLCipher tables, and immediate process termination.
+

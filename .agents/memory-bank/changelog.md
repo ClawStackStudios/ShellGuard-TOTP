@@ -2,6 +2,28 @@
 
 All notable changes to the ShellGuard TOTP project will be documented in this file.
 
+## [0.0.2.3] - 2026-09-22 (Build 16) — Phase 12: Security Suite, Panic Purge, Audit Logging & Web Server v0.0.2.3 Sync Parity
+### Added
+- **Security Audit Logging Engine (Task 23)**:
+  - Created `AuditLogEntity.kt` and `AuditLogDao.kt` in Room database (bumped to schema `version = 2`).
+  - Added reactive Flow stream collecting and displaying security events (`VAULT_UNLOCKED`, `BIOMETRIC_PASSED`, `BIOMETRIC_FAILED`, `BACKUP_EXPORTED`, `BACKUP_RESTORED`, `SECRET_ADDED`, `PANIC_TRIGGERED`).
+- **Security Preference Controller & Panic Purge (Task 23)**:
+  - Created `SecurityPreferenceController.kt` managing `allowScreenshots`, tap-to-reveal timeout duration (`10s`, `30s`, `60s`), and panic purge state.
+  - Implemented `PanicTriggerReceiver.kt` listening for `ACTION_PANIC_WIPE` broadcasts to purge Android KeyStore hardware keys, `EncryptedDeviceVault`, Room database tables, and auth preferences in emergency events.
+- **Security & Audit Log Sub-screens (Task 24)**:
+  - Implemented `SettingsSecurityScreen.kt` featuring a hardware encryption status tile, screenshot toggle with confirmation risk dialog, tap-to-reveal duration selector, and panic wipe toggle.
+  - Implemented `SettingsAuditLogScreen.kt` with live chronological event timeline, search filter, export share intent, and clear log dialog.
+  - Added reactive `FLAG_SECURE` window management in `MainActivity.kt` enforcing screen security when locked or when screenshots are disallowed.
+- **Web Server v0.0.2.3 Dynamic TOTP URI Sync & Delta Optimization (Task 24b)**:
+  - Integrated `TotpUriParser.parse()` into `TotpRepository.syncRemoteVault` to dynamically extract Base32 keys, algorithms (SHA1, SHA256, SHA512), digits (6, 8), and periods (30s, 60s) from incoming server URIs.
+  - Implemented `isContentIdentical()` fast-filter avoiding database write churn and UI recompositions when server sync payloads omit or supply null `updated_at`.
+  - Added unit test suite `TotpRepositoryTest.kt` verifying dynamic URI parsing, delta sync skipping, and null timestamp resilience.
+
+### Changed
+- **Database Schema Migration**: Upgraded `ShellGuardTotpDatabase` to version 2 with `fallbackToDestructiveMigration()` support.
+- **Settings Category Routing**: Connected `SettingsDestination.SECURITY` and `SettingsDestination.AUDIT_LOG` in `SettingsMetaScreen.kt` and `TotpNavHost.kt`.
+- **Application Versioning**: Bumped `versionCode = 16` and `versionName = "0.0.2.3"` in `app/build.gradle.kts`.
+
 ## [0.0.2.2] - 2026-09-12 (Build 15)
 ### Fixed
 - **Plaintext Secret Key Exposure (CWE-359)**: Secured `AddSecretScreen.kt` with `PasswordVisualTransformation` and `KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrectEnabled = false)` to stop soft keyboards (Gboard/SwiftKey) from caching sensitive Base32 keys in predictive text dictionaries.

@@ -6,9 +6,11 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.clawstack.shellguard.totp.data.local.dao.AppConfigDao
+import com.clawstack.shellguard.totp.data.local.dao.AuditLogDao
 import com.clawstack.shellguard.totp.data.local.dao.SyncMetadataDao
 import com.clawstack.shellguard.totp.data.local.dao.TotpItemDao
 import com.clawstack.shellguard.totp.data.local.entities.AppConfig
+import com.clawstack.shellguard.totp.data.local.entities.AuditLogEntity
 import com.clawstack.shellguard.totp.data.local.entities.SyncMetadataEntity
 import com.clawstack.shellguard.totp.data.local.entities.TotpItemEntity
 import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
@@ -17,15 +19,17 @@ import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
     entities = [
         TotpItemEntity::class,
         SyncMetadataEntity::class,
-        AppConfig::class
+        AppConfig::class,
+        AuditLogEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class ShellGuardTotpDatabase : RoomDatabase() {
     abstract fun totpItemDao(): TotpItemDao
     abstract fun syncMetadataDao(): SyncMetadataDao
     abstract fun appConfigDao(): AppConfigDao
+    abstract fun auditLogDao(): AuditLogDao
 
     companion object {
         const val DB_NAME = "shellguard_totp_encrypted.db"

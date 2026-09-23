@@ -6,7 +6,7 @@
 
 ### Secure, offline-first 2FA authenticator with hardware-encrypted vault storage.
 
-[![Version](https://img.shields.io/badge/version-v0.0.2.2%20(Build%2015)-E4048A?style=for-the-badge&logo=android&logoColor=white)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-v0.0.2.3%20(Build%2016)-E4048A?style=for-the-badge&logo=android&logoColor=white)](CHANGELOG.md)
 [![Android](https://img.shields.io/badge/Android-API%2024%E2%80%9336-3DDC84?style=for-the-badge&logo=android&logoColor=white)](app/build.gradle.kts)
 [![Security](https://img.shields.io/badge/Storage-SQLCipher%20AES--256-00BCD4?style=for-the-badge&logo=shield&logoColor=white)](project/crypto-and-keystore.md)
 [![16KB Ready](https://img.shields.io/badge/Kernel-16%20KB%20Page--Size-7952B3?style=for-the-badge)](project/16kb-page-size-alignment-guide.md)
@@ -72,6 +72,7 @@ Captured natively from physical Google Pixel hardware running Android 16 (API 36
 - **Android KeyStore & StrongBox**: Cryptographic keys never touch application memory in plaintext; all key generation occurs in dedicated hardware.
 - **SQLCipher Full-Disk Encryption**: Sensitive vault tables are encrypted at rest with 256-bit AES cipher blocks.
 - **FLAG_SECURE Privacy Shield**: Obfuscates app window contents in the Android Recents task switcher and blocks unauthorized screen captures.
+- **Security Suite & Panic Purge**: Configurable Tap-to-Reveal timeout, optional screenshot permissions with risk confirmation dialog, emergency broadcast panic wipe (`ACTION_PANIC_WIPE`), and Room-backed security event audit trail.
 - **Biometric & PIN Cold Lock**: Unlock your vault using biometric authentication (fingerprint / face) or custom Master PIN/Password.
 
 ### ⚡ Ergonomics & Usability
@@ -169,7 +170,7 @@ flowchart TD
 
 ### Verification & Testing
 ```bash
-# Run the complete unit test suite (96+ tests passing green)
+# Run the complete unit test suite (107 tests passing green)
 ./gradlew testDebugUnitTest
 
 # Assemble debug APK

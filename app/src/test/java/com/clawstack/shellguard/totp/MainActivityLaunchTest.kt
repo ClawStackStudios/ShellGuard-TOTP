@@ -28,6 +28,8 @@ class MainActivityLaunchTest {
         assertNotNull(app.totpRepository)
         assertNotNull(app.database)
         assertNotNull(app.backupManager)
+        assertNotNull(app.auditLogDao)
+        assertNotNull(app.securityPreferenceController)
     }
 
     @Test

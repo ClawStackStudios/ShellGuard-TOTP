@@ -242,6 +242,10 @@ class TotpViewModel(application: Application) : AndroidViewModel(application) {
                 syncState = "LOCAL"
             )
             totpItemDao.upsertItem(newItem)
+            app.securityPreferenceController.recordAuditEvent(
+                com.clawstack.shellguard.totp.data.preferences.SecurityPreferenceController.EVENT_SECRET_ADDED,
+                "Manual token added: ${newItem.title}"
+            )
         }
     }
 
@@ -292,6 +296,10 @@ class TotpViewModel(application: Application) : AndroidViewModel(application) {
                 syncState = "LOCAL"
             )
             totpItemDao.upsertItem(newItem)
+            app.securityPreferenceController.recordAuditEvent(
+                com.clawstack.shellguard.totp.data.preferences.SecurityPreferenceController.EVENT_SECRET_ADDED,
+                "QR token added: ${newItem.title}"
+            )
         }
         return true
     }

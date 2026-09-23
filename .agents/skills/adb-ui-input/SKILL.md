@@ -58,3 +58,26 @@ $ADB shell input tap <submit-btn>
 # screenshot -> verify result
 ```
 
+## 12. Dual-Device / Multi-Form-Factor Verification (Phone + Tablet)
+When multiple devices (e.g. Google Pixel + Nexus 7 tablet) are attached:
+1. **Device Discovery & Variable Setup**:
+   ```bash
+   # List active endpoints:
+   /config/Android/Sdk/platform-tools/adb devices -l
+   # Bind serial variables:
+   PIXEL="/config/Android/Sdk/platform-tools/adb -s $(/config/Android/Sdk/platform-tools/adb devices | grep -E "FA|sailfish|pixel" | awk '{print $1}')"
+   TABLET="/config/Android/Sdk/platform-tools/adb -s $(/config/Android/Sdk/platform-tools/adb devices | grep -E "0a3c85db|nexus|tablet" | awk '{print $1}')"
+   ```
+2. **Display Metric Inspection**:
+   ```bash
+   $PIXEL shell wm size      # e.g. 1080x1920 (phone)
+   $TABLET shell wm size     # e.g. 1200x1920 (tablet)
+   ```
+3. **Comparative Dual-Device Screencaps**:
+   Always capture and compare UI states across both screens after layout changes to verify responsive spacing, dialog sizing, and navigation padding:
+   ```bash
+   $PIXEL exec-out screencap -p > /tmp/pixel_screen.png
+   $TABLET exec-out screencap -p > /tmp/tablet_screen.png
+   ```
+
+

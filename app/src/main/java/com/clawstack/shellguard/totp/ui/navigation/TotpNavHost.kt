@@ -40,6 +40,8 @@ sealed class Screen(val route: String) {
     data object SettingsBehavior : Screen("settings_behavior")
     data object SettingsServerSync : Screen("settings_server_sync")
     data object SettingsImportExport : Screen("settings_import_export")
+    data object SettingsSecurity : Screen("settings_security")
+    data object SettingsAuditLog : Screen("settings_audit_log")
     data object SettingsPlaceholder : Screen("settings_placeholder")
 }
 
@@ -244,9 +246,33 @@ fun TotpNavHost(
             onNavigateToBehavior = { navController.navigate(Screen.SettingsBehavior.route) },
             onNavigateToServerSync = { navController.navigate(Screen.SettingsServerSync.route) },
             onNavigateToImportExport = { navController.navigate(Screen.SettingsImportExport.route) },
+            onNavigateToSecurity = { navController.navigate(Screen.SettingsSecurity.route) },
+            onNavigateToAuditLog = { navController.navigate(Screen.SettingsAuditLog.route) },
             onNavigateToPlaceholder = { title ->
                 navController.navigate("${Screen.SettingsPlaceholder.route}/${android.net.Uri.encode(title)}")
             }
+        )
+    }
+
+    composable(
+        route = Screen.SettingsSecurity.route,
+        enterTransition = { fadeIn() },
+        exitTransition = { fadeOut() }
+    ) {
+        com.clawstack.shellguard.totp.ui.screens.settings.SettingsSecurityScreen(
+            authViewModel = authViewModel,
+            onBackClick = { navController.popBackStack() }
+        )
+    }
+
+    composable(
+        route = Screen.SettingsAuditLog.route,
+        enterTransition = { fadeIn() },
+        exitTransition = { fadeOut() }
+    ) {
+        com.clawstack.shellguard.totp.ui.screens.settings.SettingsAuditLogScreen(
+            authViewModel = authViewModel,
+            onBackClick = { navController.popBackStack() }
         )
     }
 

@@ -306,3 +306,27 @@ object ClawCrypto {
    }
    ```
 3. **Local Encryption at Rest**: Decrypted secrets stored in Room DB are secured on-disk via **SQLCipher whole-database encryption**, meaning a compromised device storage cannot extract seeds without the KeyStore-derived SQLCipher passphrase.
+
+---
+
+## 7. Emergency Panic Purge & Security Preference Architecture
+
+Added in **Phase 12 (v0.0.2.3 Build 16)**, the Security Suite provides an immediate cryptographic wipe mechanism and centralized security preferences.
+
+### 7.1. Panic Purge Broadcast Receiver (`PanicTriggerReceiver`)
+Broadcast receiver responding to `com.clawstack.shellguard.totp.ACTION_PANIC_WIPE`:
+1. **Entitlement Validation**: Confirms `securityPreferenceController.panicTriggerEnabled` is `true`.
+2. **Audit Event Log**: Records `EVENT_PANIC_TRIGGERED` prior to teardown.
+3. **KeyStore Wipe**: Calls `AndroidKeyStoreHelper.deleteAllKeys()` to delete all AES-256 aliases from hardware Keystore.
+4. **Encrypted Vault Purge**: Calls `EncryptedDeviceVault.clearAll(context)` to purge encrypted preferences.
+5. **Database Table Purge**: Calls `database.clearAllTables()` across all Room entities (`totp_records`, `audit_logs`).
+6. **Auth Preferences Clear**: Clears `shellguard_auth_prefs`.
+7. **Process Termination**: Invokes `Process.killProcess(Process.myPid())` to eliminate any transient memory residue.
+
+### 7.2. Centralized Security Control (`SecurityPreferenceController`)
+Manages security flags and dispatches asynchronous immutable audit logs to `AuditLogDao`:
+- `allowScreenshots`: Toggles `FLAG_SECURE` on window manager (`false` by default).
+- `tapRevealTimeoutSeconds`: Controls automated re-concealment timer for masked TOTP secrets (default: 30s).
+- `panicTriggerEnabled`: Enables/disables the `ACTION_PANIC_WIPE` broadcast responder.
+- `recordAuditEvent(eventType, detail)`: Records cryptographic lifecycle events (`VAULT_UNLOCKED`, `BIOMETRIC_FAILED`, `BACKUP_CREATED`, `SECRET_ADDED`, `PANIC_TRIGGERED`, `SCREEN_SECURITY_CHANGED`, `SYNC_COMPLETED`, `SYNC_FAILED`).
+

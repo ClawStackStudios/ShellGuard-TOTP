@@ -25,7 +25,7 @@ flowchart TD
     Phase10["⚡ Stage 11: Phase 10 — Expandable Floating Actions Speed Dial<br/>(Task 19: Image QR Decoder & SpeedDialState · Task 20: Animated Speed Dial FAB & Pills)"]
     Phase11["⚙️ Stage 12: Phase 11 — Categorized Settings Hub & Appearance/Behavior<br/>(Task 21: Preferences Store · Task 22: SettingsMetaScreen & Sub-screens)"]
     Phase115["🔗 Stage 12.5: Phase 11.5 — Settings Continuity: Theme Parity & Server/Sync Home<br/>(Task 22b: Theme Preference Streams · Task 22c: Theme Section, Server & Sync Sub-screen)"]
-    Phase12["🛡️ Stage 13: Phase 12 — Security Suite, Panic Purge & Audit Logging<br/>(Task 23: Panic Trigger & Audit DAO · Task 24: Security Sub-screen & Audit Log)"]
+    Phase12["🛡️ Stage 13: Phase 12 — Security Suite, Panic Purge, Audit Logging & Web Server v0.0.2.3 Sync Parity<br/>(Task 23: Panic Trigger & Audit DAO · Task 24: Security Sub-screen & Audit Log · Task 24b: Dynamic TOTP URI Sync Engine)"]
     Phase13["📦 Stage 14: Phase 13 — Advanced Import/Export & Google Auth Multi-QR<br/>(Task 25: MultiFormat Migration · Task 26: Import/Export Hub & QR Viewer)"]
     Phase14["📱 Stage 15: Phase 14 — Home Screen Interactive Glance Widgets & Icon Packs<br/>(Task 27: Glance Widget Engine & Icon Store · Task 28: 2x2/4x2 Widgets & Icon Manager)"]
     Phase15["🗝️ Stage 16: Phase 15 — ClawKey Vault Creation, Import Auth & Duplicate Resolution<br/>(Task 29: ClawKey Mode Engine · Task 30: ClawKeyInputForm & UI Integration)"]
@@ -679,25 +679,27 @@ Verify every v0.0.1.3 settings control is reachable from the hub (or retired wit
 
 ---
 
-## 🛡️ Stage 13: Phase 12 Prompt — Security Suite, Panic Purge & Security Audit Logging [v0.0.2.3 (Build 16)]
+## 🛡️ Stage 13: Phase 12 Prompt — Security Suite, Panic Purge, Security Audit Logging & Web Server v0.0.2.3 Sync Parity [v0.0.2.3 (Build 16)]
 
-> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-12-security-suite-panic-purge--security-audit-logging-v0023-build-16) for complete specifications on **Task 23** and **Task 24**.  
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-12-security-suite-panic-purge-security-audit-logging--web-server-v0023-sync-parity-v0023-build-16) for complete specifications on **Task 23**, **Task 24**, and **Task 24b**.  
 > **📖 Required Context Files for Phase 12**:  
 > 1. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — KeyStore & Panic Purge.  
 > 2. [`room-storage-schema.md`](./room-storage-schema.md) — Audit Log Room Schema.  
+> 3. [`../../ShellGuard/compatibility_layer.md`](../../ShellGuard/compatibility_layer.md) — Web Server v0.0.2.3 Build 25 Wire Contract & Dynamic TOTP URI Engine.
 
-Copy and paste this prompt to execute **Phase 12 (Tasks 23 & 24)**:
+Copy and paste this prompt to execute **Phase 12 (Tasks 23, 24 & 24b)**:
 
 ```markdown
-# PHASE 12 EXECUTION: Security Suite, Panic Purge & Security Audit Logging [v0.0.2.3 (Build 16)]
+# PHASE 12 EXECUTION: Security Suite, Panic Purge, Security Audit Logging & Web Server v0.0.2.3 Sync Parity [v0.0.2.3 (Build 16)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:
-- `ROADMAP.md`: Phase 12 (Task 23: Panic Trigger & Audit DAO · Task 24: SecurityScreen & AuditLogScreen).
+- `ROADMAP.md`: Phase 12 (Task 23: Panic Trigger & Audit DAO · Task 24: SecurityScreen & AuditLogScreen · Task 24b: Dynamic TOTP URI Sync Engine).
 - `crypto-and-keystore.md`: Section 4 (Security Lifecycle).
 - `room-storage-schema.md`: Section 2 (Room Entities).
+- `../ShellGuard/compatibility_layer.md`: Sections 2, 3, and 4 (Triple-Layer Encryption, Dynamic TOTP Wire Contract & Delta Sync Protocol).
 
-Execute Phase 12 adhering to the Functionality + UI Component pairing:
+Execute Phase 12 adhering to the Functionality + UI Component + Sync Parity triad:
 
 ### Task 23: [Functionality] Security Preference Controller, Panic Trigger Handler & Room Audit Log DAO
 - Implement `AuditLogDao` and `AuditLogEntity` in Room recording chronological security events (vault unlocked, biometric failed, backup created, secret added, panic triggered).
@@ -722,14 +724,23 @@ Execute Phase 12 adhering to the Functionality + UI Component pairing:
 - Implement `SettingsAuditLogScreen.kt`:
   - Chronological event list with status chips (Unlock, Export, Failed Attempt, Sync), search filter, export audit log action, and empty state illustration (`No reported events`).
 
-Verify security toggles enforce immediate runtime protection and audit log records events accurately!
+### Task 24b: [Sync & Parity Fix] Web Server v0.0.2.3 Sync Re-alignment & Dynamic TOTP URI Engine
+- Re-align `TotpRepository.kt` downstream sync intake with ShellGuard Web Server v0.0.2.3 Build 25 (`compatibility_layer.md`):
+  - In `syncRemoteVault`, pipe decrypted `pearl.totp_secret` through `TotpUriParser.parse(decryptedPayload)`:
+    - If payload is an `otpauth://totp/...` or `steam://` URI (from Web Server v0.0.2.3 dynamic formatting or Bitwarden import), extract clean Base32 `secret` and preserve dynamic `algorithm` (SHA1/SHA256/SHA512/STEAM), `digits` (5/6/8), and `period` (15/30/60).
+    - Fall back to clean Base32 with standard defaults (`SHA1`, `6`, `30`) if raw Base32 was provided.
+    - Use URI label/issuer as fallbacks for `title` and `username` when pearl metadata is blank.
+  - Optimize delta sync for server null `updated_at`: in `classifyDeltaPearls`, compare local entity parameters against decrypted candidate before executing Room upsert transactions.
+- Add unit tests in `TotpRepositoryTest.kt` verifying dynamic TOTP URI parsing, custom algorithm/digit/period preservation, and delta sync resilience.
+
+Verify security toggles enforce immediate runtime protection, audit log records events accurately, and remote sync seamlessly ingests Web Server v0.0.2.3 dynamic TOTP secrets!
 ```
 
 ---
 
-## 📦 Stage 14: Phase 13 Prompt — Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 13) — Milestone 3]
+## 📦 Stage 14: Phase 13 Prompt — Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 17) — Milestone 3]
 
-> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-13-advanced-importexport-bitwarden-migration--google-authenticator-multi-qr-v0030-build-12--milestone-3) for complete specifications on **Task 25** and **Task 26**.  
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-13-advanced-importexport-bitwarden-migration--google-authenticator-multi-qr-v0030-build-17--milestone-3) for complete specifications on **Task 25** and **Task 26**.  
 > **📖 Required Context Files for Phase 13**:  
 > 1. [`bitwarden-and-migration-spec.md`](./bitwarden-and-migration-spec.md) — Master Ingestion Pipeline, Schemas, Steam Guard & Dual Router.  
 > 2. [`room-storage-schema.md`](./room-storage-schema.md) — Section 6 (BackupManager.kt) & Section 7 (AuditLogDao).  
@@ -738,7 +749,7 @@ Verify security toggles enforce immediate runtime protection and audit log recor
 Copy and paste this prompt to execute **Phase 13 (Tasks 25 & 26)**:
 
 ```markdown
-# PHASE 13 EXECUTION: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 13)]
+# PHASE 13 EXECUTION: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 17)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:
@@ -747,7 +758,7 @@ Before writing code, inspect:
 - `room-storage-schema.md`: Section 6 (BackupManager.kt) & Section 7 (AuditLogDao).
 - `crypto-and-keystore.md`: Section 3 (ShellCryptionEngine AAD binding).
 
-Execute Phase 12 adhering to the Functionality + UI Component pairing:
+Execute Phase 13 adhering to the Functionality + UI Component pairing:
 
 ### Task 25: [Functionality] Multi-Format Import Engine (Bitwarden Vault/Auth, Aegis, 2FAS) & Dual Vault Persister
 - Implement `MultiFormatMigrationEngine` in `data/migration`:
@@ -776,9 +787,9 @@ Verify Bitwarden JSON exports parse accurately, zero passwords/notes leak into s
 
 ---
 
-## 📱 Stage 15: Phase 14 Prompt — Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 14) — Open Beta Candidate]
+## 📱 Stage 15: Phase 14 Prompt — Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 18) — Open Beta Candidate]
 
-> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-14-home-screen-interactive-glance-widgets--icon-pack-manager-v0100-build-13--open-beta-candidate) for complete specifications on **Task 27** and **Task 28**.  
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-14-home-screen-interactive-glance-widgets--icon-pack-manager-v0100-build-18--open-beta-candidate) for complete specifications on **Task 27** and **Task 28**.  
 > **📖 Required Context Files for Phase 14**:  
 > 1. [`totp-engine-spec.md`](./totp-engine-spec.md) — Background TOTP calculation.  
 > 2. [`DESIGN.md`](./DESIGN.md) — Section 4 (Widget Modernist Layout).  
@@ -786,20 +797,24 @@ Verify Bitwarden JSON exports parse accurately, zero passwords/notes leak into s
 Copy and paste this prompt to execute **Phase 14 (Tasks 27 & 28)**:
 
 ```markdown
-# PHASE 14 EXECUTION: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 14)]
+# PHASE 14 EXECUTION: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 18)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:
-- `ROADMAP.md`: Phase 14 (Task 27: Glance Widget Engine & Icon Store · Task 28: Glance Widgets & Icon Manager).
-- `totp-engine-spec.md`: Section 1 (TotpEngine.kt).
-- `DESIGN.md`: Section 4 (TotpCard & Widget Tokens).
+- `ROADMAP.md`: Phase 14 (Task 27: Glance Widget Engine & Icon Store · Task 28: 2x2/4x2 Widgets & Icon Manager).
+- `totp-engine-spec.md`: Section 1 (RFC 6238 Algorithm & TotpEngine).
+- `DESIGN.md`: Section 4 (Widget Modernist Layout).
 
-Execute Phase 13 adhering to the Functionality + UI Component pairing:
+Execute Phase 14 adhering to the Functionality + UI Component pairing:
 
 ### Task 27: [Functionality] AndroidX Glance AppWidget Engine & Custom Issuer Icon Pack Store
 - Integrate `androidx.glance:glance-appwidget` and `androidx.glance:glance-material3`.
-- Implement `TotpGlanceReceiver` and `TotpGlanceWidgetService`.
-- Implement `IconPackManager` supporting loading, parsing, and caching vector/PNG icon packs for popular web services (GitHub, Google, AWS, Microsoft, Discord).
+- Implement `TotpGlanceReceiver.kt` and `TotpGlanceWidgetService.kt` in `ui/widgets/`:
+  - Enforce efficient periodic refresh (synchronized to 30-second epoch boundaries).
+  - Consume hardware SQLCipher Room database for cached token calculation with minimal memory footprint.
+- Implement `IconPackManager.kt` in `data/icons/`:
+  - Supports loading and caching SVG/Vector/PNG brand icon sets from local app storage.
+  - Exposes `getIconForIssuer(issuer: String): ImageVector?` with dynamic issuer mapping heuristics.
 
 ### Task 28: [UI Component] Modernist Glance 2FA Widgets (2x2 & 4x2) & Icon Pack Manager Screen
 - Implement Glance 2FA Widgets: Compact 2x2 single-token and expanded 4x2 multi-account list with live countdown progress bars, split digits (`123 456`), and one-tap copy actions.
@@ -808,14 +823,11 @@ Execute Phase 13 adhering to the Functionality + UI Component pairing:
 Verify widgets update reliably on home screens with tap-to-copy responsiveness, and icon packs render custom brand glyphs!
 ```
 
-
-
-
 ---
 
-## 📱 Stage 16: Phase 15 Prompt — ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 15)]
+## 📱 Stage 16: Phase 15 Prompt — ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 19)]
 
-> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-15-clawkey-vault-creation-import-authentication--duplicate-resolution-v0110-build-14) for complete specifications on **Task 29** and **Task 30**.
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-15-clawkey-vault-creation-import-authentication--duplicate-resolution-v0110-build-19) for complete specifications on **Task 29** and **Task 30**.
 > **📖 Required Context Files for Phase 15**:
 > 1. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — Section 2 (AndroidKeyStoreHelper patterns).
 > 2. [`room-storage-schema.md`](./room-storage-schema.md) — Section 6 (BackupManager.kt import/export).
@@ -825,7 +837,7 @@ Verify widgets update reliably on home screens with tap-to-copy responsiveness, 
 Copy and paste this prompt to execute **Phase 15 (Tasks 29 & 30)**:
 
 ```markdown
-# PHASE 15 EXECUTION: ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 15)]
+# PHASE 15 EXECUTION: ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 19)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:

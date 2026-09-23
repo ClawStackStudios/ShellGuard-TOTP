@@ -122,4 +122,27 @@
 - In Android ash shell, characters like `(`, `)`, `&`, `;`, `<`, `>`, `*`, `|` trigger syntax errors in `input text`. Replace whitespace with `%s` and escape shell metacharacters.
 - *Rationale:* Ensures 100% reliable automated UI testing without flakiness across varying display resolutions or keyboard states.
 
+## Multi-Document Release Synchronization Protocol
+**Pattern: The 8-Point Documentation Walk**
+- Every completed phase or release milestone touches a distributed documentation mesh across the repository:
+  1. `app/build.gradle.kts`: Monotonic `versionCode` and `versionName`.
+  2. `ROADMAP.md`: Check off completed tasks (`[x]`), update `current_position`, `features_completed: %`, and re-align monotonic downstream build projections (`Phase X ➔ Build Y`).
+  3. `project/meta-prompt-ai-studio.md`: Re-index upcoming stage headers and prompts to match adjusted build tags.
+  4. `CHANGELOG.md` (Root): Detailed Keep a Changelog entry for public inspection.
+  5. `RELEASE-vX.Y.Z.N.md`: Release trigger file for GitHub Actions CI.
+  6. `RELEASE-PLAY.md`: Store notes strictly <500 characters.
+  7. `README.md`: Version badge, test oracle count, and feature bullets.
+  8. Storage/Crypto Specs: Room schema version, DAO updates, Keystore/Vault zeroization methods.
+- *Rationale:* Eliminates documentation rot and ensures release pipelines, developer roadmap, and public notes remain synchronized.
+
+## Dual-Device Multi-Form-Factor Verification (Phone + Tablet)
+**Pattern: Cross-Form-Factor UI Integrity Testing**
+- Testing mobile Compose interfaces solely on a phone screen obscures tablet regressions (e.g. over-stretched text fields, distorted dialog bounds, off-center buttons).
+- Target both attached devices over ADB TLS:
+  - Phone: Google Pixel (`1080x1920`)
+  - Tablet: Nexus 7 (`1200x1920`)
+- Inspect window sizes via `wm size` and capture side-by-side screencaps to verify responsive layout behavior before declaring UI tasks complete.
+- *Rationale:* Guarantees production visual quality across varied display densities and aspect ratios.
+
+
 

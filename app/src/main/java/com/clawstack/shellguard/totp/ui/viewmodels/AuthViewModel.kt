@@ -9,11 +9,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.clawstack.shellguard.totp.ShellGuardTotpApp
 import com.clawstack.shellguard.totp.crypto.AndroidKeyStoreHelper
+import com.clawstack.shellguard.totp.data.local.entities.AuditLogEntity
+import com.clawstack.shellguard.totp.data.preferences.SecurityPreferenceController
 import com.clawstack.shellguard.totp.data.repository.AuthRepository
 import com.clawstack.shellguard.totp.data.repository.UserSession
 import com.clawstack.shellguard.totp.data.repository.VaultProtectionMode
 import com.clawstack.shellguard.totp.ui.theme.AppThemeMode
 import com.clawstack.shellguard.totp.ui.theme.ThemeAccent
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -88,6 +91,12 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                 isBiometricEnabled = authRepository.isBiometricEnabled.value,
                 pinLength = if (mode == VaultProtectionMode.PIN) rawKey.length else null
             )
+            if (result.isSuccess) {
+                app.securityPreferenceController.recordAuditEvent(
+                    SecurityPreferenceController.EVENT_BACKUP_CREATED,
+                    "Encrypted backup exported (${result.getOrNull()} tokens)"
+                )
+            }
             onResult(result)
         }
     }
@@ -101,6 +110,12 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             val rawKey = authRepository.getVaultSecret() ?: session?.rawHuKey ?: "shellguard_default_master_key"
             val ownerUuid = session?.userUuid ?: "local"
             val result = app.backupManager.importEncryptedBackup(inputStream, rawKey, ownerUuid)
+            if (result.isSuccess) {
+                app.securityPreferenceController.recordAuditEvent(
+                    "BACKUP_RESTORED",
+                    "Encrypted backup restored (${result.getOrNull()} tokens)"
+                )
+            }
             onResult(result)
         }
     }
@@ -145,6 +160,10 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                     super.onAuthenticationSucceeded(result)
                     authRepository.unlockWithBiometrics()
                     _authState.value = AuthState.Authenticated
+                    app.securityPreferenceController.recordAuditEvent(
+                        SecurityPreferenceController.EVENT_VAULT_UNLOCKED,
+                        "Unlocked with biometrics"
+                    )
                     onResult?.invoke(true)
                 }
 
@@ -159,6 +178,10 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                 override fun onAuthenticationFailed() {
                     super.onAuthenticationFailed()
                     _authState.value = AuthState.Error("Biometric verification failed. Please try again.")
+                    app.securityPreferenceController.recordAuditEvent(
+                        SecurityPreferenceController.EVENT_BIOMETRIC_FAILED,
+                        "Biometric verification failed"
+                    )
                     onResult?.invoke(false)
                 }
             }
@@ -195,6 +218,10 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         val success = authRepository.unlockWithSecret(secretOrKey)
         if (success) {
             _authState.value = AuthState.Authenticated
+            app.securityPreferenceController.recordAuditEvent(
+                SecurityPreferenceController.EVENT_VAULT_UNLOCKED,
+                "Unlocked with secret/PIN"
+            )
         } else {
             val mode = authRepository.vaultMode.value
             val modeName = if (mode == VaultProtectionMode.PIN) "PIN code" else "master password"
@@ -238,5 +265,31 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     fun resetState() {
         _authState.value = AuthState.Idle
+    }
+
+    // ── Phase 12 / Task 23: Security Preferences & Audit Log ────────────────
+    val allowScreenshots: StateFlow<Boolean> = app.securityPreferenceController.allowScreenshots
+        .stateIn(viewModelScope, SharingStarted.Eagerly, app.securityPreferenceController.allowScreenshots.value)
+
+    val tapRevealTimeoutSeconds: StateFlow<Int> = app.securityPreferenceController.tapRevealTimeoutSeconds
+        .stateIn(viewModelScope, SharingStarted.Eagerly, app.securityPreferenceController.tapRevealTimeoutSeconds.value)
+
+    val panicTriggerEnabled: StateFlow<Boolean> = app.securityPreferenceController.panicTriggerEnabled
+        .stateIn(viewModelScope, SharingStarted.Eagerly, app.securityPreferenceController.panicTriggerEnabled.value)
+
+    fun setAllowScreenshots(enabled: Boolean) = app.securityPreferenceController.setAllowScreenshots(enabled)
+    fun setTapRevealTimeout(seconds: Int) = app.securityPreferenceController.setTapRevealTimeout(seconds)
+    fun setPanicTriggerEnabled(enabled: Boolean) = app.securityPreferenceController.setPanicTriggerEnabled(enabled)
+
+    val auditEvents: StateFlow<List<AuditLogEntity>> = app.auditLogDao.observeAll()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    fun searchAuditEvents(query: String): Flow<List<AuditLogEntity>> =
+        app.auditLogDao.searchEvents(query)
+
+    fun clearAuditLog() {
+        viewModelScope.launch {
+            app.auditLogDao.deleteAll()
+        }
     }
 }

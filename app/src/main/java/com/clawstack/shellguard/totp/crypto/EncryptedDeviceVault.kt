@@ -193,4 +193,12 @@ object EncryptedDeviceVault {
         val prefs = getPrefs(context)
         prefs.edit().remove(key).apply()
     }
+
+    /**
+     * Completely wipes all encrypted preferences for panic purge.
+     */
+    fun clearAll(context: Context) {
+        val prefs = getPrefs(context)
+        prefs.edit().clear().apply()
+    }
 }
