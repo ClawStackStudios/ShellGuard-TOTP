@@ -118,7 +118,9 @@ jobs:
 
       - name: 🤖 Setup Android SDK
         if: steps.detect.outputs.tag != ''
-        uses: android-actions/setup-android@v3
+        run: |
+          yes | sdkmanager --licenses || true
+
 
       - name: ⚙️ Ensure Gradle Executable
         if: steps.detect.outputs.tag != ''
