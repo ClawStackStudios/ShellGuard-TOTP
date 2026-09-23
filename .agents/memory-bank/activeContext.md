@@ -24,9 +24,9 @@ Proceed with **Phase 13: Advanced Import/Export, Bitwarden Migration & Google Au
 1. Review Phase 13 in [`ROADMAP.md`](file:///config/Local-Storage/workspace-lucas/projects/Agents/ShellGuard-TOTP/ROADMAP.md) and Stage 14 in [`project/meta-prompt-ai-studio.md`](file:///config/Local-Storage/workspace-lucas/projects/Agents/ShellGuard-TOTP/project/meta-prompt-ai-studio.md).
 2. Start task on a clean branch: `git checkout -b feat/phase-13-advanced-import-export`.
 
-   - Task 25: Bitwarden Vault JSON / CSV sanitized import engine.
-   - Task 26: Google Authenticator `otpauth-migration://` payload decoder and multi-QR pagination intake.
-   - Task 27: Aegis & 2FAS encrypted backup restore wizard.
+   - Task 25: Multi-Format Import Engine (Bitwarden Vault/Auth, Aegis, 2FAS) & Dual Vault Persister.
+   - Task 25b: Native Debug Symbol Tables Extraction (`debugSymbolLevel = "SYMBOL_TABLE"`) & Release Bundle Polish.
+   - Task 26: Import & Export Screen, Bitwarden Migration Preview Wizard & Multi-QR Viewer.
 3. Verification Gate:
    ```bash
    ./gradlew testDebugUnitTest --no-configuration-cache --no-daemon

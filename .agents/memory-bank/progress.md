@@ -72,9 +72,9 @@
 
 ## What's Next
 - ⏳ **Phase 13: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 17)]**:
-  - Task 25: Bitwarden Vault JSON / CSV sanitized import engine.
-  - Task 26: Google Authenticator `otpauth-migration://` payload decoder and multi-QR pagination intake.
-  - Task 27: Aegis & 2FAS encrypted backup restore wizard.
+  - Task 25: Multi-Format Import Engine (Bitwarden Vault/Auth, Aegis, 2FAS) & Dual Vault Persister.
+  - Task 25b: Native Debug Symbol Tables Extraction (`debugSymbolLevel = "SYMBOL_TABLE"`) & Release Bundle Polish.
+  - Task 26: Import & Export Screen, Bitwarden Migration Preview Wizard & Multi-QR Viewer.
 - ⏳ **Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 18)]**
 - ⏳ **Phase 15: Sovereign ClawKey (`hu-`) Vault Creation & Import Integration [v0.1.1.0 (Build 19)]**
 

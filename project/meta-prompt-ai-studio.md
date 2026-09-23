@@ -26,7 +26,7 @@ flowchart TD
     Phase11["⚙️ Stage 12: Phase 11 — Categorized Settings Hub & Appearance/Behavior<br/>(Task 21: Preferences Store · Task 22: SettingsMetaScreen & Sub-screens)"]
     Phase115["🔗 Stage 12.5: Phase 11.5 — Settings Continuity: Theme Parity & Server/Sync Home<br/>(Task 22b: Theme Preference Streams · Task 22c: Theme Section, Server & Sync Sub-screen)"]
     Phase12["🛡️ Stage 13: Phase 12 — Security Suite, Panic Purge, Audit Logging & Web Server v0.0.2.3 Sync Parity<br/>(Task 23: Panic Trigger & Audit DAO · Task 24: Security Sub-screen & Audit Log · Task 24b: Dynamic TOTP URI Sync Engine)"]
-    Phase13["📦 Stage 14: Phase 13 — Advanced Import/Export & Google Auth Multi-QR<br/>(Task 25: MultiFormat Migration · Task 26: Import/Export Hub & QR Viewer)"]
+    Phase13["📦 Stage 14: Phase 13 — Advanced Import/Export & Google Auth Multi-QR<br/>(Task 25: MultiFormat Migration · Task 25b: Native Debug Symbols · Task 26: Import/Export Hub & QR Viewer)"]
     Phase14["📱 Stage 15: Phase 14 — Home Screen Interactive Glance Widgets & Icon Packs<br/>(Task 27: Glance Widget Engine & Icon Store · Task 28: 2x2/4x2 Widgets & Icon Manager)"]
     Phase15["🗝️ Stage 16: Phase 15 — ClawKey Vault Creation, Import Auth & Duplicate Resolution<br/>(Task 29: ClawKey Mode Engine · Task 30: ClawKeyInputForm & UI Integration)"]
 
@@ -740,20 +740,20 @@ Verify security toggles enforce immediate runtime protection, audit log records 
 
 ## 📦 Stage 14: Phase 13 Prompt — Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 17) — Milestone 3]
 
-> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-13-advanced-importexport-bitwarden-migration--google-authenticator-multi-qr-v0030-build-17--milestone-3) for complete specifications on **Task 25** and **Task 26**.  
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-13-advanced-importexport-bitwarden-migration--google-authenticator-multi-qr-v0030-build-17--milestone-3) for complete specifications on **Task 25**, **Task 25b**, and **Task 26**.  
 > **📖 Required Context Files for Phase 13**:  
 > 1. [`bitwarden-and-migration-spec.md`](./bitwarden-and-migration-spec.md) — Master Ingestion Pipeline, Schemas, Steam Guard & Dual Router.  
 > 2. [`room-storage-schema.md`](./room-storage-schema.md) — Section 6 (BackupManager.kt) & Section 7 (AuditLogDao).  
 > 3. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — Section 3 (ShellCryptionEngine AAD binding).  
 
-Copy and paste this prompt to execute **Phase 13 (Tasks 25 & 26)**:
+Copy and paste this prompt to execute **Phase 13 (Tasks 25, 25b & 26)**:
 
 ```markdown
 # PHASE 13 EXECUTION: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 17)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:
-- `ROADMAP.md`: Phase 13 (Task 25: Bitwarden & MultiFormat Migration · Task 26: Bitwarden Migration Wizard & Backups Screen).
+- `ROADMAP.md`: Phase 13 (Task 25: Bitwarden & MultiFormat Migration · Task 25b: Native Debug Symbol Extraction · Task 26: Bitwarden Migration Wizard & Backups Screen).
 - `bitwarden-and-migration-spec.md`: Complete parsing schemas, Steam Guard 2FA, conflict policies, and dual persistence router.
 - `room-storage-schema.md`: Section 6 (BackupManager.kt) & Section 7 (AuditLogDao).
 - `crypto-and-keystore.md`: Section 3 (ShellCryptionEngine AAD binding).
@@ -774,6 +774,11 @@ Execute Phase 13 adhering to the Functionality + UI Component pairing:
   - **Post-Commit Hooks**: Emits `IMPORT_SUCCESS` event to `AuditLogDao` and triggers `BackupManager.triggerAutomaticBackupIfEnabled()`.
   - **Google Authenticator Protobuf Exporter**: Generates standard `otpauth-migration://offline?data=...` Protobuf envelopes.
 
+### Task 25b: [Hardening & Packaging] Native Debug Symbol Tables Extraction (`debugSymbolLevel = "SYMBOL_TABLE"`) & Release Bundle Polish
+- Configure `ndk.debugSymbolLevel = "SYMBOL_TABLE"` under `buildTypes.release` in `app/build.gradle.kts`.
+- Extract and embed native debug symbols for SQLCipher (`libsqlcipher.so`) into the `.aab` bundle metadata (`BUNDLE-METADATA/com.android.tools.build.debugsymbols/`).
+- Silences Google Play Console advisory warnings during release track ingestion.
+
 ### Task 26: [UI Component] Import & Export Screen, Bitwarden Migration Preview Wizard & Multi-QR Viewer
 - Implement `SettingsImportExportScreen.kt`:
   - Category tiles for "Import Bitwarden Vault", "Import ShellGuard Habitat", "Import Aegis / 2FAS", "Export Encrypted Vault", and "Export for Google Authenticator".
@@ -782,7 +787,7 @@ Execute Phase 13 adhering to the Functionality + UI Component pairing:
 - Implement `GoogleAuthExportViewerDialog.kt`: Paged QR code carousel for multi-account migrations with account count badges and brightness boost.
 - Implement `SettingsBackupsScreen.kt`: Automatic backups toggle, Backup reminder toggle, and Android cloud backups toggle.
 
-Verify Bitwarden JSON exports parse accurately, zero passwords/notes leak into storage, destination routing functions properly, and Google Auth QR codes scan!
+Verify Bitwarden JSON exports parse accurately, zero passwords/notes leak into storage, destination routing functions properly, Google Auth QR codes scan, and release bundle includes native debug symbols!
 ```
 
 ---

@@ -425,6 +425,12 @@ Description: Implement `MultiFormatMigrationEngine` in `data/migration`:
 
 > Success Criteria: Parser extracts all 2FA secrets from complex Bitwarden exports with 0% password/note leakage in memory or storage. Dual persister accurately routes to local Room DB or self-hosted server gateway.
 
+- [ ]  Task 25b: [Hardening & Packaging] Native Debug Symbol Tables Extraction (`debugSymbolLevel = "SYMBOL_TABLE"`) & Release Bundle Polish
+
+Description: Configure `ndk.debugSymbolLevel = "SYMBOL_TABLE"` under `buildTypes.release` in `app/build.gradle.kts` to extract and embed native debug symbols for SQLCipher (`libsqlcipher.so`) into the `.aab` bundle metadata (`BUNDLE-METADATA/com.android.tools.build.debugsymbols/`), eliminating Google Play Console advisory warnings during release track ingestion.
+
+> Success Criteria: Generated `app-release.aab` bundle embeds native symbol tables, silencing the Google Play Console missing debug symbols warning upon upload.
+
 - [ ]  Task 26: [UI Component] Import & Export Screen, Bitwarden Migration Preview Wizard & Multi-QR Viewer
 
 Description: Implement:
