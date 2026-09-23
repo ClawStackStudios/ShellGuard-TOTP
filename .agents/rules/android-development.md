@@ -28,7 +28,25 @@ export GRADLE_OPTS="-XX:-UsePerfData -Djava.io.tmpdir=$PWD/app/build/tmp"
 - **JVM Flags**: `-XX:-UsePerfData` prevents memory crashes in containerized environments.
 - **Temp Directory**: Isolating `java.io.tmpdir` to `app/build/tmp` prevents permission errors and file locks.
 
+### Cloud CI Runner & SDK Invariants (GitHub Actions)
+- **Avoid Legacy SDK Actions**: Never use third-party actions (such as `android-actions/setup-android@v3`) that invoke `sdkmanager tools`. Google has removed the legacy `tools` package from the remote SDK repository, causing exit code 1 build failures.
+- **Runner-Native Android SDK**: GitHub Actions `ubuntu-latest` runners already pre-install the Android SDK at `/usr/local/lib/android/sdk` (`ANDROID_HOME`). Accept licenses directly via runner-native tooling:
+  ```yaml
+  - name: 🤖 Setup Android SDK
+    if: steps.detect.outputs.tag != ''
+    run: |
+      yes | sdkmanager --licenses || true
+  ```
+- **CLI Release Observability**: When monitoring cloud releases or troubleshooting pipeline failures, use `gh` CLI commands:
+  ```bash
+  gh run list -L 5
+  gh run view <run-id> --log-failed
+  gh run view --job=<job-id>
+  gh release view <tag>
+  ```
+
 ---
+
 
 ## 2. Architecture & MVI Layer Boundaries
 

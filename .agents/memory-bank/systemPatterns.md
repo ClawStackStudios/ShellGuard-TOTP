@@ -89,6 +89,11 @@ AuthRepository.hatchVault() + TotpItemDao.upsertItems() → Screen.CodeList
 1. **Setup Action**: Use `gradle/actions/setup-gradle@v4` to provide Gradle in `PATH` and configure dependency caching.
 2. **Auto-Wrapper Fallback**: Ensure the wrapper exists and is executable (`if [ ! -f "gradlew" ]; then gradle wrapper --gradle-version X.Y.Z; fi; chmod +x gradlew`) before running Gradle tasks.
 
+## Runner-Native Android SDK Provisioning Pattern
+1. **Zero-Dependency SDK Setup**: On GitHub Actions `ubuntu-latest`, bypass third-party `setup-android` wrappers and use the pre-installed Android SDK at `/usr/local/lib/android/sdk`.
+2. **License Pipe**: Accept SDK licenses via `yes | sdkmanager --licenses || true`. This eliminates breaking changes caused by third-party actions requesting deprecated packages (e.g. `sdkmanager tools`).
+
+
 ## Adaptive Signing Configuration Pattern
 1. **Conditional Keystore Binding**: In `app/build.gradle.kts`, check `releaseKeystoreFile.exists()` before configuring `signingConfigs.create("release")` and attaching it to `buildTypes.release`.
 2. **Headless Keystore Decoding**: In cloud CI, pass the base64 secret through environment variables (`SIGNING_KEY`) and decode via Python 3 (`base64.b64decode(os.environ['SIGNING_KEY'].strip())`) to ensure whitespace and newline resilience without GNU `base64: invalid input` errors.

@@ -144,5 +144,17 @@
 - Inspect window sizes via `wm size` and capture side-by-side screencaps to verify responsive layout behavior before declaring UI tasks complete.
 - *Rationale:* Guarantees production visual quality across varied display densities and aspect ratios.
 
+## Runner-Native Android SDK Provisioning & CLI Release Observability
+**Pattern: Zero-Dependency CI SDK Setup & Terminal Build Monitoring**
+- Third-party GitHub Actions wrappers like `android-actions/setup-android@v3` fail when upstream SDK packages are removed (e.g. `sdkmanager tools`).
+- Modern GitHub Actions `ubuntu-latest` runners already pre-install the Android SDK at `/usr/local/lib/android/sdk` (`ANDROID_HOME`). Always use native runners with:
+  `yes | sdkmanager --licenses || true`
+- Monitor, diagnose, and verify cloud releases directly from the shell using GitHub CLI:
+  - `gh run list -L 5` (track queued/running workflows)
+  - `gh run view <run-id> --log-failed` (instant terminal stacktrace on CI failures)
+  - `gh release view <tag>` (confirm published release assets and download URLs)
+- *Rationale:* Eliminates CI breakage from unmaintained third-party actions and removes the need to leave the terminal to inspect build failures.
+
+
 
 

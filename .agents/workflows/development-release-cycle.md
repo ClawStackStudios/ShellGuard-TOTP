@@ -92,6 +92,23 @@ The agent maintains awareness of this lifecycle state and proactively prompts th
   - **User: "Release / Push tag"** → Execute `git tag vX.Y.Z.W && git push origin vX.Y.Z.W`. Cloud CI takes over to produce the signed `.aab`.
   - **User: "No, still adding"** → Agent records that a release is pending but holds tag creation until the user signals completion.
 
+### Cloud CI Verification & Release Monitoring via GitHub CLI
+Immediately after pushing a release tag or triggering a release commit:
+1. **Monitor In-Flight Pipeline**:
+   ```bash
+   gh run list -L 5
+   gh run view <run-id>
+   ```
+2. **Diagnose Failures Immediately**:
+   ```bash
+   gh run view <run-id> --log-failed
+   ```
+3. **Verify Published Release Assets**:
+   ```bash
+   gh release view <tag>
+   ```
+   Confirm that both `.aab` and `.apk` branded assets are attached and verified before declaring the release complete.
+
 ---
 
 ### Transition 4: Post-Release → Tester Rollout & Feedback
@@ -100,6 +117,7 @@ The agent maintains awareness of this lifecycle state and proactively prompts th
   > *"Cloud build complete! The signed `app-release.aab` is ready. Would you like me to guide through uploading to the Play Console Internal Testing track and sharing the opt-in invite link with testers?"*
 
 ---
+
 
 ## 🧠 Epistemic Memory Rules for Agents
 
