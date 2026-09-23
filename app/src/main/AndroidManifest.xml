@@ -37,6 +37,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Phase 12 / Task 23: Emergency Panic Trigger Receiver -->
+        <receiver
+            android:name=".security.PanicTriggerReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.clawstack.shellguard.totp.ACTION_PANIC_WIPE" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

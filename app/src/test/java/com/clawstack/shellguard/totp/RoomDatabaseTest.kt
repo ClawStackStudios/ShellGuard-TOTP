@@ -131,4 +131,35 @@ class RoomDatabaseTest {
         assertNotNull(dao.getItemById("remote-active"))
         assertNotNull(dao.getItemById("local-scanned"))
     }
+
+    @Test
+    fun testInsertAndObserveAuditLogEvents() = runBlocking {
+        val dao = database.auditLogDao()
+        val event1 = com.clawstack.shellguard.totp.data.local.entities.AuditLogEntity(
+            eventType = "VAULT_UNLOCKED",
+            detail = "Unlocked with biometrics",
+            timestampMs = 1000L
+        )
+        val event2 = com.clawstack.shellguard.totp.data.local.entities.AuditLogEntity(
+            eventType = "SECRET_ADDED",
+            detail = "Added GitHub token",
+            timestampMs = 2000L
+        )
+
+        dao.insertEvent(event1)
+        dao.insertEvent(event2)
+
+        val all = dao.observeAll().first()
+        assertEquals(2, all.size)
+        // Ordered by timestampMs DESC: event2 should be first
+        assertEquals("SECRET_ADDED", all[0].eventType)
+        assertEquals("VAULT_UNLOCKED", all[1].eventType)
+
+        val searchResult = dao.searchEvents("GitHub").first()
+        assertEquals(1, searchResult.size)
+        assertEquals("SECRET_ADDED", searchResult[0].eventType)
+
+        dao.deleteAll()
+        assertTrue(dao.observeAll().first().isEmpty())
+    }
 }

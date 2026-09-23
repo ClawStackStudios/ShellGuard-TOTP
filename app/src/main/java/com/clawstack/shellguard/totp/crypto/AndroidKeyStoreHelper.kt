@@ -188,4 +188,26 @@ object AndroidKeyStoreHelper {
             // Ignore in headless test environments
         }
     }
+
+    /**
+     * Deletes all known and managed ShellGuard encryption keys from Android KeyStore.
+     */
+    fun deleteAllKeys() {
+        deleteKey(KEY_ALIAS_BIOMETRIC_WRAPPER)
+        deleteKey(KEY_ALIAS_PIN_WRAPPER)
+        deleteKey(KEY_ALIAS_PASSWORD_WRAPPER)
+        deleteKey("sg_totp_device_vault_aes256")
+        try {
+            val ks = getKeyStore()
+            if (ks != null) {
+                val aliases = ks.aliases()
+                while (aliases.hasMoreElements()) {
+                    val alias = aliases.nextElement()
+                    if (alias.startsWith("sg_totp_") || alias.startsWith("clawstack_")) {
+                        ks.deleteEntry(alias)
+                    }
+                }
+            }
+        } catch (ignored: Throwable) {}
+    }
 }

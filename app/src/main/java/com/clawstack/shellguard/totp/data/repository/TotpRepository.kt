@@ -9,6 +9,7 @@ import com.clawstack.shellguard.totp.data.local.entities.TotpItemEntity
 import com.clawstack.shellguard.totp.data.remote.ApiClient
 import com.clawstack.shellguard.totp.data.remote.models.CreateVaultItemRequest
 import com.clawstack.shellguard.totp.data.remote.models.PearlDto
+import com.clawstack.shellguard.totp.engine.TotpUriParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -79,13 +80,17 @@ class TotpRepository(
             //    NOTE: pearls with a null/missing server `updated_at` stamp are ALWAYS
             //    treated as changed — comparing null-to-null would silently classify
             //    brand-new pearls as "unchanged" and they would never be inserted.
-            val existingRemoteByUpdatedAt = totpItemDao.getRemoteItemsOnce(userUuid)
-                .associate { it.id to it.remoteUpdatedAt }
+            val existingRemoteItems = totpItemDao.getRemoteItemsOnce(userUuid)
+            val existingRemoteById = existingRemoteItems.associateBy { it.id }
+            val existingRemoteByUpdatedAt = existingRemoteItems.associate { it.id to it.remoteUpdatedAt }
             val totpPearls = remotePearls.filter { !it.totp_secret.isNullOrBlank() }
             val (unchangedRemoteIds, changedPearls) = classifyDeltaPearls(existingRemoteByUpdatedAt, totpPearls)
 
             // 4. Decrypt seeds and map to Room entities (changed/new pearls only)
-            val entities = changedPearls.mapNotNull { pearl ->
+            // Phase 12 / Task 24b: Dynamic TOTP URI Engine (Web Server v0.0.2.3 Parity)
+            // Pipes decrypted seed through TotpUriParser to parse otpauth:// or steam:// URIs,
+            // extracting clean Base32 secret, algorithm, digits, period, and URI-provided title/issuer.
+            val candidateEntities = changedPearls.mapNotNull { pearl ->
                 try {
                     val decryptedSeed = ShellCryptionEngine.decryptField(
                         encryptedJson = pearl.totp_secret!!,
@@ -93,13 +98,17 @@ class TotpRepository(
                         table = "vault_pearls_totp",
                         recordId = pearl.id
                     )
+                    val parsed = TotpUriParser.parse(decryptedSeed)
                     TotpItemEntity(
                         id = pearl.id,
                         ownerUuid = userUuid,
-                        title = pearl.title,
-                        username = pearl.username,
-                        category = pearl.category,
-                        secret = decryptedSeed.replace(" ", "").replace("-", "").uppercase(),
+                        title = pearl.title.ifBlank { parsed?.title ?: "2FA Token" },
+                        username = pearl.username?.ifBlank { null } ?: parsed?.username,
+                        category = pearl.category ?: parsed?.issuer,
+                        secret = parsed?.secret ?: decryptedSeed.replace(" ", "").replace("-", "").uppercase(),
+                        algorithm = parsed?.algorithm ?: "SHA1",
+                        digits = parsed?.digits ?: 6,
+                        period = parsed?.period ?: 30,
                         isLocalOnly = false,
                         syncState = "SYNCED",
                         remoteUpdatedAt = pearl.updated_at,
@@ -110,14 +119,20 @@ class TotpRepository(
                 }
             }
 
+            // Delta fast filter: Only upsert items that are brand-new or whose content has actually changed
+            val entitiesToUpsert = candidateEntities.filter { candidate ->
+                val local = existingRemoteById[candidate.id]
+                local == null || !isContentIdentical(local, candidate)
+            }
+
             // 5. Upsert into Room DB and prune deleted remote items.
-            //    Pruning spans ALL known remote ids (unchanged + changed) so rows are
+            //    Pruning spans ALL known remote ids (unchanged + candidate) so rows are
             //    only removed when they disappeared server-side, never for merely
             //    unchanged mirrors.
-            if (entities.isNotEmpty()) {
-                totpItemDao.upsertItems(entities)
+            if (entitiesToUpsert.isNotEmpty()) {
+                totpItemDao.upsertItems(entitiesToUpsert)
             }
-            val remoteIds = unchangedRemoteIds + entities.map { it.id }
+            val remoteIds = unchangedRemoteIds + candidateEntities.map { it.id }
             totpItemDao.pruneDeletedRemoteItems(userUuid, remoteIds)
 
             // 6. Update sync metadata
@@ -134,7 +149,7 @@ class TotpRepository(
                 )
             )
 
-            entities.size
+            candidateEntities.size
         }.onFailure { ex ->
             syncMetadataDao?.updateMetadata(
                 SyncMetadataEntity(
@@ -176,6 +191,20 @@ class TotpRepository(
                 !(pearl.updated_at != null && localStamp != null && localStamp == pearl.updated_at)
             }
             return Pair(unchangedIds, changed)
+        }
+
+        /**
+         * Fast content comparison to avoid unnecessary Room database writes when
+         * pearls with null updated_at have already been synchronized with identical attributes.
+         */
+        internal fun isContentIdentical(local: TotpItemEntity, candidate: TotpItemEntity): Boolean {
+            return local.secret == candidate.secret &&
+                    local.algorithm == candidate.algorithm &&
+                    local.digits == candidate.digits &&
+                    local.period == candidate.period &&
+                    local.title == candidate.title &&
+                    local.username == candidate.username &&
+                    local.category == candidate.category
         }
     }
 }

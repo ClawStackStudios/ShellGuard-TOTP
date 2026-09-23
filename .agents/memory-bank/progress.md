@@ -60,11 +60,22 @@
   - Tested on live Google Pixel over ADB TLS; captured `screenshot-09-add-secret.png` (Abyssal Dark mode); expanded `README.md` to 3×3 screenshot grid.
   - Test suite passing 100% green (33 test tasks, 101+ unit tests).
 
+- ✅ **Phase 12: Security Suite, Panic Purge, Security Audit Logging & Web Server v0.0.2.3 Sync Parity [v0.0.2.3 (Build 16)]**:
+  - `AuditLogEntity.kt` & `AuditLogDao.kt`: Room database bumped to version 2; reactive Flow event stream recording unlock, biometric failures, export/restore, and secret creation.
+  - `SecurityPreferenceController.kt`: Encrypted preferences managing `allowScreenshots`, tap-to-reveal timeout duration (`10s`, `30s`, `60s`), and panic purge toggles.
+  - `PanicTriggerReceiver.kt`: Emergency broadcast handler (`ACTION_PANIC_WIPE`) destroying Android KeyStore keys, EncryptedDeviceVault, Room tables, and auth preferences.
+  - `SettingsSecurityScreen.kt`: Encryption status tile, screenshot toggle with risk dialog, tap-to-reveal duration chips, and panic wipe toggle.
+  - `SettingsAuditLogScreen.kt`: Live chronological event list, search filter, share intent export, and clear log dialog.
+  - `MainActivity.kt`: Reactive `FLAG_SECURE` window management enforcing anti-snoop protection when locked or when `allowScreenshots` is disabled.
+  - `TotpRepository.kt`: Web Server v0.0.2.3 dynamic TOTP URI parsing via `TotpUriParser.parse()` extracting Base32 secret, custom algorithm (SHA256/512), digits (8), and custom periods, paired with `isContentIdentical()` fast-filter avoiding database write churn on null `updated_at`.
+  - 107/107 unit and Robolectric tests passing 100% green; verified on physical Google Pixel and Nexus 7 tablet.
+
 ## What's Next
-- ⏳ **Phase 12: Security Suite, Panic Purge & Security Audit Logging [v0.0.2.3 (Build 16)]**:
-  - Task 23: [Functionality] Security Preference Controller, Panic Trigger Handler & Room Audit Log DAO (`AuditLogDao`, `AuditLogEntity`, `PanicTriggerReceiver`, `allowScreenshots` preference stream, tap-to-reveal timeout).
-  - Task 24: [UI Component] Security Sub-screen (`SettingsSecurityScreen.kt`: Tap-to-Reveal, Screen Security `FLAG_SECURE`, Panic Purge) & Security Audit Log Sub-screen (`SettingsAuditLogScreen.kt`).
-- ⏳ **Phase 13: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 17)]**
+- ⏳ **Phase 13: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 17)]**:
+  - Task 25: Bitwarden Vault JSON / CSV sanitized import engine.
+  - Task 26: Google Authenticator `otpauth-migration://` payload decoder and multi-QR pagination intake.
+  - Task 27: Aegis & 2FAS encrypted backup restore wizard.
 - ⏳ **Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 18)]**
 - ⏳ **Phase 15: Sovereign ClawKey (`hu-`) Vault Creation & Import Integration [v0.1.1.0 (Build 19)]**
+
 

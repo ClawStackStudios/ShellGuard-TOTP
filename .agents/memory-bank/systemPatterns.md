@@ -130,3 +130,8 @@ AuthRepository.hatchVault() + TotpItemDao.upsertItems() → Screen.CodeList
 - **Format Invariant**: Sovereign human key (`hu-` + 64 hex/base62 characters = 67 characters).
 - **Single Source Validator**: Pure-function `ClawKeyValidator.isValid(key)`.
 - **Dual-Tab UX Form**: Mirroring `QuickLoginModal.tsx` on web with "Key Paste" (monospace textarea) and "Upload File" (SAF `.json` parser extracting `identity.token`).
+
+## Dynamic TOTP Payload Extraction & Content Fast-Filtering
+- **Dynamic URI Extraction**: Incoming remote vault items may carry raw Base32 secret seeds or full `otpauth://` URIs. `TotpRepository` always delegates payload parsing through `TotpUriParser.parse(decryptedSecret)` to extract secret, algorithm, digits, and period dynamically.
+- **Pre-Upsert Identity Fast-Filter (`isContentIdentical`)**: To prevent unnecessary Room write churn and encryption cycles, remote items are compared against local cached entities using `isContentIdentical(cached, remote)`. Only altered records trigger Room updates and audit trail events.
+

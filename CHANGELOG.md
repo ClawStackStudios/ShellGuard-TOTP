@@ -8,6 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - No unreleased changes yet.
 
+## [0.0.2.3] - 2026-09-22 (Build 16) — Phase 12: Security Suite, Panic Purge, Audit Logging & Web Server v0.0.2.3 Sync Parity
+### Added
+- **Security Hub Sub-screen (`SettingsSecurityScreen`)**: Added comprehensive security controls including runtime screenshot capture toggle (`FLAG_SECURE`), tap-to-reveal timeout configuration (10s, 30s, 60s, Never), and emergency panic wipe trigger enablement.
+- **Emergency Panic Wipe (`PanicTriggerReceiver`)**: Broadcast receiver registered for `ACTION_PANIC_WIPE` that executes an irreversible zero-residue wipe across hardware KeyStore aliases, EncryptedSharedPreferences vault, Room database tables, and auth preferences before terminating the app process.
+- **Security Audit Trail (`SettingsAuditLogScreen`)**: Chronological audit trail viewer backed by Room `AuditLogEntity` and `AuditLogDao` tracking cryptographic events (`VAULT_UNLOCKED`, `BIOMETRIC_FAILED`, `BACKUP_CREATED`, `SECRET_ADDED`, `PANIC_TRIGGERED`, `SCREEN_SECURITY_CHANGED`, `SYNC_COMPLETED`, `SYNC_FAILED`) with human-readable timestamps and search/filter support.
+- **Database Migration**: Bumped Room database schema to `version = 2` with auto-migration support for the new `audit_logs` table.
+
+### Changed
+- **Web Server v0.0.2.3 Sync Parity**: Enhanced `TotpRepository` to support dynamic TOTP URI extraction (`TotpUriParser.parse()`) and `isContentIdentical()` fast-filter, reconciling payload structures between ShellGuard Web Server v0.0.2.3 and the Android client.
+- **Settings Navigation Wiring**: Connected the Security and Audit Log tiles in `SettingsMetaScreen` directly to their dedicated screens via `TotpNavHost`.
+
+### Verified
+- **Dual-Device UI Verification**: Verified live rendering on both Google Pixel (phone) and Nexus 7 (tablet) over ADB.
+- **Test Suite**: 107/107 unit and Robolectric tests passing green.
+
 ## [0.0.2.2] - 2026-09-12 (Build 15) — Hotfix: Compose Secret Key Masking & IME Hardening
 ### Fixed
 - **Security Hardening — Plaintext 2FA Secret Key Exposure (CWE-359)**: `AddSecretScreen.kt` previously exposed the Base32 Secret Key via plaintext input without password semantics, leaving sensitive seeds susceptible to system keyboard predictive learning, word caching, and shoulder-surfing. Applied `PasswordVisualTransformation`, enforced `KeyboardType.Password`, and explicitly disabled predictive text learning via `autoCorrectEnabled = false`.

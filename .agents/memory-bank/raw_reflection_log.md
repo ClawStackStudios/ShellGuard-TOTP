@@ -35,4 +35,22 @@ Successes:
 - Hardened `AddSecretScreen.kt` with `PasswordVisualTransformation`, `KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrectEnabled = false)`, and a dynamic visibility toggle.
 - 100% green test suite across all 33 tasks and clean `assembleDebug` build verification.
 ---
+Date: 2026-09-22
+TaskRef: "Phase 12: Security Suite, Panic Purge, Audit Logging & Web Server v0.0.2.3 Sync Parity [v0.0.2.3 (Build 16)]"
+
+Learnings:
+- In multi-factor authentication applications mirroring a dynamic backend (such as ShellGuard Web Server v0.0.2.3), TOTP secrets may arrive in RFC 6238 Key URI formats (`otpauth://totp/...`) or raw Base32 strings. Piping decrypted secrets through `TotpUriParser.parse()` normalizes both variants into clean Base32 while extracting custom algorithm (SHA256/512), digits (8), and period parameters, preserving interoperability across services.
+- When remote servers omit `updated_at` or emit null timestamps on remote sync responses, comparing candidate entity fields (`isContentIdentical`) before executing Room transactions prevents unnecessary database write cycles and UI recomposition churn.
+- Room database version bumps (from v1 to v2 with `AuditLogEntity`) require careful instantiation across test harnesses (`RoomDatabaseTest`, `MainActivityLaunchTest`) and application singletons (`ShellGuardTotpApp`). Providing fallback destruction/migration and explicit DAO test fixtures ensures 100% test suite resilience.
+- When testing on physical devices with differing screen sizes (Google Pixel 1080x1920 vs Nexus 7 tablet 1200x1920), soft keyboard appearances alter touch targets and scroll offsets; dumping the live hierarchy via `uiautomator dump` yields exact `[x1, y1][x2, y2]` bounds for deterministic interaction.
+
+Difficulties:
+- During headless testing and local builds, Gradle configuration cache cached stale paths pointing to `/config/Documents/...`. Running with `--no-configuration-cache` resolved directory resolution discrepancies.
+- A missing `</intent-filter>` closing tag in `AndroidManifest.xml` broke manifest merger; resolved immediately with balanced tags.
+
+Successes:
+- Successfully implemented Tasks 23, 24, and 24b: `AuditLogDao`, `AuditLogEntity`, `SecurityPreferenceController`, `PanicTriggerReceiver`, `SettingsSecurityScreen`, `SettingsAuditLogScreen`, and `TotpRepository` dynamic URI sync.
+- 107/107 unit and Robolectric tests passing 100% green.
+- Live verified on physical Google Pixel and Nexus 7 tablet.
+---
 

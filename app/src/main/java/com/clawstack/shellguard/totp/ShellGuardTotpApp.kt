@@ -4,6 +4,8 @@ import android.app.Application
 import android.util.Log
 import com.clawstack.shellguard.totp.data.backup.BackupManager
 import com.clawstack.shellguard.totp.data.local.ShellGuardTotpDatabase
+import com.clawstack.shellguard.totp.data.local.dao.AuditLogDao
+import com.clawstack.shellguard.totp.data.preferences.SecurityPreferenceController
 import com.clawstack.shellguard.totp.data.repository.AuthRepository
 import com.clawstack.shellguard.totp.data.repository.TotpRepository
 import com.clawstack.shellguard.totp.data.sync.TotpSyncWorker
@@ -17,6 +19,14 @@ class ShellGuardTotpApp : Application() {
 
     val database: ShellGuardTotpDatabase by lazy {
         ShellGuardTotpDatabase.getInstance(this)
+    }
+
+    val auditLogDao: AuditLogDao by lazy {
+        database.auditLogDao()
+    }
+
+    val securityPreferenceController: SecurityPreferenceController by lazy {
+        SecurityPreferenceController(this, auditLogDao)
     }
 
     val authRepository: AuthRepository by lazy {

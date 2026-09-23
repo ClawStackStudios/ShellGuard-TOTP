@@ -3,6 +3,20 @@
 > **Single Source of Truth for Google Play Store What's New Notes**  
 > *Google Play enforces a strict 500-character limit per localized language block.*
 
+## `v0.0.2.3` — Security Suite, Panic Purge & Server Parity (Build 16)
+
+```xml
+<en-US>
+• Security Suite: Configurable Tap-to-Reveal timeout (10s, 30s, 60s) and screenshot privacy controls.
+• Panic Purge: Emergency broadcast integration to wipe encryption keys, database, and cached secrets.
+• Security Audit Trail: Live, searchable chronological log of cryptographic and access events.
+• Web Server Sync Parity: Dynamic RFC 6238 TOTP URI support for SHA256/8-digit/custom period tokens.
+• Full hardware security: Android KeyStore, SQLCipher AES-256, 16 KB page-aligned.
+</en-US>
+```
+
+---
+
 ## `v0.0.2.2` — Hotfix: Secret Key Masking & IME Hardening (Build 15)
 
 ```xml

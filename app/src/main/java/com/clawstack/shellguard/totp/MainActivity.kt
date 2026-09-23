@@ -69,6 +69,24 @@ class MainActivity : FragmentActivity() {
             val isVaultHatched by authViewModel.isVaultHatched.collectAsStateWithLifecycle()
             val isBiometricEnabled by authViewModel.isBiometricEnabled.collectAsStateWithLifecycle()
             val isLocked by authViewModel.isLocked.collectAsStateWithLifecycle()
+            val allowScreenshots by authViewModel.allowScreenshots.collectAsStateWithLifecycle()
+
+            // Phase 12 / Task 24: Reactive Screen Security (FLAG_SECURE) enforcement
+            // Invariant: Always enforce FLAG_SECURE when locked or when screenshots are disallowed.
+            // When unlocked and allowScreenshots is true, clear FLAG_SECURE.
+            // In debug builds (!BuildConfig.DEBUG), FLAG_SECURE is never applied so ADB screencap works.
+            androidx.compose.runtime.LaunchedEffect(allowScreenshots, isLocked) {
+                if (!BuildConfig.DEBUG) {
+                    if (isLocked || !allowScreenshots) {
+                        window.setFlags(
+                            WindowManager.LayoutParams.FLAG_SECURE,
+                            WindowManager.LayoutParams.FLAG_SECURE
+                        )
+                    } else {
+                        window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                    }
+                }
+            }
 
             // Resolve the effective dark/light state and re-assert system bar icon
             // appearance reactively — the one-shot enableEdgeToEdge() in onCreate()
