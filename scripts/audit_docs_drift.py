@@ -104,6 +104,11 @@ def audit_relative_links():
             if not target:
                 continue
             target_path = (md.parent / target).resolve()
+            try:
+                target_path.relative_to(ROOT)
+            except ValueError:
+                # Target resolves outside git repository root (e.g. sibling repo in local workspace)
+                continue
             if not target_path.exists():
                 print(f"[!] Broken link in {md.relative_to(ROOT)}: '{link}' -> '{target}'")
                 broken += 1

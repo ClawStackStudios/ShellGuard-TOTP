@@ -687,7 +687,7 @@ Verify every v0.0.1.3 settings control is reachable from the hub (or retired wit
 > **📖 Required Context Files for Phase 12**:  
 > 1. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — KeyStore & Panic Purge.  
 > 2. [`room-storage-schema.md`](./room-storage-schema.md) — Audit Log Room Schema.  
-> 3. [`../../ShellGuard/compatibility_layer.md`](../../ShellGuard/compatibility_layer.md) — Web Server v0.0.2.3 Build 25 Wire Contract & Dynamic TOTP URI Engine.
+> 3. [`compatibility_layer.md (Web Server)`](https://github.com/ClawStackStudios/ShellGuard/blob/main/compatibility_layer.md) — Web Server v0.0.2.3 Build 25 Wire Contract & Dynamic TOTP URI Engine.
 
 Copy and paste this prompt to execute **Phase 12 (Tasks 23, 24 & 24b)**:
 
@@ -839,7 +839,7 @@ Verify widgets update reliably on home screens with tap-to-copy responsiveness, 
 > 1. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — Section 2 (AndroidKeyStoreHelper patterns).
 > 2. [`room-storage-schema.md`](./room-storage-schema.md) — Section 6 (BackupManager.kt import/export).
 > 3. [`ui-ux-design-system.md`](./ui-ux-design-system.md) — Section 9 (VaultSecurityScreen dual-tab pattern).
-> 4. **External Reference**: [`ShellGuard/src/components/QuickLoginModal.tsx`](../../ShellGuard/src/components/QuickLoginModal.tsx) — The web platform's dual-tab ClawKey form (Paste / Upload) that the Android `ClawKeyInputForm` must mirror in UX behaviour.
+> 4. **External Reference**: [`QuickLoginModal.tsx (Web Platform)`](https://github.com/ClawStackStudios/ShellGuard/blob/main/src/components/QuickLoginModal.tsx) — The web platform's dual-tab ClawKey form (Paste / Upload) that the Android `ClawKeyInputForm` must mirror in UX behaviour.
 
 Copy and paste this prompt to execute **Phase 15 (Tasks 29 & 30)**:
 
