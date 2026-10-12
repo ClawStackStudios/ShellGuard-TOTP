@@ -24,3 +24,13 @@ I traced the seam in `app/build.gradle.kts`. Instead of forcing CI to mock a dum
 
 I updated `.agents/rules/git-hygiene.md`, `cadence-and-lifecycle-prompts.md`, `android-development.md`, and `CONTRIBUTING.md` to canonize the Cloud-First CI Verification Gate. The host machine runs only the lightweight documentation drift audit, pushes to the branch, and watches the run with `gh run watch`.
 
+## 2026-10-12 — Pre-Work Assumptions, Jules Fleet Onboarding & Phase 13 Dispatch
+
+I reconciled the domain truth of ShellGuard-TOTP with Lucas: zero attachments, strictly RFC 6238 2FA seeds. The external Bitwarden JSON export carries passwords and notes, but our `BitwardenSanitizer` purges them in volatile RAM so zero non-TOTP credentials ever reach disk.
+
+I executed `/pre-work-assumptions`, projecting forward to Phase 14 Glance Widgets assuming Phase 13 lands 100% green. That forward leap caught three critical contract gaps:
+1. Glance Widgets in broadcast receivers need a one-shot `TotpItemDao.getAllTotpItems()` suspend query, not an infinite Flow. I added it directly to Jules's Task 25 specification so `MigrationPersister` implements it immediately.
+2. Icon Packs in Phase 14 need clean issuer keys. I added compound title splitting (`Service: User`) to `BitwardenSanitizer` so brand glyphs match with zero downstream refactoring.
+3. Settings Hub navigation continuity: `SettingsMetaScreen` category 6 (`☁️ Backups`) needs a route to `SettingsBackupsScreen`.
+
+I built the fleet briefing `.jules/JULES.md`, `task-25.md` (Wave 1), `task-26.md` (Waves 2-4), and authored the master execution dossier `meta-plan-phase-13-jules-orchestration-and-release.md`. I merged `main` with the Cloud CI runner, created `feat/phase-13-advanced-import-export`, and launched Jules session `14327715134975196291` via `jules new`. The stage branch is active. Now I scout and stand watch for the pull request.
