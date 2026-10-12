@@ -5,3 +5,6 @@ Piping decrypted secrets through `TotpUriParser.parse()` instead of raw Base32 i
 
 ## 2026-09-22 — panic wipe broadcast & room v2 migration
 Configured `PanicTriggerReceiver` to listen for emergency panic broadcasts with a fallback `clearAll()` covering KeyStore keys, SQLCipher Room DB, and encrypted preferences. Bumped `ShellGuardTotpDatabase` to version 2 with `fallbackToDestructiveMigration()` and verified full test suite synchronization with Robolectric SQLite open helper.
+
+## 2026-10-03 — git advanced history engineering & test oracle bisect
+Pattern matched the Git Advanced Workflows skill into our hygiene rules and consolidated learnings. Codified `--fixup` autosquash workflows with two-layer attribution pairing and automated binary search bug hunting via `git bisect run ./gradlew testDebugUnitTest`.

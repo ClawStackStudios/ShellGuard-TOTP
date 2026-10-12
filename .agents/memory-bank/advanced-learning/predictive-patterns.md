@@ -13,7 +13,18 @@
 - **Confidence**: 0.89
 - **Basis**: Hardware-backed KeyStore aliases must be completely purged to guarantee unrecoverability upon security breaches.
 
+### Pattern: Automated Release Pipeline with git-cliff & Dual Distribution (Phase 13+)
+- **Prediction**: As release frequency increases with multi-format import/export (Phase 13), manual creation of `RELEASE-v*.md` and GitHub Release assets risks documentation drift. Integrating `git-cliff` directly into `.github/workflows/release.yml` will automate markdown generation from conventional commit tags.
+- **Confidence**: 0.94
+- **Basis**: Proven in automated open-source ecosystems using Keep a Changelog + Conventional Commits.
+- **Recommended Resources**: [git-cliff documentation, GitHub Actions release notes automation]
+
 ## Cross-Domain Connections
+
+### Pattern: Conventional Commits & Changelog Synthesizers
+- **Domains**: Rust (`git-cliff`), Node.js (`standard-version`, `commitlint`), Python (`commitizen`), Android/Kotlin Git repositories.
+- **Common Principle**: Universal `<type>(<scope>): <summary>` commit structure enables deterministic changelog categorization and automated semantic version bump calculation.
+- **Transferable Insights**: Standard regex parsers (`^feat` ➔ Added, `^fix` ➔ Fixed, `^perf|^refactor` ➔ Changed) transcend languages and frameworks.
 
 ### Pattern: Cryptographic Wire & Rest Parity
 - **Domains**: Android Kotlin Client, Node.js / Express Server, Rust / C Core

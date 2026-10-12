@@ -53,4 +53,81 @@ Successes:
 - 107/107 unit and Robolectric tests passing 100% green.
 - Live verified on physical Google Pixel and Nexus 7 tablet.
 ---
+Date: 2026-10-02
+TaskRef: "Changelog Automation & Conventional Commits Skill Knowledge Ingestion (/learn)"
+
+Learnings:
+- Keep a Changelog 1.1.0 standardizes 6 exact functional sections: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, and `Security`. Adhering to these strict names guarantees interoperability with automated changelog parsers and release note generators.
+- Conventional Commits (`<type>[optional scope][!]: <description>`) provides a deterministic, mathematical mapping to changelog categories: `feat` ➔ `Added`, `refactor`/`perf` ➔ `Changed`, `fix` ➔ `Fixed`, `revert` ➔ `Removed`, security fixes ➔ `Security`.
+- In pair-programming agent workflows requiring two-layer attribution (`User:` / `AI:`), placing the Conventional Commit header on line 1 followed by blank lines and the attribution block satisfies both Git commitlint/git-cliff parsers and human/AI accountability standards.
+- In multi-digit version schemes (e.g. 4-digit `MAJOR.MINOR.PATCH.REVISION`), Conventional Commit types map cleanly: breaking changes (`!`) trigger `MAJOR`, subsystem features trigger `MINOR`, phase deliverables trigger `PATCH`, and hotfixes/refactors trigger `REVISION`, while monotonically incrementing Android `versionCode = N + 1`.
+- Comparison links at the footer of `CHANGELOG.md` (`[X.Y.Z.N]: https://.../compare/...`) provide instantaneous 1-click Git diff inspection for auditors and developers.
+- `git-cliff` (`cliff.toml`) provides an ultra-fast, zero-dependency, standalone binary solution for generating changelogs directly from git history in containerized/headless environments.
+
+Difficulties:
+- Bridging standard 3-digit SemVer tools (Node/Rust) with Android's 4-digit SemVer and monotonic integer `versionCode` requirement. Resolved by codifying an explicit 4-tier mapping matrix in `semantic-versioning.md` and adding `cliff.toml` with regex group parsers.
+
+Successes:
+- Bolstered `.agents/rules/git-hygiene.md` with Conventional Commits specifications, scope taxonomy, breaking change syntax, and two-layer attribution alignment.
+- Bolstered `.agents/rules/semantic-versioning.md` with Keep a Changelog 1.1.0 standards, comparison links, release note templates, and type-to-SemVer mapping matrix.
+- Created dedicated `.agents/skills/changelog-automation/SKILL.md` and project root `cliff.toml`.
+- Updated root `CHANGELOG.md` with full Keep a Changelog compare links.
+---
+Date: 2026-10-03
+TaskRef: "Deterministic Documentation Automation & Root Docs SSoT Synthesis (doc-automation skill)"
+
+Learnings:
+- The fundamental axiom of Docs-as-Code is that the codebase is the physical, ground-truth reality, and documentation is a compiled projection. If code and documentation disagree, the documentation is defective by definition.
+- Documentation drift typically falls into four concrete failure topologies: Metric Drift (test counts/badges), Schema/Contract Drift (Room tables/DAOs), Strategic Blast-Radius Drift (roadmap phase build re-indexing), and Store Constraint Leakage (Play Store markdown or character overflows).
+- The 8-Point Root Documentation Mesh connects source code changes across `app/build.gradle.kts`, `ROADMAP.md`, `CHANGELOG.md`, `RELEASE-vX.Y.Z.N.md`, `RELEASE-PLAY.md`, `README.md`, domain specs (`project/*.md`), and the agent memory bank.
+- Automating drift detection via a standalone Python auditor script (`scripts/audit_docs_drift.py`) transforms documentation verification into a deterministic, non-zero-exit-code CI check.
+
+Difficulties:
+- Generic documentation templates often carry legacy assumptions (e.g. web frameworks like React/Zustand or JSDoc). Purging these in favor of Android Kotlin MVI primitives (`StateFlow`, `Room + SQLCipher`, `KDoc`) ensures total contextual fidelity.
+
+Successes:
+- Created sibling skill `.agents/skills/doc-automation/SKILL.md` matching the epistemic shape of `changelog-automation`.
+- Created standalone CLI tool `scripts/audit_docs_drift.py` for automated pre-commit and CI verification.
+- Fortified `.agents/rules/docs-hygiene.md` to reference the new skill and enforce zero-deferred documentation under the "Docs Bow to Code" axiom.
+---
+Date: 2026-10-03
+TaskRef: "SECURITY.md Root Policy Creation & Skill/Rule Integration"
+
+Learnings:
+- High-assurance cryptographic applications require a public root-level `SECURITY.md` establishing supported versions, cryptographic threat model boundaries, and coordinated vulnerability disclosure channels.
+- Integrating `SECURITY.md` into the Root Documentation Mesh elevates the protocol to a 9-Point/10-Point Mesh, requiring verification that the Supported Versions table matches `app/build.gradle.kts` and that cryptographic defense claims (SQLCipher, KeyStore StrongBox, `FLAG_SECURE`, IME dictionary protection, panic purge) reflect real code implementations.
+- Automating `SECURITY.md` checks in `scripts/audit_docs_drift.py` ensures that release version bumps immediately flag if `SECURITY.md` supported version tables are not updated.
+
+Difficulties:
+- Ensuring the threat model clearly scopes out physical decapping or rooted device compromise to prevent ambiguous or frivolous vulnerability submissions while maintaining a strict 48h response SLA for legitimate issues.
+
+Successes:
+- Created root `SECURITY.md` with complete cryptographic invariants, supported versions table, and disclosure timeline.
+- Integrated `SECURITY.md` into `.agents/skills/doc-automation/SKILL.md` (9-Point Root Mesh).
+- Fortified `.agents/rules/docs-hygiene.md` and `.agents/workflows/walk-the-docs.md`.
+- Added `audit_security()` check to `scripts/audit_docs_drift.py`.
+- Linked `SECURITY.md` in root `README.md` Documentation Index.
+---
+Date: 2026-10-03
+TaskRef: "Git Advanced Workflows & History Engineering Skill Knowledge Ingestion (/learn)"
+
+Learnings:
+- Interactive rebase (`git rebase -i`) is history engineering: verbs (`pick`, `reword`, `edit`, `squash`, `fixup`, `drop`) allow pre-merge transformation into clean, atomic Conventional Commits.
+- The autosquash pattern (`git commit --fixup <hash>` combined with `git rebase -i --autosquash`) completely removes manual reordering overhead, pairing defect fixes with their parent feature commits deterministically.
+- `git bisect run` combined with a non-daemon Gradle test runner (`./gradlew testDebugUnitTest --no-daemon`) automates regression discovery in O(log N) commit steps using standard process exit codes (0 = good, 1-127 = bad).
+- Git worktrees (`git worktree add`) provide physical workspace isolation for hotfixes and code reviews without dirtying the working directory, stashing, or risking in-flight work.
+- `git reflog` preserves orphaned and reset commits for 90 days, providing deterministic recovery paths from botched rebases or accidental `reset --hard` commands.
+- Pre-rebase safety branches (`git branch backup/<name>`) and strictly enforced `--force-with-lease` ensure zero-loss history rewrites on local feature branches while prohibiting any rebase on public branches (`main`, `master`, `release/*`).
+
+Difficulties:
+- In headless containerized environments, interactive git rebases can hang indefinitely waiting for an interactive editor (vim/nano). Mitigated by mandating `GIT_EDITOR=:` and `GIT_SEQUENCE_EDITOR=:` (or `--no-edit`).
+- Reconciling autosquashed commits with two-layer attribution: fixups must preserve or update the `AI:` implementation trace while retaining the original `User:` architectural intent.
+
+Successes:
+- Synthesized and created dedicated skill `.agents/skills/git-advanced-workflows/SKILL.md` with complete command tables, autosquash flows, Mermaid bisect diagram, worktree playbooks, and reflog recovery blueprints.
+- Bolstered `.agents/rules/git-hygiene.md` with Section "Rebase & Advanced Workflow Hygiene" codifying editor bypass, autosquash, public branch rebase prohibition, `--force-with-lease` mandate, automated bisect runner, worktree isolation, and reflog recovery.
+---
+
+
+
 

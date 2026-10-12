@@ -34,7 +34,7 @@ Identify the exact domains touched:
 
 ---
 
-## 📋 Phase 2: The 8-Point Documentation Walk
+## 📋 Phase 2: The 10-Point Documentation Walk
 
 Walk each anchor document sequentially and enforce bidirectional consistency with the code:
 
@@ -70,13 +70,17 @@ Walk each anchor document sequentially and enforce bidirectional consistency wit
 - [ ] Update passing test suite count badge/prose to match current test oracle total.
 - [ ] Highlight new user-facing features or security suites in the feature list.
 
-### 8. Architectural & Storage Specs (`project/*.md`, `ARCHITECTURE.md`)
+### 8. Security Policy & Posture (`SECURITY.md`)
+- [ ] Confirm Supported Versions table reflects active `vX.Y.Z.N (Build N)` release.
+- [ ] Confirm cryptographic defense guarantees (SQLCipher, KeyStore StrongBox, `FLAG_SECURE`, IME protection, panic wipe) and reporting SLAs.
+
+### 9. Architectural & Storage Specs (`project/*.md`, `ARCHITECTURE.md`)
 - [ ] **Room DB Schema** (`project/room-storage-schema.md`): If database entities changed, update schema version, entity listings, and DAO signatures.
 - [ ] **Cryptography & Keystore** (`project/crypto-and-keystore.md`): If key management, broadcast receivers, or security controls changed, document methods and security guarantees.
 - [ ] **Architecture Blueprint** (`ARCHITECTURE.md`): Update component interaction diagrams, threat models, and operational modes.
 - [ ] **UI/UX Design System** (`project/ui-ux-design-system.md`): If theme tokens, typography, or component patterns changed, update design specs.
 
-### 9. Cross-Repository Compatibility (`compatibility_layer.md`)
+### 10. Cross-Repository Compatibility (`compatibility_layer.md`)
 - [ ] If network sync payloads, item formats, or REST endpoints were updated, open and synchronize `compatibility_layer.md` in the partner repository (e.g. ShellGuard Web Server) before closing the task.
 
 ---

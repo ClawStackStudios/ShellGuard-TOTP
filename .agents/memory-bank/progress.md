@@ -77,5 +77,6 @@
   - Task 26: Import & Export Screen, Bitwarden Migration Preview Wizard & Multi-QR Viewer.
 - ⏳ **Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 18)]**
 - ⏳ **Phase 15: Sovereign ClawKey (`hu-`) Vault Creation & Import Integration [v0.1.1.0 (Build 19)]**
+- ⏳ **Phase 16: Encrypted Remote Credential Cache, Offline Session Persistence & Targeted Purge [v0.1.2.0 (Build 20)]**
 
 

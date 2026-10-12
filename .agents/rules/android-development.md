@@ -53,7 +53,7 @@ export GRADLE_OPTS="-XX:-UsePerfData -Djava.io.tmpdir=$PWD/app/build/tmp"
 | Layer | Technology |
 |---|---|
 | **State** | MVI (Unidirectional Data Flow) |
-| **DI** | Dagger Hilt |
+| **DI** | Application-Scoped Lazy DI (`ShellGuardTotpApp`) |
 | **Local DB** | Room 2.7+ (SQLCipher whole-database encryption) |
 | **Sensitive Secrets** | EncryptedSharedPreferences (Jetpack Security, Android Keystore) |
 | **UI Framework** | Jetpack Compose + Material 3 (no custom external widget libraries) |

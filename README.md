@@ -152,7 +152,7 @@ flowchart TD
 | **Language & Platform** | Kotlin 2.0+ / Android 14–16 (API 24 to 36) | Modern Kotlin toolchain targeting latest Android standards |
 | **Architecture** | MVI (Unidirectional Data Flow) | Unidirectional state management with reactive `StateFlow` |
 | **UI Framework** | Jetpack Compose (Material 3) | Declarative UI with custom Canvas rendering & spring physics |
-| **Dependency Injection** | Dagger Hilt | Clean inversion of control across all repository and use case layers |
+| **Dependency Injection** | Application-Scoped Lazy DI | Lightweight, thread-safe Kotlin singletons via `ShellGuardTotpApp` with zero annotation processor overhead |
 | **Local Database** | Room + SQLCipher 4.6.1+ | 256-bit AES-encrypted local storage; 16 KB page-size kernel ready |
 | **Hardware Security** | Android KeyStore (StrongBox) | Hardware TEE master key derivation; zero plaintext leakage |
 | **QR Vision** | CameraX + Google ML Kit | Dual-mode scanning: live camera feed and saved gallery images |
@@ -186,11 +186,13 @@ flowchart TD
 
 | File | Description |
 |---|---|
+| [**`CONTRIBUTING.md`**](CONTRIBUTING.md) | Developer onboarding guide, local environment setup, verification loops, and git conventions. |
 | [**`ARCHITECTURE.md`**](ARCHITECTURE.md) | Client mode architecture, client-server relationship boundaries, and threat model. |
 | [**`DESIGN.md`**](DESIGN.md) | Comprehensive Material 3 design system tokens, color palettes, and motion specs. |
 | [**`ROADMAP.md`**](ROADMAP.md) | Multi-phase development roadmap tracking completed features and upcoming milestones. |
 | [**`CHANGELOG.md`**](CHANGELOG.md) | Chronological version release history adhering to Keep a Changelog standards. |
 | [**`RELEASE-PLAY.md`**](RELEASE-PLAY.md) | Google Play Store release notes single source of truth across all published versions. |
+| [**`SECURITY.md`**](SECURITY.md) | Vulnerability disclosure policy, cryptographic threat model, and zero-knowledge invariants. |
 | [**`project/routes-and-contracts.md`**](project/routes-and-contracts.md) | REST API endpoints, DTO models, and delta sync reconciliation contracts. |
 | [**`project/crypto-and-keystore.md`**](project/crypto-and-keystore.md) | Complete ShellCryption specification, KeyStore derivation, and biometric integration. |
 | [**`project/room-storage-schema.md`**](project/room-storage-schema.md) | Room SQLite entity definitions, DAOs, and SQLCipher configuration. |

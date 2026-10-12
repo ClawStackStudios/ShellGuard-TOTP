@@ -9,21 +9,33 @@ This rule defines an automated, multi-step process for releasing a new version o
 
 ### Step 1: Determine New Version (Work-Driven 4-Digit Logic)
 
-My primary task is to calculate the new version number following the `MAJOR.MINOR.PATCH.REVISION` (`X.Y.Z.N`) convention. **We do not force artificial target versions**; the nature and magnitude of the actual completed work dictates which tier increments:
+My primary task is to calculate the new version number following the `MAJOR.MINOR.PATCH.REVISION` (`X.Y.Z.N`) convention paired with Conventional Commits semantics. **We do not force artificial target versions**; the nature and magnitude of the actual completed work dictates which tier increments:
 
 1.  **Check for Explicit User Input:**
     - First, check if the user has provided an explicit version type or number (e.g., `major`, `minor`, `patch`, `revision`, `v0.0.0.4`, `v0.0.1.0`).
     - If yes, this is the highest priority. Proceed to calculate the new version based on this input.
 
-2.  **Infer from Implemented Work & `CHANGELOG.md`:**
-    - If no explicit type is given, infer by analyzing the scope of work in `CHANGELOG.md` under `[Unreleased]`:
-        - **MAJOR (`X+1.0.0.0`)**: Fundamental structural overhauls, database breaking migrations, or full public production milestones.
-        - **MINOR (`X.Y+1.0.0`)**: Significant new subsystems or large cohesive feature groups (e.g., entire Glance widget framework, multi-tier modular settings hub).
-        - **PATCH (`X.Y.Z+1.0`)**: Discrete feature additions, completed 2-task phase deliverables, or targeted bug fixes (e.g. `0.0.0.1` ➔ `0.0.1.0`).
-        - **REVISION (`X.Y.Z.N+1`)**: Small patches, hotfixes, CI pipeline tweaks, minor UI polish, or iterative task increments (e.g., `0.0.0.1` ➔ `0.0.0.2`).
+2.  **Infer from Conventional Commits & `CHANGELOG.md`:**
+    - If no explicit type is given, infer by analyzing the scope of work and conventional commit types under `[Unreleased]`:
+        - **MAJOR (`X+1.0.0.0`)**: Triggered by breaking changes (`feat!`, `fix!`, or `BREAKING CHANGE:` footer), fundamental structural overhauls, database breaking migrations, or full public production milestones.
+        - **MINOR (`X.Y+1.0.0`)**: Triggered by significant new subsystems or large cohesive feature groups (`feat(subsystem)` - e.g., entire Glance widget framework, multi-tier modular settings hub).
+        - **PATCH (`X.Y.Z+1.0`)**: Triggered by discrete feature additions (`feat`), completed multi-task phase deliverables, or substantial bug fixes (`fix`).
+        - **REVISION (`X.Y.Z.N+1`)**: Triggered by targeted bug fixes (`fix`), hotfixes, performance tweaks (`perf`), CI pipeline adjustments (`ci`), or minor UI polish (`style`).
         - **Android Play Console Invariant**: Every release upload MUST increment `versionCode` (`N + 1` strictly monotonic integer) in `app/build.gradle.kts`, even when maintaining `versionName` display parity.
 
-3.  **Ask User on Ambiguity (Fallback):**
+3.  **Conventional Commit Type to SemVer & Changelog Mapping Matrix**:
+    | Conventional Type | Changelog Section | 4-Digit SemVer Impact | Play Store Notes |
+    | :--- | :--- | :--- | :--- |
+    | `feat!` / `BREAKING CHANGE` | `Added` / `Changed` | **MAJOR** (`X+1.0.0.0`) | Include breaking notice |
+    | `feat(scope)` (Major Subsystem) | `Added` | **MINOR** (`X.Y+1.0.0`) | Highlight feature |
+    | `feat` (Phase Deliverable) | `Added` | **PATCH** (`X.Y.Z+1.0`) | Highlight feature |
+    | `fix` (Hotfix / Bug Fix) | `Fixed` | **REVISION** (`X.Y.Z.N+1`) | Include bug fix summary |
+    | `perf` / `refactor` | `Changed` | **REVISION** (`X.Y.Z.N+1`) | Include optimization note |
+    | `fix(security)` / CWE fix | `Security` | **PATCH** / **REVISION** | Include security notice |
+    | `revert` | `Removed` | **REVISION** (`X.Y.Z.N+1`) | Detail removed feature |
+    | `chore(release)` | *(Excluded)* | Sets release tag | N/A |
+
+4.  **Ask User on Ambiguity (Fallback):**
     - ⚠️ **If my inference is ambiguous**, I **MUST NOT GUESS**.
     - Instead, I MUST ask the user for clarification. Present my analysis and provide clear choices:
       > "I have analyzed the changes in `[Unreleased]` and the version increment tier is ambiguous. Based on the work completed:
@@ -57,31 +69,68 @@ Once the user confirms, I will proceed with the following precise file modificat
 1.  **Update Central Version Source:**
     - Locate and update the version number in the central source file (`app/build.gradle.kts` for Android, setting `versionCode = N + 1` and `versionName = "X.Y.Z.N"`).
 
-2.  **Update `CHANGELOG.md`:**
-    - Create a new version heading below `[Unreleased]` using the format `## [X.Y.Z.N] - YYYY-MM-DD`.
-    - Move the summarized changes from the `[Unreleased]` section to this new version section.
-    - Update the version comparison link at the bottom of the file.
+2.  **Update `CHANGELOG.md` (Keep a Changelog 1.1.0 Strict Standards):**
+    - Create a new version heading below `[Unreleased]` using the format `## [X.Y.Z.N] - YYYY-MM-DD (Build N) — Phase Title`.
+    - Group changes strictly into the standard Keep a Changelog categories:
+      - `### Added`: New user features, capabilities, or screens.
+      - `### Changed`: Modifications to existing functionality, architectural refactors, performance upgrades.
+      - `### Deprecated`: Features planned for removal in upcoming versions.
+      - `### Removed`: Features, screens, or legacy classes removed.
+      - `### Fixed`: Bug fixes and error resolutions.
+      - `### Security`: Cryptographic hardening, memory zeroization, or CVE/CWE remediations.
+    - Update comparison links at the footer of `CHANGELOG.md`:
+      ```markdown
+      [Unreleased]: https://github.com/ClawStackStudios/ShellGuard-TOTP/compare/vX.Y.Z.N...HEAD
+      [X.Y.Z.N]: https://github.com/ClawStackStudios/ShellGuard-TOTP/compare/vPREVIOUS...vX.Y.Z.N
+      ```
 
-3.  **Update `README.md` Version Badge:**
+3.  **Update `README.md` Version Badge & Metrics:**
     - Find the version badge in `README.md` and update the version number.
-    - **✅ Template:** `[![Version](https://img.shields.io/badge/version-NEW.VERSION.HERE-blue.svg)](CHANGELOG.md)`
+    - **Template:** `[![Version](https://img.shields.io/badge/version-X.Y.Z.N-blue.svg)](CHANGELOG.md)`
+    - Update test count badge and verified documentation table.
 
-### Step 4: 🧠 Intelligently Update Project Documentation
+### Step 4: 🧠 Synchronize Release Notes & Project Documentation
 
 My goal is to ensure all technical and maintenance documentation reflects the new changes, not just list them.
 
-1.  **Analyze Changes:** Review the finalized changelog entries for this version.
-2.  **Identify Affected Docs:** Scan the project for relevant documentation (e.g., files in `docs/`, `guides/`, or files like `ARCHITECTURE.md`, `MAINTENANCE.md`).
-3.  **Synthesize and Propose Updates:** Based on the *type* of change, determine the required documentation update.
-    - **`Added`**: If a new feature was added (e.g., caching), find the relevant document (e.g., `architecture.md`) and propose adding a new section explaining it. If new configuration is required, propose updates to the setup guide.
-    - **`Changed`**: If a process was changed, locate its existing description and propose updates to reflect the new behavior (e.g., updating an API endpoint's documentation).
-    - **`Removed`**: If a feature was removed, find its documentation and propose either removing the section or clearly marking it as deprecated with migration steps.
-    - **`Fixed`**: Bug fixes typically do not require documentation updates unless they clarify a previously misunderstood behavior.
-4.  **AWAIT USER APPROVAL:** 🚨 **CRITICAL:** I MUST NOT apply these changes directly. I MUST present a clear summary of the proposed documentation updates (e.g., as a `diff` or a before/after summary) to the user for review and approval before proceeding.
+1.  **Draft Milestone Release Notes (`RELEASE-vX.Y.Z.N.md`):**
+    - Create or update the root release artifact following the Standard Milestone Template:
+      ```markdown
+      # Release vX.Y.Z.N - YYYY-MM-DD (Build N)
+
+      ## Summary
+      [High-level overview of the milestone and user value]
+
+      ## Highlights
+      ### 🌟 [Key Feature Name]
+      [Architecture, UI/UX, and security details]
+
+      ## Breaking Changes
+      [None or migration steps]
+
+      ## Pre-Flight Verification Gate
+      - Unit & Robolectric Tests: 100% green ([Count]/[Count] passing).
+      - Build Verification: Clean assembleDebug and bundleRelease.
+      - Device Verification: Tested on target hardware.
+
+      ## Dependencies & Schemas
+      | Component | From | To | Rationale |
+      ```
+
+2.  **Draft Google Play Store Notes (`RELEASE-PLAY.md`):**
+    - Formatted strictly under 500 plain text characters inside `<en-US>` tags.
+    - Zero markdown syntax (no `**`, `*`, `#`, or backticks).
+
+3.  **Analyze Affected Docs & Propose Updates:**
+    - **`Added`**: If a new feature was added (e.g., caching), update `architecture.md`, `ROADMAP.md`, or setup guides.
+    - **`Changed`**: Propose updates reflecting modified behavior or endpoints.
+    - **`Removed`**: Mark removed features or add migration steps.
+    - **`Fixed`**: Clarify previously misunderstood behaviors if applicable.
+4.  **AWAIT USER APPROVAL:** 🚨 **CRITICAL:** I MUST NOT apply documentation changes directly without presenting a clear summary of proposed updates for user review and approval.
 
 ### Step 5: Prepare Git Commit Message
 
-Once all file changes are approved and applied, I will prepare and output the commit message following the two-layer attribution format:
+Once all file changes are approved and applied, I will prepare and output the commit message following the Conventional Commit + two-layer attribution format:
 
 ```
 chore(release): bump version to vX.Y.Z.N (Build N+1) --release vX.Y.Z.N

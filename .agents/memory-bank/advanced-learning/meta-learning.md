@@ -17,3 +17,9 @@
   - Whenever an architectural change is made, immediately grep and audit tests in `app/src/test`.
   - Re-align obsolete assertions and semantic finders immediately rather than treating test failures as surprises during CI.
   - **Success Rate**: 100% first-pass CI success across releases v0.0.1.0 and v0.0.1.2.
+
+### Insight: Skill Ingestion & Workspace Rule Cross-Pollination
+- **Observation**: External developer skills often contain powerful industry standards (e.g. Keep a Changelog 1.1.0, Conventional Commits, git-cliff, standard-version) that can easily sit unused if kept isolated in a standalone skill file.
+- **Implementation**: Deconstruct skills into actionable invariant primitives, pattern-match against existing project boundaries, and inject the distilled invariants directly into living workspace rules (`git-hygiene.md`, `semantic-versioning.md`) while provisioning tools (`cliff.toml`).
+- **Effectiveness**: Elevated changelog consistency, eliminated semantic versioning ambiguity, and unified human-AI two-layer attribution with global open-source commitlint standards.
+- **Optimization**: Run `/learn` immediately whenever a high-value skill is introduced to permanently harden workspace conventions.

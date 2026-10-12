@@ -155,6 +155,85 @@
   - `gh release view <tag>` (confirm published release assets and download URLs)
 - *Rationale:* Eliminates CI breakage from unmaintained third-party actions and removes the need to leave the terminal to inspect build failures.
 
+## Conventional Commits & Automated Changelog Invariants (Keep a Changelog 1.1.0)
+**Pattern: Deterministic Commit-to-Changelog Grouping**
+- Keep a Changelog 1.1.0 requires 6 canonical categories: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, and `Security`.
+- Map commit types deterministically:
+  - `feat` ➔ `Added`
+  - `refactor`, `perf` ➔ `Changed`
+  - `revert` ➔ `Removed`
+  - `fix` ➔ `Fixed`
+  - `fix(security)`, `fix(crypto)`, CWE remediations ➔ `Security`
+  - `chore`, `docs`, `style`, `test`, `ci`, `build` ➔ Excluded from public user changelogs (or grouped into Maintenance).
+- Every version heading must strictly use `## [X.Y.Z.N] - YYYY-MM-DD` and maintain comparison anchors at the footer (`[X.Y.Z.N]: https://.../compare/vPREV...vX.Y.Z.N`).
+- *Rationale:* Eliminates arbitrary section naming drift and enables automated tools like `git-cliff` to parse history without configuration errors.
+
+## Conventional Commits & Two-Layer Attribution Harmonization
+**Pattern: Standards-Compliant AI Pair Attribution**
+- In human/AI pair programming systems requiring two-layer accountability (`User:` intent / `AI:` implementation), maintain standard Conventional Commit line-1 headers:
+  ```
+  <type>(<scope>): <summary>
+
+  User: <intent, system design, architectural decision, or glue provided>
+  AI: <concrete implementation, functions, refactors, or tests generated>
+  ```
+- Breaking changes must be declared with `!` after the type/scope (`feat(api)!: ...`) or in a footer `BREAKING CHANGE: <explanation>`.
+- *Rationale:* Concurrently satisfies strict Git linters (commitlint, git-cliff, standard-version) while enforcing human-AI accountability standards.
+
+## Release Notes Multi-Audience Triad
+**Pattern: Three-Tier Synchronized Release Artifacts**
+- Every software release targets three distinct consumers with differing format constraints:
+  1. **Public GitHub Release**: Markdown formatted with category headers (`Added`, `Fixed`, `Security`), contributor mentions, and compare links.
+  2. **Internal Milestone Document (`RELEASE-vX.Y.Z.N.md`)**: Comprehensive technical dossier including architectural summary, highlights, pre-flight test gate counts (e.g. 107/107 tests green), and schema/dependency deltas.
+  3. **Google Play Console (`RELEASE-PLAY.md`)**: Plain text strictly under 500 characters within `<en-US>` tags, with zero markdown syntax.
+- *Rationale:* Prevents Play Store binary upload rejections while giving developers deep technical context and public users clean change summaries.
+
+## Deterministic Documentation Invariants & The 8-Point Root Mesh
+**Pattern: The Docs Bow to Code SSoT Law**
+- Documentation is a compiled projection of physical codebase truth. If code and docs disagree, docs are defective by definition.
+- Synchronize across the 8-point root mesh on every release or architectural milestone:
+  1. `app/build.gradle.kts`: Monotonic `versionCode` and semantic `versionName`.
+  2. `ROADMAP.md`: Check off completed tasks, update `current_position`, preserve downstream monotonic build numbers.
+  3. `CHANGELOG.md`: Keep a Changelog 1.1.0 with compare link anchors.
+  4. `RELEASE-vX.Y.Z.N.md`: Milestone technical summary and test oracle count.
+  5. `RELEASE-PLAY.md`: `<en-US>` block (<500 chars, zero markdown tags).
+  6. `README.md`: Version badges, test count badges, tech stack, and documentation index.
+  7. `project/*.md` & `ARCHITECTURE.md`: Room schemas, KeyStore aliases, wire contracts.
+  8. `SECURITY.md`: Supported versions table, cryptographic threat model, and SLAs.
+  9. `.agents/memory-bank/`: Sliding active context and progress metrics.
+- Enforce via automated verification script `scripts/audit_docs_drift.py`.
+- *Rationale:* Eliminates documentation rot and establishes documentation synchronization as an automated, non-negotiable Definition of Done.
+
+## Root Security Policy (SECURITY.md) & Coordinated Disclosure Invariants
+**Pattern: Public Cryptographic Posture & Supported Versions**
+- For high-assurance security tools, `SECURITY.md` serves as a contractual baseline for threat boundaries and coordinated disclosure:
+  1. **Supported Versions Alignment**: The active version in `SECURITY.md` must strictly match `versionName` in `app/build.gradle.kts`.
+  2. **Cryptographic Defense Invariants**: Explicitly document active protections (SQLCipher 4.6.1 AES-256, Android KeyStore StrongBox keys, dynamic `FLAG_SECURE`, IME dictionary protection CWE-359, panic purge receiver).
+  3. **Responsible Disclosure SLA**: Declare 48h acknowledgment and severity-based patch targets with private disclosure channels.
+- *Rationale:* Sets clear boundaries for security researchers and prevents vulnerability reports for out-of-scope scenarios (e.g. physical decapping or rooted devices).
+
+## Advanced Git History Engineering & Autosquash
+**Pattern: Zero-Overhead Pre-PR History Polish**
+- Maintain atomic Conventional Commits on local feature branches without tedious manual rebase editing:
+  1. **Tag Iterative Fixes**: When amending an earlier commit during development, use `git commit --fixup <commit-hash>`.
+  2. **Automated Squashing**: Run `git rebase -i --autosquash $(git merge-base HEAD main)`. Git automatically reorders and marks fixup commits.
+  3. **Headless Bypass**: In containerized or non-interactive environments, pass `GIT_SEQUENCE_EDITOR=:` to run autosquash without prompting.
+  4. **Safe Remote Sync**: Always push with `--force-with-lease`, never raw `--force`. Never rebase shared public branches.
+- *Rationale:* Keeps git history clean, readable, and bisectable while eliminating manual rebase mistakes.
+
+## Automated Bisect with Gradle Test Oracles
+**Pattern: Binary Search Regression Hunting via Automated Exit Codes**
+- When a bug or regression is detected across multiple commits, avoid manual checkout and verification cycles:
+  ```bash
+  git bisect start HEAD <known-good-tag>
+  git bisect run ./gradlew testDebugUnitTest --no-daemon
+  git bisect reset
+  ```
+- Gradle's exit code `0` maps to `good`, non-zero `1` maps to `bad`, allowing Git to isolate the introducing commit in O(log N) steps without human intervention.
+- Always ensure the working tree is completely clean before invoking `git bisect`.
+- *Rationale:* Reduces multi-hour regression debugging sessions to automated minutes and grounds regression identification in deterministic test oracle evidence.
+
+
 
 
 
