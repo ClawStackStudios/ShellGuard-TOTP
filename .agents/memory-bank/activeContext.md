@@ -27,10 +27,11 @@ Proceed with **Phase 13: Advanced Import/Export, Bitwarden Migration & Google Au
    - Task 25: Multi-Format Import Engine (Bitwarden Vault/Auth, Aegis, 2FAS) & Dual Vault Persister.
    - Task 25b: Native Debug Symbol Tables Extraction (`debugSymbolLevel = "SYMBOL_TABLE"`) & Release Bundle Polish.
    - Task 26: Import & Export Screen, Bitwarden Migration Preview Wizard & Multi-QR Viewer.
-3. Verification Gate:
-   ```bash
-   ./gradlew testDebugUnitTest --no-configuration-cache --no-daemon
-   ```
+3. Verification Gate (Cloud-First CI Offloading):
+   - Run instantaneous pre-flight drift check: `python3 scripts/audit_docs_drift.py`
+   - Commit and push to branch: `git push origin feat/phase-13-advanced-import-export`
+   - Tail cloud verification: `gh run list -L 1` or `gh run watch`
+   (Heavy JVM Gradle test suites and APK assemblies run in GitHub Actions to preserve host machine resources).
 
 
 
