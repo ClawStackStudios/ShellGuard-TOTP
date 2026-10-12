@@ -65,20 +65,20 @@ All screens accepting cryptographic secrets (Base32 keys, master passwords, PINs
 
 ## 🔄 The 3-Gate Verification Loop
 
-We stack three verification gates before any code is merged or released:
+We stack verification gates before any code is merged or released:
 
-### Gate 1: Tests (100% Green Required)
-Run the full unit and Robolectric headless test suite:
-```bash
-./gradlew testDebugUnitTest --no-configuration-cache --no-daemon
-```
-* Note: Headless Robolectric tests automatically use `FrameworkSQLiteOpenHelperFactory` and headless HMAC KeyStore fallbacks to ensure native binaries do not crash host JVMs.
-
-### Gate 2: Build Compilation
-Verify clean build artifact generation:
-```bash
-./gradlew assembleDebug
-```
+### Gate 1 & 2: Tests & Build Compilation (Cloud CI Offloaded)
+To preserve local machine CPU and RAM, unit tests (`./gradlew testDebugUnitTest`) and build compilation (`./gradlew assembleDebug`) are offloaded to **GitHub Actions Cloud CI** (`.github/workflows/ci.yml`):
+1. Run local drift audit: `python3 scripts/audit_docs_drift.py`
+2. Push branch to `origin`: `git push origin <branch>`
+3. Tail and monitor cloud execution:
+   ```bash
+   gh run list -L 1
+   gh run view --log-failed
+   # Or watch live in terminal:
+   gh run watch
+   ```
+*(Optional Local Execution: Developers with ample hardware resources may optionally run `./gradlew testDebugUnitTest --no-configuration-cache --no-daemon` and `./gradlew assembleDebug` locally).*
 
 ### Gate 3: Live Verification
 Verify interactive UX, the soft keyboard, and edge-to-edge layouts on a physical device or emulator over ADB:

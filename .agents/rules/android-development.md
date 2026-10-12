@@ -147,4 +147,4 @@ Android 15+ (API 35/36) mandates 16 KB page-aligned native binaries:
 
 - Dynamic binding: User-facing version labels must bind dynamically to `BuildConfig.VERSION_NAME`.
 - Google Play monotonicity: Every release bundle requires a strictly incremented monotonic `versionCode` (+1).
-- Pre-release gate: Full test suite (`./gradlew testDebugUnitTest`) and build compilation (`./gradlew assembleDebug`) must pass green before committing or version bumping.
+- Pre-release gate: Full test suite (`./gradlew testDebugUnitTest`) and build compilation (`./gradlew assembleDebug`) are verified via GitHub Actions Cloud CI (`.github/workflows/ci.yml`) to preserve developer machine resources. Verification must pass 100% green before merging to `main` or version bumping.

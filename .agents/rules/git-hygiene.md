@@ -64,10 +64,26 @@ trigger: always_on
 - `rm -rf` or any bulk file deletion
 - If unsure whether a file belongs to another agent's in-flight work, stop and coordinate — don't delete to silence an error.
 
-## Android Pre-Commit Verification Gate
-- Run unit and UI tests before committing: `./gradlew testDebugUnitTest`.
-- Ensure clean build verification: `./gradlew assembleDebug`.
-- Never commit broken tests or unverified compilation states.
+## Verification Gate: Cloud-First CI Offloading (Preserving Local Machine Resources)
+- **Local Compilation Exemption**: To preserve host developer machine resources (preventing high CPU/RAM locks and terminal freezes), agents and developers **do NOT run heavy local Gradle builds or test suites** (`./gradlew testDebugUnitTest`, `./gradlew assembleDebug`) locally by default.
+- **Fast Local Pre-Flight Check**:
+  - Run the instantaneous Python drift verification:
+    ```bash
+    python3 scripts/audit_docs_drift.py
+    ```
+- **Cloud CI Execution & Log Tailing Workflow**:
+  1. Commit changes to a dedicated feature or task branch under Conventional Commits with two-layer attribution.
+  2. Push the branch to `origin`: `git push origin <branch>`.
+  3. GitHub Actions automatically executes `.github/workflows/ci.yml` in the cloud (`Test & Debug Build (Cloud Runner) 🚀`), running all unit/Robolectric tests and compiling `assembleDebug`.
+  4. Tail and observe the cloud build from the terminal using GitHub CLI:
+     ```bash
+     gh run list -L 1
+     gh run view --log-failed
+     # Or watch live in terminal:
+     gh run watch
+     ```
+  5. If CI fails, inspect the cloud log, correct the defect locally, and push the fixup commit.
+- **Pre-Merge Invariant**: PRs and branches may only be merged into `main` after the GitHub Actions Cloud CI verification gate passes 100% green.
 
 ## Attribution & Commit Message Format
 - Commit under the human's configured identity (`git config user.name` / `user.email`). No separate agent identity, no AI co-author line.

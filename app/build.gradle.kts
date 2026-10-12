@@ -37,9 +37,9 @@ android {
       keyAlias = kAlias
       keyPassword = kPassword
     }
-    create("debugConfig") {
-      val debugKeystoreFile = file("${rootDir}/debug.keystore")
-      if (debugKeystoreFile.exists()) {
+    val debugKeystoreFile = file("${rootDir}/debug.keystore")
+    if (debugKeystoreFile.exists()) {
+      create("debugConfig") {
         storeFile = debugKeystoreFile
         storePassword = "android"
         keyAlias = "androiddebugkey"

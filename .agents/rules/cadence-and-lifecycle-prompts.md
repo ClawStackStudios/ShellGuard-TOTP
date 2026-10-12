@@ -12,9 +12,9 @@ The agent acts as an active cartographer of the project's development lifecycle.
 ## 🧭 The 4 Boundary Prompts
 
 ### 1. Task Completion Gate (Verified → Commit Check)
-- **When to Trigger**: Immediately after a task's code changes are implemented and the pre-flight verification gate (`./gradlew testDebugUnitTest`) passes 100% green.
+- **When to Trigger**: Immediately after a task's code changes are implemented and quick pre-flight checks (`python3 scripts/audit_docs_drift.py`) pass.
 - **Agent Action**: Ask the user:
-  > *"All tests are passing 100% green. Should I commit these changes now under our two-layer attribution format, or are you still reviewing / experimenting locally?"*
+  > *"Changes are ready and local drift checks pass. Should I commit these changes under our two-layer attribution format and push to trigger/tail the GitHub Actions cloud CI verification (`.github/workflows/ci.yml`), or are you still reviewing / experimenting locally?"*
 
 ### 2. Commit Completion Gate (Committed → Version Bump Check)
 - **When to Trigger**: Immediately after a commit is successfully created following `git-hygiene.md`.

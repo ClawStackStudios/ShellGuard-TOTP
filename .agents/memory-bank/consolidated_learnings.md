@@ -233,7 +233,13 @@
 - Always ensure the working tree is completely clean before invoking `git bisect`.
 - *Rationale:* Reduces multi-hour regression debugging sessions to automated minutes and grounds regression identification in deterministic test oracle evidence.
 
-
-
-
-
+## Cloud CI Verification Gate & Host Resource Preservation
+**Pattern: Zero-Local-Load Build and Test Offloading via GitHub Actions**
+- In resource-constrained or containerized environments where Gradle and Robolectric JVM test runs cause memory starvation, system lag, or CPU exhaustion, do not force local execution.
+- Implement a dedicated Continuous Integration workflow (`.github/workflows/ci.yml`) on `ubuntu-latest` cloud runners with Gradle caching (`gradle/actions/setup-gradle@v4`).
+- Offload the verification pipeline:
+  1. Instant local drift check: `python3 scripts/audit_docs_drift.py`
+  2. Commit and push branch to GitHub.
+  3. Tail and monitor execution from the terminal: `gh run list -L 1` and `gh run view --log-failed`.
+  4. Ensure headless debug keystores fall back safely when `debug.keystore` is not committed (`val debugKeystoreFile = file("${rootDir}/debug.keystore"); if (debugKeystoreFile.exists()) ...`).
+- *Rationale:* Completely eliminates developer machine freezes, speeds up iteration, and leverages cloud compute for heavy Android compilation and multi-test execution.
