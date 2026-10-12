@@ -140,3 +140,8 @@ AuthRepository.hatchVault() + TotpItemDao.upsertItems() → Screen.CodeList
 - **Dynamic URI Extraction**: Incoming remote vault items may carry raw Base32 secret seeds or full `otpauth://` URIs. `TotpRepository` always delegates payload parsing through `TotpUriParser.parse(decryptedSecret)` to extract secret, algorithm, digits, and period dynamically.
 - **Pre-Upsert Identity Fast-Filter (`isContentIdentical`)**: To prevent unnecessary Room write churn and encryption cycles, remote items are compared against local cached entities using `isContentIdentical(cached, remote)`. Only altered records trigger Room updates and audit trail events.
 
+## Pre-Work Assumptions & Forward Cartography Pattern
+1. **Anticipatory Downstream Seams**: While delegated background agents (Jules) implement Phase N on cloud branches, the orchestrator leaps forward to Phase N+1 to trace consumer interfaces.
+2. **Pre-Merge Contract Neutralization**: Catches missing database queries (e.g. one-shot suspend DAO methods for background AppWidgets) and field formatting (e.g. compound title splitting for icon packs) before the active PR merges, eliminating post-merge refactoring cycles.
+
+

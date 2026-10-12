@@ -4,6 +4,9 @@ All notable changes to the ShellGuard TOTP project will be documented in this fi
 
 ## [Unreleased]
 ### Added
+- **Jules Fleet Delegation & Mode 3 Long-Lived Co-Pilot**: Integrated `.jules/JULES.md`, `task-25.md` (Wave 1), and `task-26.md` (Waves 2-4) for Phase 13 (v0.0.3.0 Build 17). Launched Session `14327715134975196291` on persistent branch `feat/phase-13-advanced-import-export`.
+- **Pre-Work Assumptions Protocol (`/pre-work-assumptions`)**: Forward-looking architectural cartography protocol leaping to Phase 14 Glance Widgets to catch downstream contract gaps before merging Phase 13.
+- **One-Shot DAO Query Specification**: Specified `TotpItemDao.getAllTotpItems()` suspend query for background AppWidgets and duplicate migration evaluation.
 - **Continuous Integration Pipeline (`.github/workflows/ci.yml`)**: Automated cloud runner workflow offloading all 107 unit and Robolectric tests and debug APK compilation to GitHub Actions (`ubuntu-latest`) with Gradle caching.
 - **Deterministic Documentation Automation (`doc-automation`)**: Dedicated agent skill and standalone pre-flight audit script (`scripts/audit_docs_drift.py`) enforcing zero documentation drift and the Docs Bow to Code Single Source of Truth invariant.
 - **Security Policy (`SECURITY.md`)**: Root vulnerability disclosure policy detailing supported versions, cryptographic threat model, and 48-hour responsible disclosure SLA.

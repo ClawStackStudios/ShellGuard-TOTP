@@ -9,3 +9,4 @@
 - **Hardware Security**: Android KeyStore + AndroidX Biometric 1.2.0-alpha05 + AndroidX Security Crypto 1.1.0-alpha06
 - **Background Scheduling**: AndroidX WorkManager 2.10.0
 - **Testing**: JUnit 4, Robolectric 4.14.1, Roborazzi 1.39.0
+- **Delegated AI Execution**: Google Jules CLI (isolated VM container, Mode 3 Long-Lived Co-Pilot)

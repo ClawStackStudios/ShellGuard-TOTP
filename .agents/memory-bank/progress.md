@@ -77,11 +77,13 @@
   - Cloud Verification Invariant: Codified in `.agents/rules/git-hygiene.md`, `cadence-and-lifecycle-prompts.md`, `android-development.md`, and `CONTRIBUTING.md` protecting local machine resources from heavy JVM test daemon exhaustion.
 
 ## What's Next
-- ⏳ **Phase 13: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 17)]**:
-  - Task 25: Multi-Format Import Engine (Bitwarden Vault/Auth, Aegis, 2FAS) & Dual Vault Persister.
-  - Task 25b: Native Debug Symbol Tables Extraction (`debugSymbolLevel = "SYMBOL_TABLE"`) & Release Bundle Polish.
-  - Task 26: Import & Export Screen, Bitwarden Migration Preview Wizard & Multi-QR Viewer.
-- ⏳ **Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 18)]**
+- 🟡 **Phase 13: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 17)]** *(IN-FLIGHT: Jules Session 14327715134975196291 on feat/phase-13-advanced-import-export)*:
+  - Wave 1 (Active): Multi-Format Import Engine (`MultiFormatMigrationEngine.kt`), Dual Persister (`MigrationPersister.kt`), `TotpItemDao.getAllTotpItems()`, and NDK release symbol extraction (`SYMBOL_TABLE`).
+  - Wave 2: Google Authenticator Protobuf Multi-QR generator (`GoogleAuthMigrationEncoder.kt`).
+  - Wave 3: Material 3 Bitwarden migration wizard dialog & paginated QR carousel.
+  - Wave 4: Settings Backups sub-screen, auto-backup triggers & audit logging.
+  - Wave 5: On-device Pixel verification, docs synchronization & release tag.
+- ⏳ **Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 18)]** *(Mapped in phase-14-glance-widgets-forward-plan.md)*
 - ⏳ **Phase 15: Sovereign ClawKey (`hu-`) Vault Creation & Import Integration [v0.1.1.0 (Build 19)]**
 - ⏳ **Phase 16: Encrypted Remote Credential Cache, Offline Session Persistence & Targeted Purge [v0.1.2.0 (Build 20)]**
 
