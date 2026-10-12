@@ -495,3 +495,46 @@ Description: Implement all user-facing surfaces for the ClawKey mode:
 - **`SettingsScreen.kt` — Import Flow**: After `MultiVaultBackupPreValidator` resolves the backup file, inspect `protectionMode`. If `"CLAWKEY"`, show a `ModalBottomSheet` hosting `ClawKeyInputForm` before calling `importEncryptedBackup()`. On wrong key, surface a sanitized error: *"Invalid ClawKey — vault could not be decrypted."*
 
 > Success Criteria: A user can create a vault secured by their `hu-` ClawKey (paste or upload), be correctly prompted for their ClawKey on app lock/restart, export a `.sgtotp.bak` with `protectionMode = "CLAWKEY"` stamped in the envelope, and re-import that backup on another device using only their ClawKey. Duplicate TOTP entries are silently skipped during all import flows.
+
+---
+
+## Phase 16: Encrypted Remote Credential Cache, Offline Session Persistence & Targeted Purge [v0.1.2.0 (Build 20)]
+
+> Phase Feature Set Overview:
+> Delivers an encrypted on-device caching system for synced remote credentials within the SQLCipher Room database. Eliminates mandatory full sync on every application launch, allowing the user to operate completely offline with previously synced credentials while strictly preserving read-only protection. Periodic updates follow the existing background sync schedule from settings, delta sync skips re-decryption of unchanged records, and cached credentials persist until the user explicitly disconnects the server or logs out to authenticate as a new user.
+
+- [ ]  Task 31: [Functionality] Encrypted Remote Cache Persistence, Offline Session Resolver & Targeted Purge Engine
+
+Description: Implement back-end caching and lifecycle boundaries for remote credentials:
+- **Offline Session Persistence**:
+  - Securely store the active `cachedOwnerUuid` / `cachedServerUrl` in `EncryptedDeviceVault` upon successful sync.
+  - Decouple dashboard queries in `TotpItemDao` and `TotpViewModel` to allow querying cached remote records matching the authorized vault identity even when offline or when network connectivity is absent.
+  - Preserve strict read-only invariant: remote items remain immutable and cannot be edited, deleted, or exported into local backups.
+- **Delta-Only Syncing & Schedule Alignment**:
+  - Rely on the existing background sync schedule (`TotpSyncWorker` periodic schedule from settings) and manual pull-to-refresh rather than forcing a blocking full sync on every app open.
+  - Use `remoteUpdatedAt` timestamps and `isContentIdentical()` fast-filter in `TotpRepository.syncRemoteVault()` to only pull, decrypt, and upsert modified/new server pearls.
+- **Targeted Purge on Disconnect & Logout**:
+  - In `TotpItemDao.kt`, implement `clearRemoteItemsForOwner(ownerUuid: String)` (`DELETE FROM totp_items WHERE owner_uuid = :ownerUuid AND is_local_only = 0`).
+  - Wire `AuthRepository.logout()` and `disconnectVault()` to trigger this targeted purge, clearing all cached remote items and sync metadata for that connection.
+  - Guarantee local codes (`is_local_only = 1` or `owner_uuid = 'local'`) are 100% preserved and never purged.
+- **Multi-User Switching Isolation**:
+  - Invalidate and purge prior cached remote records when logging in under a distinct user UUID, preventing cross-account credential bleed.
+
+> Success Criteria: Remote credentials remain cached and generate valid rolling TOTP codes while fully offline without network contact. Background sync updates only changed items according to the configured schedule. Manually disconnecting or logging out cleanly purges cached remote items while leaving all local codes intact.
+
+- [ ]  Task 32: [UI Component] Connection & Cache Status Badges, Offline Sync Banner & Disconnect Confirmation Dialog
+
+Description: Implement UI indicators and feedback for the caching engine:
+- **Dashboard Cache State Indicator**:
+  - In `TotpListScreen.kt`, render a status chip alongside the "☁️ Synced from ShellGuard" header:
+    - `[ 🟢 Live · Synced Xm ago ]` when server is connected and responsive.
+    - `[ 🟡 Offline Cache · X items ]` when the device is offline or disconnected, reassuring the user their cached credentials are valid.
+- **`SettingsServerSyncScreen.kt` Cache Diagnostics**:
+  - Connection card displays live cache diagnostics: *"Encrypted on-device cache: X credentials · Read-only"*.
+  - Update "Disconnect Vault" confirmation dialog with explicit reassurance: *"Disconnecting will remove cached remote credentials from this device. All locally created codes remain safe."*
+  - Add a "Force Full Resync" action to invalidate local timestamps and perform a clean re-pull if desired.
+- **Offline Resilience & Error Handling**:
+  - In `TotpListScreen.kt`, pull-to-refresh while offline surfaces a friendly transient message (*"Network unavailable — using encrypted offline cache"*) without blanking the screen or clearing cached items.
+
+> Success Criteria: Users see clear visual feedback whether remote codes are live or served from the encrypted offline cache. Disconnect confirmation clearly communicates cache purge vs local safety, and pulling to refresh offline is graceful with zero data loss.
+

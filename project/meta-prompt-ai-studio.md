@@ -29,6 +29,7 @@ flowchart TD
     Phase13["📦 Stage 14: Phase 13 — Advanced Import/Export & Google Auth Multi-QR<br/>(Task 25: MultiFormat Migration · Task 25b: Native Debug Symbols · Task 26: Import/Export Hub & QR Viewer)"]
     Phase14["📱 Stage 15: Phase 14 — Home Screen Interactive Glance Widgets & Icon Packs<br/>(Task 27: Glance Widget Engine & Icon Store · Task 28: 2x2/4x2 Widgets & Icon Manager)"]
     Phase15["🗝️ Stage 16: Phase 15 — ClawKey Vault Creation, Import Auth & Duplicate Resolution<br/>(Task 29: ClawKey Mode Engine · Task 30: ClawKeyInputForm & UI Integration)"]
+    Phase16["💾 Stage 17: Phase 16 — Encrypted Offline Persistence & Remote Credential Cache<br/>(Task 31: Encrypted Remote Cache & Delta Sync Engine · Task 32: Disconnect/Logout Purge & Offline State UI)"]
 
     Step0 --> UploadContext
     UploadContext --> Phase1
@@ -47,6 +48,7 @@ flowchart TD
     Phase12 --> Phase13
     Phase13 --> Phase14
     Phase14 --> Phase15
+    Phase15 --> Phase16
 ```
 
 ---
@@ -54,7 +56,7 @@ flowchart TD
 ## 🚀 Stage 0: The "First Build" Initial Scaffold Prompt
 
 > **📖 Required Reference Files Attached in AI Studio**:  
-> 1. [`architecture.md`](./architecture.md) — System boundaries, security invariants, `FLAG_SECURE`, and build topology.  
+> 1. [`ARCHITECTURE.md`](../ARCHITECTURE.md) — System boundaries, security invariants, `FLAG_SECURE`, and build topology.  
 > 2. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — `ClawCrypto.hashHumanKey` and `AndroidKeyStoreHelper` biometric wrapper.  
 
 Copy and paste this exact prompt into Google AI Studio as the **First Build Message**:
@@ -119,14 +121,14 @@ Scaffold this foundational structure now. Verify compilation and ensure zero dep
 
 Once the AI Studio agent finishes the First Build scaffold:
 1. Upload the remaining documentation files from `/android/` into the AI Studio project directory (or attach them to the chat):
-   - [`DESIGN.md`](./DESIGN.md)
+   - [`DESIGN.md`](../DESIGN.md)
    - [`app-icon-and-splash.md`](./app-icon-and-splash.md)
    - [`routes-and-contracts.md`](./routes-and-contracts.md)
    - [`room-storage-schema.md`](./room-storage-schema.md)
    - [`totp-engine-spec.md`](./totp-engine-spec.md)
    - [`ui-ux-design-system.md`](./ui-ux-design-system.md)
-   - [`roadmap.md`](./roadmap.md)
-   - [`README.md`](./README.md)
+   - [`ROADMAP.md`](../ROADMAP.md)
+   - [`README.md`](../README.md)
 
 ---
 
@@ -134,9 +136,9 @@ Once the AI Studio agent finishes the First Build scaffold:
 
 > 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-1-cryptographic-engine--live-countdown-display) for complete specifications on **Task 01** and **Task 02**.  
 > **📖 Required Context Files for Phase 1**:  
-> 1. [`totp-engine-spec.md`](project/totp-engine-spec.md) — Section 1 (RFC 6238 TotpEngine), Section 2 (Base32Decoder), Section 3 (TotpTicker with Kotlin Time).  
-> 2. [`crypto-and-keystore.md`](project/crypto-and-keystore.md) — Section 1 (HKDF Parity), Section 2 (Envelope Schema), Section 3 (ShellCryptionEngine with AAD `vault_pearls_totp:{id}`).  
-> 3. [`DESIGN.md`](DESIGN.md) — Section 2 (Theme Tokens), Section 4 (TotpCard with Spring Bounce), Section 5 (TotpCountdownRing Canvas Arc).  
+> 1. [`totp-engine-spec.md`](./totp-engine-spec.md) — Section 1 (RFC 6238 TotpEngine), Section 2 (Base32Decoder), Section 3 (TotpTicker with Kotlin Time).  
+> 2. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — Section 1 (HKDF Parity), Section 2 (Envelope Schema), Section 3 (ShellCryptionEngine with AAD `vault_pearls_totp:{id}`).  
+> 3. [`DESIGN.md`](../DESIGN.md) — Section 2 (Theme Tokens), Section 4 (TotpCard with Spring Bounce), Section 5 (TotpCountdownRing Canvas Arc).  
 
 Copy and paste this prompt to execute **Phase 1 (Tasks 01 & 02)**:
 
@@ -184,9 +186,9 @@ Verify all unit tests pass and the countdown ring renders smoothly at 60fps.
 
 > 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-2-encrypted-local-persistence--authenticator-dashboard) for complete specifications on **Task 03** and **Task 04**.  
 > **📖 Required Context Files for Phase 2**:  
-> 1. [`room-storage-schema.md`](project/room-storage-schema.md) — Section 2 (Entities: TotpItemEntity, SyncMetadataEntity), Section 3 (DAOs), Section 4 (ShellGuardTotpDatabase SQLCipher Builder).  
-> 2. [`DESIGN.md`](DESIGN.md) — Section 4 (TotpCard), Section 6 (PodFilterChips), Section 7 (ClipboardToastPill), Section 8 (TotpEmptyState).  
-> 3. [`ui-ux-design-system.md`](project/ui-ux-design-system.md) — Section 2 & 4 (MVI TotpViewModel).  
+> 1. [`room-storage-schema.md`](./room-storage-schema.md) — Section 2 (Entities: TotpItemEntity, SyncMetadataEntity), Section 3 (DAOs), Section 4 (ShellGuardTotpDatabase SQLCipher Builder).  
+> 2. [`DESIGN.md`](../DESIGN.md) — Section 4 (TotpCard), Section 6 (PodFilterChips), Section 7 (ClipboardToastPill), Section 8 (TotpEmptyState).  
+> 3. [`ui-ux-design-system.md`](./ui-ux-design-system.md) — Section 2 & 4 (MVI TotpViewModel).  
 
 Copy and paste this prompt to execute **Phase 2 (Tasks 03 & 04)**:
 
@@ -240,7 +242,7 @@ Verify that searching filters items instantly, swipe-to-delete removes items, lo
 > **📖 Required Context Files for Phase 3**:  
 > 1. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — Section 4 (AndroidKeyStoreHelper.kt Biometrics), Section 5 (ClawCrypto.kt).  
 > 2. [`ui-ux-design-system.md`](./ui-ux-design-system.md) — Section 4.B (HatchVaultScreen.kt), Section 4.A (TotpNavHost.kt), Section 4.C (LoginScreen.kt / LockScreen.kt).  
-> 3. [`DESIGN.md`](./DESIGN.md) — Section 10 (HatchVaultScreen Layout).  
+> 3. [`DESIGN.md`](../DESIGN.md) — Section 10 (HatchVaultScreen Layout).  
 
 Copy and paste this prompt to execute **Phase 3 (Tasks 05 & 06)**:
 
@@ -290,7 +292,7 @@ Verify first install launches into Hatch Vault, allows skipping biometrics, and 
 > 1. [`totp-engine-spec.md`](./totp-engine-spec.md) — Section 4 (TotpUriParser.kt), Section 5 (QrCodeAnalyzer.kt CameraX Pipeline).  
 > 2. [`room-storage-schema.md`](./room-storage-schema.md) — Section 6 (BackupManager.kt Encrypted JSON Export/Import).  
 > 3. [`ui-ux-design-system.md`](./ui-ux-design-system.md) — Section 4.C (AddSecretScreen.kt).  
-> 4. [`DESIGN.md`](./DESIGN.md) — Section 6 (ScannerFab.kt).  
+> 4. [`DESIGN.md`](../DESIGN.md) — Section 6 (ScannerFab.kt).  
 
 Copy and paste this prompt to execute **Phase 4 (Tasks 07 & 08)**:
 
@@ -334,7 +336,7 @@ Verify that camera scanning detects 2FA codes immediately, gallery QR import wor
 > **📖 Required Context Files for Phase 5**:  
 > 1. [`routes-and-contracts.md`](./routes-and-contracts.md) — Section 1 (ShellResponse), Section 2 (DTOs), Section 3 (ShellGuardTotpClient), Section 4 (ApiClient), Section 5 (Two-Way Sync), Section 6 (Cleartext/VPN Transport), Section 7 (TotpSyncWorker).  
 > 2. [`ui-ux-design-system.md`](./ui-ux-design-system.md) — Section 3 (GatewayScreen.kt 1:1 ClawStack Port), Section 4.E (SpotlightOverlay.kt).  
-> 3. [`DESIGN.md`](./DESIGN.md) — Section 2 (Theme Tokens), Section 9 (SettingsScreen.kt), Section 11 (SpotlightOverlay.kt), Section 12 (Self-Hosted Transport).  
+> 3. [`DESIGN.md`](../DESIGN.md) — Section 2 (Theme Tokens), Section 9 (SettingsScreen.kt), Section 11 (SpotlightOverlay.kt), Section 12 (Self-Hosted Transport).  
 
 Copy and paste this prompt to execute **Phase 5 (Tasks 09 & 10)**:
 
@@ -484,7 +486,7 @@ Verify Dashboard renders two distinct grouped sections clearly, and creating new
 > 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-8-welcoming-first-run-wizard--import-habitat-intake-flow-v0002-build-4) for complete specifications on **Task 15** and **Task 16**.  
 > **📖 Required Context Files for Phase 8**:  
 > 1. [`room-storage-schema.md`](./room-storage-schema.md) — BackupManager.kt & JSON schema.  
-> 2. [`DESIGN.md`](./DESIGN.md) — Section 10 (Onboarding & Hero Theme Tokens).  
+> 2. [`DESIGN.md`](../DESIGN.md) — Section 10 (Onboarding & Hero Theme Tokens).  
 
 Copy and paste this prompt to execute **Phase 8 (Tasks 15 & 16)**:
 
@@ -524,7 +526,7 @@ Verify file picker imports valid habitats and Bitwarden vaults, presents passwor
 > 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-9-vault-security-education-enlarged-spotlight-tour--empty-vault-landing-v0011-build-8--milestone-1) for complete specifications on **Task 17** and **Task 18**.  
 > **📖 Required Context Files for Phase 9**:  
 > 1. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — KeyStore Protection Orchestration.  
-> 2. [`DESIGN.md`](./DESIGN.md) — Section 11 (Spotlight Geometry & Spacious Cutouts).  
+> 2. [`DESIGN.md`](../DESIGN.md) — Section 11 (Spotlight Geometry & Spacious Cutouts).  
 
 Copy and paste this prompt to execute **Phase 9 (Tasks 17 & 18)**:
 
@@ -563,7 +565,7 @@ Verify security setup binds to KeyStore, spotlight cutouts are spacious and clea
 > 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-10-expandable-floating-actions-speed-dial-qr-image--manual-v0012-build-8) for complete specifications on **Task 19** and **Task 20**.  
 > **📖 Required Context Files for Phase 10**:  
 > 1. [`totp-engine-spec.md`](./totp-engine-spec.md) — ML Kit QrCodeAnalyzer.kt.  
-> 2. [`DESIGN.md`](./DESIGN.md) — Section 6 (ScannerFab & Speed Dial tokens).  
+> 2. [`DESIGN.md`](../DESIGN.md) — Section 6 (ScannerFab & Speed Dial tokens).  
 
 Copy and paste this prompt to execute **Phase 10 (Tasks 19 & 20)**:
 
@@ -600,7 +602,7 @@ Verify FAB rotates smoothly, scrim dims background, tapping outside closes menu,
 
 > 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-11-categorized-settings-hub--appearancebehavior-customization-v0020-build-10--milestone-2) for complete specifications on **Task 21** and **Task 22**.  
 > **📖 Required Context Files for Phase 11**:  
-> 1. [`DESIGN.md`](./DESIGN.md) — Section 2 (Theme Tokens) & Section 9 (Settings Navigation).  
+> 1. [`DESIGN.md`](../DESIGN.md) — Section 2 (Theme Tokens) & Section 9 (Settings Navigation).  
 > 2. [`ui-ux-design-system.md`](./ui-ux-design-system.md) — Section 4 (Settings Architecture).  
 
 Copy and paste this prompt to execute **Phase 11 (Tasks 21 & 22)**:
@@ -641,7 +643,7 @@ Verify category navigation transitions smoothly and settings updates reflect imm
 
 > 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-115-settings-continuity--theme-parity--serversync-home-v0021-build-11) for complete specifications on **Task 22b** and **Task 22c**.  
 > **📖 Required Context Files for Phase 11.5**:  
-> 1. [`DESIGN.md`](./DESIGN.md) — Section 2 (Theme Tokens & Accent Palettes) & Section 9 (Settings Navigation).  
+> 1. [`DESIGN.md`](../DESIGN.md) — Section 2 (Theme Tokens & Accent Palettes) & Section 9 (Settings Navigation).  
 > 2. [`ui-ux-design-system.md`](./ui-ux-design-system.md) — Section 4 (Settings Architecture & Navigation Routes).  
 
 Copy and paste this prompt to execute **Phase 11.5 (Tasks 22b & 22c)**:
@@ -797,7 +799,7 @@ Verify Bitwarden JSON exports parse accurately, zero passwords/notes leak into s
 > 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-14-home-screen-interactive-glance-widgets--icon-pack-manager-v0100-build-18--open-beta-candidate) for complete specifications on **Task 27** and **Task 28**.  
 > **📖 Required Context Files for Phase 14**:  
 > 1. [`totp-engine-spec.md`](./totp-engine-spec.md) — Background TOTP calculation.  
-> 2. [`DESIGN.md`](./DESIGN.md) — Section 4 (Widget Modernist Layout).  
+> 2. [`DESIGN.md`](../DESIGN.md) — Section 4 (Widget Modernist Layout).  
 
 Copy and paste this prompt to execute **Phase 14 (Tasks 27 & 28)**:
 
@@ -885,3 +887,62 @@ Execute Phase 15 adhering to the Functionality + UI Component pairing:
 
 Verify: A user can create a ClawKey vault (paste or upload), be correctly prompted for their ClawKey on lock/restart, export a `.sgtotp.bak` with `protectionMode = "CLAWKEY"` stamped in the envelope, re-import on another device using their ClawKey, and duplicate TOTP entries are silently skipped during all import flows.
 ```
+
+---
+
+## 💾 Stage 17: Phase 16 Prompt — Encrypted Remote Credential Cache, Offline Session Persistence & Targeted Purge [v0.1.2.0 (Build 20)]
+
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-16-encrypted-remote-credential-cache-offline-session-persistence--targeted-purge-v0120-build-20) for complete specifications on **Task 31** and **Task 32**.  
+> **📖 Required Context Files for Phase 16**:  
+> 1. [`room-storage-schema.md`](./room-storage-schema.md) — Section 1 (`TotpItemEntity`), Section 2 (`TotpItemDao`), and Section 7 (`AuditLogDao`).  
+> 2. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — Section 2 (`EncryptedDeviceVault` secure key/session caching).  
+> 3. [`totp-engine-spec.md`](./totp-engine-spec.md) — Section 3 (`TotpRepository` dynamic sync & delta engine).  
+
+Copy and paste this prompt to execute **Phase 16 (Tasks 31 & 32)**:
+
+```markdown
+# PHASE 16 EXECUTION: Encrypted Remote Credential Cache, Offline Session Persistence & Targeted Purge [v0.1.2.0 (Build 20)]
+
+## 📖 Reference Documentation & Roadmap
+Before writing code, inspect:
+- `ROADMAP.md`: Phase 16 (Task 31: Encrypted Remote Cache Persistence · Task 32: Connection & Cache Status Badges).
+- `room-storage-schema.md`: Section 1 (TotpItemEntity), Section 2 (TotpItemDao), and Section 7 (AuditLogDao).
+- `crypto-and-keystore.md`: Section 2 (EncryptedDeviceVault secure identity persistence).
+- `totp-engine-spec.md`: Section 3 (TotpRepository syncRemoteVault & delta engine).
+
+Execute Phase 16 adhering to the Functionality + UI Component pairing:
+
+### Task 31: [Functionality] Encrypted Remote Cache Persistence, Offline Session Resolver & Targeted Purge Engine
+- **Invariants**:
+  - Remote codes are strictly READ-ONLY mirrors: never editable, deletable on device, or exportable into local backups.
+  - Remote credentials must be cached encrypted at rest inside SQLCipher Room DB (`is_local_only = 0`).
+  - No mandatory full sync on app open: users can use the app fully offline if they have a previous sync of the vault.
+  - Scheduled syncs continue to run on the existing remote sync schedule (`TotpSyncWorker`) from settings.
+- **Offline Session Persistence**:
+  - Securely persist the active `cachedOwnerUuid` and server connection metadata in `EncryptedDeviceVault` upon successful sync.
+  - Update `TotpViewModel.currentOwnerUuid` and `TotpItemDao` query logic: when `currentSession` is offline/unreachable, fallback to `cachedOwnerUuid` so previously synced remote credentials render seamlessly on the dashboard without network access.
+  - Rolling TOTP calculation and countdown tickers must function identically offline for cached remote items.
+- **Delta-Only Syncing**:
+  - `TotpRepository.syncRemoteVault()` checks incoming `updated_at` timestamps against local `remoteUpdatedAt`, skipping cryptographic decryption and database writes for identical records.
+- **Targeted Purge on Disconnect & Logout**:
+  - Implement `TotpItemDao.clearRemoteItemsForOwner(ownerUuid: String)` (`DELETE FROM totp_items WHERE owner_uuid = :ownerUuid AND is_local_only = 0`).
+  - Wire `AuthRepository.logout()` and `disconnectVault()` to execute this targeted purge, clearing all cached remote items and sync metadata for that connection.
+  - Guarantee local codes (`is_local_only = 1` or `owner_uuid = 'local'`) are 100% preserved and never purged.
+- **Multi-User Switching Isolation**:
+  - When logging into a different user account, purge prior cached remote records before inserting new items.
+
+### Task 32: [UI Component] Connection & Cache Status Badges, Offline Sync Banner & Disconnect Confirmation Dialog
+- **Dashboard Cache State Indicator**:
+  - In `TotpListScreen.kt`, add a status chip alongside the "☁️ Synced from ShellGuard" header:
+    - `[ 🟢 Live · Synced Xm ago ]` when connected and reachable.
+    - `[ 🟡 Offline Cache · X items ]` when offline, reassuring the user their cached credentials are valid and active.
+- **`SettingsServerSyncScreen.kt` Cache Diagnostics**:
+  - Display live cache status tile: *"Encrypted on-device cache: X credentials · Read-only"*.
+  - Update "Disconnect Vault" confirmation dialog with explicit reassurance: *"Disconnecting will remove cached remote credentials from this device. All locally created codes remain safe."*
+  - Add "Force Full Resync" button to invalidate local timestamps and perform a fresh re-pull when desired.
+- **Offline Resilience & Error Handling**:
+  - In `TotpListScreen.kt`, pull-to-refresh while offline displays a graceful transient message (*"Network unavailable — using encrypted offline cache"*) without blanking the screen or clearing cached items.
+
+Verify: Remote credentials remain cached and generate valid rolling TOTP codes while fully offline without network contact. Background sync updates only changed items according to the configured schedule. Manually disconnecting or logging out cleanly purges cached remote items while leaving all local codes intact.
+```
+
