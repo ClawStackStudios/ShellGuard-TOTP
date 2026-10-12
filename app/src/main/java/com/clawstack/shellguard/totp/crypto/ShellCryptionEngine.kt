@@ -149,10 +149,32 @@ object ShellCryptionEngine {
     }
 
     private fun base64Encode(bytes: ByteArray): String {
-        return java.util.Base64.getEncoder().encodeToString(bytes)
+        return try {
+            val clazz = Class.forName("android.util.Base64")
+            clazz.getMethod("encodeToString", ByteArray::class.java, Int::class.java)
+                .invoke(null, bytes, 2) as String // 2 = NO_WRAP
+        } catch (e: Throwable) {
+            try {
+                val encoder = Class.forName("java.util.Base64").getMethod("getEncoder").invoke(null)
+                encoder.javaClass.getMethod("encodeToString", ByteArray::class.java).invoke(encoder, bytes) as String
+            } catch (ex: Throwable) {
+                throw Exception("Base64 encode failed")
+            }
+        }
     }
 
     private fun base64Decode(str: String): ByteArray {
-        return java.util.Base64.getDecoder().decode(str.trim())
+        return try {
+            val clazz = Class.forName("android.util.Base64")
+            clazz.getMethod("decode", String::class.java, Int::class.java)
+                .invoke(null, str.trim(), 0) as ByteArray // 0 = DEFAULT
+        } catch (e: Throwable) {
+            try {
+                val decoder = Class.forName("java.util.Base64").getMethod("getDecoder").invoke(null)
+                decoder.javaClass.getMethod("decode", String::class.java).invoke(decoder, str.trim()) as ByteArray
+            } catch (ex: Throwable) {
+                throw Exception("Base64 decode failed")
+            }
+        }
     }
 }

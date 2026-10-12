@@ -69,4 +69,7 @@ interface TotpItemDao {
 
     @Query("SELECT COUNT(*) FROM totp_items WHERE owner_uuid = :ownerUuid")
     suspend fun getItemCount(ownerUuid: String = "local"): Int
+
+    @Query("SELECT * FROM totp_items WHERE (:ownerUuid = 'local' AND owner_uuid = 'local') OR (:ownerUuid != 'local' AND (owner_uuid = :ownerUuid OR owner_uuid = 'local')) ORDER BY title COLLATE NOCASE ASC")
+    suspend fun getAllTotpItems(ownerUuid: String = "local"): List<TotpItemEntity>
 }
