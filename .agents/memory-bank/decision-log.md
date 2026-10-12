@@ -8,3 +8,7 @@ Configured `PanicTriggerReceiver` to listen for emergency panic broadcasts with 
 
 ## 2026-10-03 — git advanced history engineering & test oracle bisect
 Pattern matched the Git Advanced Workflows skill into our hygiene rules and consolidated learnings. Codified `--fixup` autosquash workflows with two-layer attribution pairing and automated binary search bug hunting via `git bisect run ./gradlew testDebugUnitTest`.
+
+## 2026-10-12 — cloud ci offload & headless keystore fallback
+Local JVM Gradle test suites and debug builds exhausted host memory and froze terminals. Offloaded verification to GitHub Actions CI (`.github/workflows/ci.yml`) and codified a push-and-tail verification gate. Wrapping `signingConfigs.create("debugConfig")` in `if (debugKeystoreFile.exists())` within `app/build.gradle.kts` resolved missing keystore failures on headless runners, enabling automatic AGP default keystore generation.
+

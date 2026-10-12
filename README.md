@@ -7,6 +7,7 @@
 ### Secure, offline-first 2FA authenticator with hardware-encrypted vault storage.
 
 [![Version](https://img.shields.io/badge/version-v0.0.2.3%20(Build%2016)-E4048A?style=for-the-badge&logo=android&logoColor=white)](CHANGELOG.md)
+[![CI](https://github.com/ClawStackStudios/ShellGuard-TOTP/actions/workflows/ci.yml/badge.svg)](https://github.com/ClawStackStudios/ShellGuard-TOTP/actions/workflows/ci.yml)
 [![Android](https://img.shields.io/badge/Android-API%2024%E2%80%9336-3DDC84?style=for-the-badge&logo=android&logoColor=white)](app/build.gradle.kts)
 [![Security](https://img.shields.io/badge/Storage-SQLCipher%20AES--256-00BCD4?style=for-the-badge&logo=shield&logoColor=white)](project/crypto-and-keystore.md)
 [![16KB Ready](https://img.shields.io/badge/Kernel-16%20KB%20Page--Size-7952B3?style=for-the-badge)](project/16kb-page-size-alignment-guide.md)
@@ -169,6 +170,22 @@ flowchart TD
 - **Gradle 8.13+** (bundled via `./gradlew`)
 
 ### Verification & Testing
+
+#### 1. Instantaneous Local Pre-Flight Check
+```bash
+# Verify documentation Single Source of Truth and zero drift (< 1 second)
+python3 scripts/audit_docs_drift.py
+```
+
+#### 2. Cloud-First CI Verification (Default)
+To preserve developer host CPU and memory resources, heavy JVM Gradle test suites and debug builds are offloaded to GitHub Actions runners:
+```bash
+# Push branch and watch cloud runner execution live from your terminal
+git push origin <branch>
+gh run watch
+```
+
+#### 3. Local Gradle Build (Optional / Offline)
 ```bash
 # Run the complete unit test suite (107 tests passing green)
 ./gradlew testDebugUnitTest

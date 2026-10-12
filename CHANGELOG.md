@@ -6,7 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-- No unreleased changes yet.
+### Added
+- **Continuous Integration Pipeline (`.github/workflows/ci.yml`)**: Automated cloud runner workflow offloading all 107 unit and Robolectric tests and debug APK compilation to GitHub Actions (`ubuntu-latest`) with Gradle caching.
+- **Deterministic Documentation Automation (`doc-automation`)**: Dedicated agent skill and standalone pre-flight audit script (`scripts/audit_docs_drift.py`) enforcing zero documentation drift and the Docs Bow to Code Single Source of Truth invariant.
+- **Security Policy (`SECURITY.md`)**: Root vulnerability disclosure policy detailing supported versions, cryptographic threat model, and 48-hour responsible disclosure SLA.
+- **Git Advanced Workflows (`git-advanced-workflows`)**: Dedicated skill codifying interactive rebase verbs, `--fixup` autosquash workflows with two-layer attribution, automated `git bisect run` test runners, worktree isolation, and reflog recovery.
+
+### Changed
+- **Cloud-First CI Verification Gate**: Updated repository governance rules (`git-hygiene.md`, `cadence-and-lifecycle-prompts.md`, `android-development.md`, and `CONTRIBUTING.md`) to exempt local developer machines from resource-heavy JVM test suites, offloading verification to GitHub Actions with terminal tailing via `gh run watch`.
+
+### Fixed
+- **Headless Debug Keystore Fallback**: Conditioned `debugConfig` in `app/build.gradle.kts` on the presence of local `debug.keystore`, enabling AGP to fall back cleanly to its built-in debug keystore in headless CI environments.
+
 
 ## [0.0.2.3] - 2026-09-22 (Build 16) — Phase 12: Security Suite, Panic Purge, Audit Logging & Web Server v0.0.2.3 Sync Parity
 ### Added

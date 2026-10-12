@@ -127,6 +127,24 @@ Successes:
 - Synthesized and created dedicated skill `.agents/skills/git-advanced-workflows/SKILL.md` with complete command tables, autosquash flows, Mermaid bisect diagram, worktree playbooks, and reflog recovery blueprints.
 - Bolstered `.agents/rules/git-hygiene.md` with Section "Rebase & Advanced Workflow Hygiene" codifying editor bypass, autosquash, public branch rebase prohibition, `--force-with-lease` mandate, automated bisect runner, worktree isolation, and reflog recovery.
 ---
+Date: 2026-10-12
+TaskRef: "Cloud-First CI Verification Gate & Headless Debug Keystore Fallback"
+
+Learnings:
+- Heavy JVM Gradle build commands (`./gradlew testDebugUnitTest`, `./gradlew assembleDebug`) consume substantial CPU and RAM, starving local developer environments. Offloading these runs to a GitHub Actions CI runner preserves developer focus and hardware stability while still enforcing a strict verification gate.
+- When running headlessly in CI without a physical local `debug.keystore` file, configuring `signingConfigs.create("debugConfig")` in `app/build.gradle.kts` without checking `debugKeystoreFile.exists()` causes Android Gradle Plugin to fail with missing required storeFile property errors. Wrapping the custom signing config block in `if (debugKeystoreFile.exists())` lets AGP cleanly fall back to its internal default debug keystore.
+- Fast local pre-flight checks (such as `python3 scripts/audit_docs_drift.py`) provide sub-second verification of documentation Single Source of Truth without spinning up Gradle or JVM daemons.
+- Terminal-based CI observability via `gh run list --branch <branch> -L 1` and `gh run watch <run-id>` provides real-time progress feedback without leaving the command line.
+
+Difficulties:
+- Initial CI run failed on `assembleDebug` because `debug.keystore` was gitignored and absent in the runner. Traced AGP signing config resolution and added the conditional existence guard.
+
+Successes:
+- Built `.github/workflows/ci.yml` running doc drift audit, 107 unit and Robolectric tests, and debug APK assembly with Gradle caching.
+- Achieved 100% green verification in GitHub Actions CI run `38278380245` with zero local host machine load.
+- Codified Cloud-First CI Verification Gate across all agent governance rules and `CONTRIBUTING.md`.
+---
+
 
 
 

@@ -70,6 +70,12 @@
   - `TotpRepository.kt`: Web Server v0.0.2.3 dynamic TOTP URI parsing via `TotpUriParser.parse()` extracting Base32 secret, custom algorithm (SHA256/512), digits (8), and custom periods, paired with `isContentIdentical()` fast-filter avoiding database write churn on null `updated_at`.
   - 107/107 unit and Robolectric tests passing 100% green; verified on physical Google Pixel and Nexus 7 tablet.
 
+- ✅ **Cloud-First CI Verification Gate & Repository Governance Hardening**:
+  - `ci.yml`: GitHub Actions continuous integration workflow (`.github/workflows/ci.yml`) offloading all 107 unit/Robolectric test executions and `assembleDebug` compilation to cloud runners (`ubuntu-latest`) with Gradle caching.
+  - `app/build.gradle.kts`: Headless debug keystore fallback checking `debugKeystoreFile.exists()` to enable automatic AGP default keystore generation in headless CI environments.
+  - SSoT Documentation Mesh: Ingested `doc-automation` and `git-advanced-workflows` skills, created root `SECURITY.md`, and implemented `scripts/audit_docs_drift.py` for automated Single Source of Truth drift detection.
+  - Cloud Verification Invariant: Codified in `.agents/rules/git-hygiene.md`, `cadence-and-lifecycle-prompts.md`, `android-development.md`, and `CONTRIBUTING.md` protecting local machine resources from heavy JVM test daemon exhaustion.
+
 ## What's Next
 - ⏳ **Phase 13: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 17)]**:
   - Task 25: Multi-Format Import Engine (Bitwarden Vault/Auth, Aegis, 2FAS) & Dual Vault Persister.
