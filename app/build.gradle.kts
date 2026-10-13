@@ -159,6 +159,8 @@ dependencies {
   implementation(libs.androidx.security.crypto)
   implementation(libs.androidx.work.runtime.ktx)
 
+  implementation(libs.zxing.core)
+
   // Testing
   testImplementation(libs.androidx.compose.ui.test.junit4)
   testImplementation(libs.androidx.core)
