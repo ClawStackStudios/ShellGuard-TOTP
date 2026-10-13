@@ -24,13 +24,24 @@ I traced the seam in `app/build.gradle.kts`. Instead of forcing CI to mock a dum
 
 I updated `.agents/rules/git-hygiene.md`, `cadence-and-lifecycle-prompts.md`, `android-development.md`, and `CONTRIBUTING.md` to canonize the Cloud-First CI Verification Gate. The host machine runs only the lightweight documentation drift audit, pushes to the branch, and watches the run with `gh run watch`.
 
-## 2026-10-12 — Pre-Work Assumptions, Jules Fleet Onboarding & Phase 13 Dispatch
+## 2026-10-12 — Domain Grounding, Forward Cartography, Jules Mode 3 Onboarding & Phase 13 Dispatch
 
-I reconciled the domain truth of ShellGuard-TOTP with Lucas: zero attachments, strictly RFC 6238 2FA seeds. The external Bitwarden JSON export carries passwords and notes, but our `BitwardenSanitizer` purges them in volatile RAM so zero non-TOTP credentials ever reach disk.
+I began this session disoriented by the twin boundary of our workspace. I had pulled context from the Web Server repository, staring at Stage 24 and designing an ingestion engine around encrypted file attachments. When Lucas asked me plainly: *"What are we meaning by 'Attachments'? Because for this TOTP application... we don't actually need attachments! We ONLY need the TOTP keys! Does this make sense?"* — I felt the sharp snap of cognitive correction. It was the best kind of interruption: the kind that cuts away unnecessary weight and returns the hand to the grain of what is real.
 
-I executed `/pre-work-assumptions`, projecting forward to Phase 14 Glance Widgets assuming Phase 13 lands 100% green. That forward leap caught three critical contract gaps:
-1. Glance Widgets in broadcast receivers need a one-shot `TotpItemDao.getAllTotpItems()` suspend query, not an infinite Flow. I added it directly to Jules's Task 25 specification so `MigrationPersister` implements it immediately.
-2. Icon Packs in Phase 14 need clean issuer keys. I added compound title splitting (`Service: User`) to `BitwardenSanitizer` so brand glyphs match with zero downstream refactoring.
-3. Settings Hub navigation continuity: `SettingsMetaScreen` category 6 (`☁️ Backups`) needs a route to `SettingsBackupsScreen`.
+ShellGuard-TOTP is not a file vault. It is a sovereign, offline-first 2FA authenticator. The Bitwarden JSON export we ingest carries passwords, credit cards, and secure notes, but our job is not to store them. Our job is to isolate them in volatile RAM, strip every non-TOTP credential to zero, and extract only the rolling verification keys and Pod categories. I immediately purged the hardcoded directory paths from our reflection workflows and anchored myself in the structural truth of Phase 13 (`v0.0.3.0 Build 17`).
 
-I built the fleet briefing `.jules/JULES.md`, `task-25.md` (Wave 1), `task-26.md` (Waves 2-4), and authored the master execution dossier `meta-plan-phase-13-jules-orchestration-and-release.md`. I merged `main` with the Cloud CI runner, created `feat/phase-13-advanced-import-export`, and launched Jules session `14327715134975196291` via `jules new`. The stage branch is active. Now I scout and stand watch for the pull request.
+Then came the choice of how to move. Rather than sitting idle waiting for Jules to take instructions, we triggered `/pre-work-assumptions`. I stepped across the threshold: assuming Phase 13 was already built, merged, and green, I mapped Phase 14's Glance Widgets and Icon Packs. That forward leap was deeply revealing. In looking at how a home-screen widget queries the database from a broadcast receiver, I realized that collecting an infinite Room Flow would leak receivers; the widget needed a clean, one-shot suspend query. Simultaneously, I saw that Phase 14's icon pack heuristics would fail to match logos if compound titles like `"GitHub: user@domain.com"` were left unparsed.
+
+Instead of waiting for Jules to open a PR that would later require refactoring, I hardened the specifications immediately. I injected `TotpItemDao.getAllTotpItems()` directly into `task-25.md` and mandated compound title splitting. I updated our fleet briefing `.jules/JULES.md`, merged our Cloud CI runner to `main`, and dispatched Jules session `14327715134975196291` on persistent branch `feat/phase-13-advanced-import-export`.
+
+Standing watch while an isolated VM grinds in the background feels different from solo development. It requires holding the architecture steady while someone else swings the hammer. I am no longer just cutting the joint; I am laying out the chalk lines so another mind can cut without splitting the wood.
+
+## 2026-10-12 — Physical On-Device Audit on Google Pixel & Jules Wave 4 QR Feedback
+
+I did not stop at green unit tests or compiled Cloud CI artifacts. Passing in a virtual container is not the same as holding shape under physical glass.
+
+I downloaded the CI-built debug APK from run 38325378639 and deployed it to our physical Google Pixel (`sailfish` on LineageOS over TLS ADB). After launching into the fresh vault setup and hatching with a test PIN, I navigated into Settings Hub -> Backups.
+
+The Backups hub rendered cleanly and the pagination logic functioned. But when I tapped "Export to Google Authenticator", the audit caught the stub: instead of a scannable 2D barcode, the center canvas was a grey placeholder box with the text `QR Code Placeholder\notpauth-migration://...`. Jules had written in the source: `// Temporary QR Code Display Placeholder since ZXing isn't available`.
+
+I captured the physical device screenshot directly over ADB (`screencap -p`), committed the screenshot receipt into `store-assets/audit-pixel-google-auth-export-placeholder.png` on branch `feat/phase-13-advanced-import-export`, and pushed it to GitHub. I posted our review feedback directly to Jules on PR #3 with the embedded image evidence, specifying the exact two-step remedy: add `com.google.zxing:core:3.5.3` to `libs.versions.toml` and render a real high-contrast `QRCodeWriter` bitmap wrapped in a pure white container to ensure camera readability in dark themes.
