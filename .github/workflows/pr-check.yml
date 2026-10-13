@@ -1,0 +1,45 @@
+name: Pull Request Check 🧪
+
+on:
+  pull_request:
+    branches:
+      - main
+      - 'feat/**'
+      - 'fix/**'
+
+permissions:
+  contents: read
+
+jobs:
+  test_and_build:
+    name: Test & Build Gate 🛡️
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code 🛡️
+        uses: actions/checkout@v4
+
+      - name: ☕ Setup Java 17 (Zulu)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: 🐘 Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: 🤖 Accept Android SDK Licenses
+        run: |
+          yes | sdkmanager --licenses || true
+
+      - name: ⚙️ Ensure Gradle Executable
+        run: chmod +x gradlew
+
+      - name: 📜 Audit Documentation Drift
+        run: |
+          python3 scripts/audit_docs_drift.py
+
+      - name: 🛡️ Unit & Robolectric Tests
+        run: ./gradlew testDebugUnitTest --no-daemon
+
+      - name: 📦 Assemble Debug APK
+        run: ./gradlew assembleDebug --no-daemon
