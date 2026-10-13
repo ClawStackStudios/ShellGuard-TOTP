@@ -248,6 +248,7 @@ fun TotpNavHost(
             onNavigateToImportExport = { navController.navigate(Screen.SettingsImportExport.route) },
             onNavigateToSecurity = { navController.navigate(Screen.SettingsSecurity.route) },
             onNavigateToAuditLog = { navController.navigate(Screen.SettingsAuditLog.route) },
+            onNavigateToBackups = { navController.navigate("settings/backups") },
             onNavigateToPlaceholder = { title ->
                 navController.navigate("${Screen.SettingsPlaceholder.route}/${android.net.Uri.encode(title)}")
             }
@@ -318,6 +319,17 @@ fun TotpNavHost(
         com.clawstack.shellguard.totp.ui.screens.settings.SettingsPlaceholderScreen(
             categoryTitle = title,
             onBackClick = { navController.popBackStack() }
+        )
+    }
+
+    composable(
+        route = "settings/backups",
+        enterTransition = { fadeIn() },
+        exitTransition = { fadeOut() }
+    ) {
+        com.clawstack.shellguard.totp.ui.screens.settings.SettingsBackupsScreen(
+            navController = navController,
+            hasRemoteGateway = false
         )
     }
     }
