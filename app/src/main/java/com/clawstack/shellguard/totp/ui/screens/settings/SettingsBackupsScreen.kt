@@ -15,6 +15,10 @@ import com.clawstack.shellguard.totp.data.migration.BackupSchemaType
 import com.clawstack.shellguard.totp.data.migration.ParsedTotpItem
 import com.clawstack.shellguard.totp.data.migration.PreValidationResult
 import com.clawstack.shellguard.totp.ui.dialogs.BitwardenImportPreviewDialog
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.platform.LocalContext
+import com.clawstack.shellguard.totp.data.migration.MultiFormatMigrationEngine
 import com.clawstack.shellguard.totp.ui.dialogs.GoogleAuthExportViewerDialog
 import java.util.UUID
 
@@ -24,22 +28,35 @@ fun SettingsBackupsScreen(
     navController: NavController,
     hasRemoteGateway: Boolean = false // Passed in from ViewModel realistically
 ) {
+    val context = LocalContext.current
     var showImportDialog by remember { mutableStateOf(false) }
     var showExportDialog by remember { mutableStateOf(false) }
+    var requireStepUpAuth by remember { mutableStateOf(false) }
 
-    // Mock data for dialog preview testing
-    val mockPreValidation = remember {
-        PreValidationResult(
-            isValid = true,
-            schemaType = BackupSchemaType.BITWARDEN_VAULT,
-            tokenCount = 5,
-            parsedTokens = listOf(
-                ParsedTotpItem(id = UUID.randomUUID().toString(), title = "Github", secret = "JBSWY3DPEHPK3PXP", category = "Dev"),
-                ParsedTotpItem(id = UUID.randomUUID().toString(), title = "Twitter", secret = "JBSWY3DPEHPK3PXP", category = "Social")
-            )
-        )
+    var preValidationData by remember { mutableStateOf<PreValidationResult?>(null) }
+
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            try {
+                context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                    val parseResult = MultiFormatMigrationEngine.parseStream(inputStream)
+                    preValidationData = PreValidationResult(
+                        isValid = true,
+                        schemaType = parseResult.schemaType,
+                        tokenCount = parseResult.items.size,
+                        parsedTokens = parseResult.items
+                    )
+                    showImportDialog = true
+                }
+            } catch (e: Exception) {
+                // handle error appropriately
+            }
+        }
     }
 
+    // Mock data for dialog preview testing
     val mockExportUris = remember {
         listOf(
             "otpauth-migration://offline?data=mock1",
@@ -47,15 +64,34 @@ fun SettingsBackupsScreen(
         )
     }
 
-    if (showImportDialog) {
+    if (showImportDialog && preValidationData != null) {
         BitwardenImportPreviewDialog(
-            preValidationResult = mockPreValidation,
+            preValidationResult = preValidationData!!,
             hasRemoteGateway = hasRemoteGateway,
             onConfirm = { policy, dest ->
                 // Handle import logic
                 showImportDialog = false
             },
             onDismiss = { showImportDialog = false }
+        )
+    }
+
+    if (requireStepUpAuth) {
+        // Implement biometric/PIN step-up logic here (simplified for this task)
+        // Upon successful auth: requireStepUpAuth = false; showExportDialog = true
+        AlertDialog(
+            onDismissRequest = { requireStepUpAuth = false },
+            title = { Text("Authentication Required") },
+            text = { Text("Please verify your identity to export 2FA accounts.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    requireStepUpAuth = false
+                    showExportDialog = true
+                }) { Text("Verify (Mocked)") }
+            },
+            dismissButton = {
+                TextButton(onClick = { requireStepUpAuth = false }) { Text("Cancel") }
+            }
         )
     }
 
@@ -91,17 +127,17 @@ fun SettingsBackupsScreen(
             SettingsActionCard(
                 title = "Import from File",
                 description = "Import Bitwarden, Aegis, or 2FAS exports.",
-                onClick = { showImportDialog = true }
+                onClick = { filePickerLauncher.launch(arrayOf("*/*")) }
             )
 
-            Divider(modifier = Modifier.padding(vertical = 8.dp))
+            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             Text("Export", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
 
             SettingsActionCard(
                 title = "Export to Google Authenticator",
                 description = "Generate QR codes to migrate your vault.",
-                onClick = { showExportDialog = true }
+                onClick = { requireStepUpAuth = true }
             )
 
             SettingsActionCard(
