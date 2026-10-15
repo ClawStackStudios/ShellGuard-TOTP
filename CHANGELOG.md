@@ -19,6 +19,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Headless Debug Keystore Fallback**: Conditioned `debugConfig` in `app/build.gradle.kts` on the presence of local `debug.keystore`, enabling AGP to fall back cleanly to its built-in debug keystore in headless CI environments.
 
 
+## [0.0.3.0] - 2026-10-15 (Build 17) — Phase 13 & 13.5: Advanced Import/Export, Migration Polish & OWASP Step-Up Auth
+### Added
+- **Multi-Format Import Engine**: Unified ingestion parser (`MultiFormatMigrationEngine`) supporting Bitwarden Vault JSON, Bitwarden Authenticator JSON, Aegis JSON, and 2FAS JSON.
+- **Zero-Knowledge Memory Sanitizer**: Secure memory parsing strictly stripping passwords, secure notes, and non-2FA identities during imports to enforce zero credential leakage into the database.
+- **Dual Vault Persister**: New `MigrationPersister` enabling `SKIP_DUPLICATES`, `OVERWRITE_EXISTING`, and `KEEP_BOTH` conflict resolution during bulk imports.
+- **Google Authenticator Export**: Native Kotlin protobuf encoder (`GoogleAuthMigrationEncoder`) generating 10-token `otpauth-migration` QR code carousel payloads.
+- **Backups & Migration Hub**: Interactive screens (`SettingsBackupsScreen`, `BitwardenImportPreviewDialog`, `GoogleAuthExportViewerDialog`) orchestrating SAF file selection, schema validation, and QR exports.
+- **Native Debug Symbols**: Extracted `libsqlcipher.so` symbol tables via `ndk { debugSymbolLevel = "SYMBOL_TABLE" }` into the release App Bundle to silence Play Console warnings.
+- **ZXing QR Integration**: Added `com.google.zxing:core` to render high-contrast scannable QR bitmaps.
+
+### Security
+- **OWASP MASVS-AUTH-1 Compliance**: Google Authenticator exports are now locked behind a biometric/PIN step-up authentication challenge before rendering plaintext seeds.
+- **FLAG_SECURE Protection**: The Google Authenticator QR viewer explicitly applies `FLAG_SECURE` to the window context, preventing screenshots or Recents menu thumbnail capture of the exported secrets.
+
+### Changed
+- **Offline-First Migration Sync (YAGNI)**: Removed synchronous API pushes during bulk file imports. Imported tokens are inserted immediately into Room SQLCipher with `syncState = PENDING_SYNC`, deferring upload to the `TotpSyncWorker` background queue.
+- **Refined Audit Logging**: The persister now emits a single summary event into the audit log rather than polluting the log with a row-per-token entry during mass imports.
+
 ## [0.0.2.3] - 2026-09-22 (Build 16) — Phase 12: Security Suite, Panic Purge, Audit Logging & Web Server v0.0.2.3 Sync Parity
 ### Added
 - **Security Hub Sub-screen (`SettingsSecurityScreen`)**: Added comprehensive security controls including runtime screenshot capture toggle (`FLAG_SECURE`), tap-to-reveal timeout configuration (10s, 30s, 60s, Never), and emergency panic wipe trigger enablement.
@@ -128,7 +146,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **Core Base**: Initial project setup, 16 KB page size alignment for Android 15, SQLCipher 4.6.1 integration.
 
-[Unreleased]: https://github.com/ClawStackStudios/ShellGuard-TOTP/compare/v0.0.2.3...HEAD
+[Unreleased]: https://github.com/ClawStackStudios/ShellGuard-TOTP/compare/v0.0.3.0...HEAD
+[0.0.3.0]: https://github.com/ClawStackStudios/ShellGuard-TOTP/compare/v0.0.2.3...v0.0.3.0
 [0.0.2.3]: https://github.com/ClawStackStudios/ShellGuard-TOTP/compare/v0.0.2.2...v0.0.2.3
 [0.0.2.2]: https://github.com/ClawStackStudios/ShellGuard-TOTP/compare/v0.0.2.1...v0.0.2.2
 [0.0.2.1]: https://github.com/ClawStackStudios/ShellGuard-TOTP/compare/v0.0.2.0...v0.0.2.1

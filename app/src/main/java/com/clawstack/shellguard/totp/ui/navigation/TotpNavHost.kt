@@ -327,9 +327,16 @@ fun TotpNavHost(
         enterTransition = { fadeIn() },
         exitTransition = { fadeOut() }
     ) {
+        val app = navController.context.applicationContext as com.clawstack.shellguard.totp.ShellGuardTotpApp
         com.clawstack.shellguard.totp.ui.screens.settings.SettingsBackupsScreen(
             navController = navController,
-            hasRemoteGateway = false
+            hasRemoteGateway = authViewModel.currentSession.value != null,
+            migrationPersister = com.clawstack.shellguard.totp.data.migration.MigrationPersister(
+                app.database.totpItemDao(),
+                app.database.auditLogDao()
+            ),
+            totpItemDao = app.database.totpItemDao(),
+            authViewModel = authViewModel
         )
     }
     }
