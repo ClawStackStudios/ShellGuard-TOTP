@@ -50,7 +50,7 @@ data class SettingsCategory(
     val destination: SettingsDestination
 )
 
-enum class SettingsDestination { APPEARANCE, BEHAVIOR, SERVER_SYNC, IMPORT_EXPORT, SECURITY, AUDIT_LOG, PLACEHOLDER }
+enum class SettingsDestination { APPEARANCE, BEHAVIOR, SERVER_SYNC, IMPORT_EXPORT, SECURITY, AUDIT_LOG, BACKUPS, PLACEHOLDER }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,6 +62,7 @@ fun SettingsMetaScreen(
     onNavigateToImportExport: () -> Unit,
     onNavigateToSecurity: () -> Unit = {},
     onNavigateToAuditLog: () -> Unit = {},
+    onNavigateToBackups: () -> Unit = {},
     onNavigateToPlaceholder: (String) -> Unit
 ) {
     Scaffold(
@@ -99,6 +100,7 @@ fun SettingsMetaScreen(
                                 SettingsDestination.IMPORT_EXPORT -> onNavigateToImportExport()
                                 SettingsDestination.SECURITY -> onNavigateToSecurity()
                                 SettingsDestination.AUDIT_LOG -> onNavigateToAuditLog()
+                                SettingsDestination.BACKUPS -> onNavigateToBackups()
                                 SettingsDestination.PLACEHOLDER -> onNavigateToPlaceholder(category.title)
                             }
                         },
@@ -136,7 +138,7 @@ fun SettingsMetaScreen(
         SettingsCategory("☁️ Server & Sync", "Gateway connection, sync status, and vault link", Icons.Default.CloudSync, SettingsDestination.SERVER_SYNC),
         SettingsCategory("📦 Icon packs", "Manage and import icon packs", Icons.Default.Image, SettingsDestination.PLACEHOLDER),
         SettingsCategory("🔐 Security", "Configure encryption, biometric unlock, auto lock", Icons.Default.Security, SettingsDestination.SECURITY),
-        SettingsCategory("☁️ Backups", "Automatic backups & Android cloud backup system", Icons.Default.Backup, SettingsDestination.PLACEHOLDER),
+        SettingsCategory("☁️ Backups", "Automatic backups & Android cloud backup system", Icons.Default.Backup, SettingsDestination.BACKUPS),
         SettingsCategory("🛠️ Import & Export", "Export encrypted .sgtotp.bak, restore vault backups", Icons.Default.ImportExport, SettingsDestination.IMPORT_EXPORT),
         SettingsCategory("📈 Audit log", "Security event audit trail", Icons.Default.History, SettingsDestination.AUDIT_LOG)
     )

@@ -1,10 +1,10 @@
 ---
 roadmap_version: 2.5.1
 last_updated: 2026-09-22
-current_position: "v0.0.2.3 (Build 16) — Phase 12: Security Suite, Panic Purge, Audit Logging & Web Server v0.0.2.3 Sync Parity; next Phase 13: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR (v0.0.3.0)"
+current_position: "v0.0.3.0 (Build 17) — Phase 13.5: Migration Polish, OWASP Step-Up Auth & Offline-First YAGNI Sync; next Phase 14: Home Screen Interactive Glance Widgets & Icon Packs (v0.1.0.0)"
 statistics:
   description: "Deterministic build roadmap for ShellGuard-TOTP Android Authenticator application. Engineered strictly in synergistic 2-task phases where Task A delivers core functionality and Task B delivers the corresponding UI/UX component."
-  features_completed: "█████████████░░ 85%"
+  features_completed: "██████████████░ 92%"
   features_in_progress: "░░░░░░░░░░ 0%"
 ---
 
@@ -412,7 +412,7 @@ Description: Re-align the remote sync intake pipeline in `TotpRepository.kt` wit
 > Phase Feature Set Overview:
 > Delivers robust multi-format vault import with specialized Bitwarden vault parsing (extracting 2FA TOTP secrets while strictly stripping passwords and secure notes in-memory), dual persistence routing (Local SQLCipher vs Remote Gateway sync), and Google Authenticator multi-account migration QR export.
 
-- [ ]  Task 25: [Functionality] Multi-Format Import Engine (Bitwarden Vault/Auth, Aegis, 2FAS) & Dual Vault Persister
+- [x]  Task 25: [Functionality] Multi-Format Import Engine (Bitwarden Vault/Auth, Aegis, 2FAS) & Dual Vault Persister
 
 Description: Implement `MultiFormatMigrationEngine` in `data/migration`:
 - **Bitwarden Vault Parsing**: Parses Bitwarden Password Manager JSON exports (`items[].login.totp` containing `otpauth://totp/...` or raw Base32 seeds, mapping `folders[]` ➔ ShellGuard Pod categories).
@@ -425,13 +425,13 @@ Description: Implement `MultiFormatMigrationEngine` in `data/migration`:
 
 > Success Criteria: Parser extracts all 2FA secrets from complex Bitwarden exports with 0% password/note leakage in memory or storage. Dual persister accurately routes to local Room DB or self-hosted server gateway.
 
-- [ ]  Task 25b: [Hardening & Packaging] Native Debug Symbol Tables Extraction (`debugSymbolLevel = "SYMBOL_TABLE"`) & Release Bundle Polish
+- [x]  Task 25b: [Hardening & Packaging] Native Debug Symbol Tables Extraction (`debugSymbolLevel = "SYMBOL_TABLE"`) & Release Bundle Polish
 
 Description: Configure `ndk.debugSymbolLevel = "SYMBOL_TABLE"` under `buildTypes.release` in `app/build.gradle.kts` to extract and embed native debug symbols for SQLCipher (`libsqlcipher.so`) into the `.aab` bundle metadata (`BUNDLE-METADATA/com.android.tools.build.debugsymbols/`), eliminating Google Play Console advisory warnings during release track ingestion.
 
 > Success Criteria: Generated `app-release.aab` bundle embeds native symbol tables, silencing the Google Play Console missing debug symbols warning upon upload.
 
-- [ ]  Task 26: [UI Component] Import & Export Screen, Bitwarden Migration Preview Wizard & Multi-QR Viewer
+- [x]  Task 26: [UI Component] Import & Export Screen, Bitwarden Migration Preview Wizard & Multi-QR Viewer
 
 Description: Implement:
 - **`SettingsImportExportScreen.kt`**: Category tiles for "Import Bitwarden Vault", "Import ShellGuard Habitat", "Import Aegis / 2FAS", "Export Encrypted Vault", and "Export for Google Authenticator".
@@ -440,6 +440,15 @@ Description: Implement:
 - **`SettingsBackupsScreen.kt`**: Automatic backups toggle, Backup reminder toggle, and Android cloud backups toggle.
 
 > Success Criteria: Users can select a Bitwarden export JSON file, preview extracted 2FA accounts with clear privacy assurance, choose local vs remote destination, and import seamlessly.
+
+---
+
+## Phase 13.5: Migration Polish, OWASP Step-Up Auth & Offline-First YAGNI Sync
+
+> Phase Feature Set Overview:
+> Consolidates Phase 13 imports and exports by locking Google Auth QR rendering behind OWASP MASVS-AUTH-1 biometric step-up, shielding raw keys from screenshots via FLAG_SECURE, and streamlining the `MigrationPersister` to an offline-first architecture prioritizing local DB insertions and allowing the background worker to sync remotely.
+
+- [x] Task 26.5: Migration Architecture Polish
 
 ---
 

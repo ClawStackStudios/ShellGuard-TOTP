@@ -27,6 +27,7 @@ flowchart TD
     Phase115["🔗 Stage 12.5: Phase 11.5 — Settings Continuity: Theme Parity & Server/Sync Home<br/>(Task 22b: Theme Preference Streams · Task 22c: Theme Section, Server & Sync Sub-screen)"]
     Phase12["🛡️ Stage 13: Phase 12 — Security Suite, Panic Purge, Audit Logging & Web Server v0.0.2.3 Sync Parity<br/>(Task 23: Panic Trigger & Audit DAO · Task 24: Security Sub-screen & Audit Log · Task 24b: Dynamic TOTP URI Sync Engine)"]
     Phase13["📦 Stage 14: Phase 13 — Advanced Import/Export & Google Auth Multi-QR<br/>(Task 25: MultiFormat Migration · Task 25b: Native Debug Symbols · Task 26: Import/Export Hub & QR Viewer)"]
+    Phase135["📦 Stage 14.5: Phase 13.5 — Migration Polish, OWASP Step-Up Auth & Offline-First YAGNI Sync"]
     Phase14["📱 Stage 15: Phase 14 — Home Screen Interactive Glance Widgets & Icon Packs<br/>(Task 27: Glance Widget Engine & Icon Store · Task 28: 2x2/4x2 Widgets & Icon Manager)"]
     Phase15["🗝️ Stage 16: Phase 15 — ClawKey Vault Creation, Import Auth & Duplicate Resolution<br/>(Task 29: ClawKey Mode Engine · Task 30: ClawKeyInputForm & UI Integration)"]
     Phase16["💾 Stage 17: Phase 16 — Encrypted Offline Persistence & Remote Credential Cache<br/>(Task 31: Encrypted Remote Cache & Delta Sync Engine · Task 32: Disconnect/Logout Purge & Offline State UI)"]
@@ -46,7 +47,8 @@ flowchart TD
     Phase11 --> Phase115
     Phase115 --> Phase12
     Phase12 --> Phase13
-    Phase13 --> Phase14
+    Phase13 --> Phase135
+    Phase135 --> Phase14
     Phase14 --> Phase15
     Phase15 --> Phase16
 ```
@@ -790,6 +792,40 @@ Execute Phase 13 adhering to the Functionality + UI Component pairing:
 - Implement `SettingsBackupsScreen.kt`: Automatic backups toggle, Backup reminder toggle, and Android cloud backups toggle.
 
 Verify Bitwarden JSON exports parse accurately, zero passwords/notes leak into storage, destination routing functions properly, Google Auth QR codes scan, and release bundle includes native debug symbols!
+```
+
+---
+
+## 📦 Stage 14.5: Phase 13.5 Prompt — Migration Polish, OWASP Step-Up Auth & Offline-First YAGNI Sync
+
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md) for architectural audit and refinement constraints.
+> **📖 Required Context Files for Phase 13.5**:
+> 1. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — Security Lifecycle and Biometric step-up.
+> 2. `app/src/main/java/com/clawstack/shellguard/totp/data/migration/MigrationPersister.kt` — YAGNI offline-first adjustments.
+
+Copy and paste this prompt to execute **Phase 13.5**:
+
+```markdown
+# PHASE 13.5 EXECUTION: Migration Polish, OWASP Step-Up Auth & Offline-First YAGNI Sync
+
+## 📖 Reference Documentation & Roadmap
+Before writing code, inspect:
+- `ROADMAP.md` & `SECURITY.md` for MASVS-AUTH-1 alignment.
+- `MigrationPersister.kt` and `TotpSyncWorker.kt` for asynchronous sync offloading.
+
+Execute Phase 13.5 adhering to the architectural directives:
+
+### [Functionality] Offline-First Persistence & YAGNI Sync Cut
+- In `MigrationPersister.kt`, remove the immediate sequential HTTP `POST` sync loop.
+- Persist items locally into SQLCipher tagged with `syncState = PENDING_SYNC`. Let `TotpSyncWorker` handle the asynchronous push to the remote API.
+- Refactor audit logging: Instead of logging row-by-row, insert a single summary `AuditLogEntity` ("Imported X accounts from [Format]").
+
+### [Security] OWASP Step-Up Auth & FLAG_SECURE
+- Enforce biometric/PIN step-up authentication before opening `GoogleAuthExportViewerDialog`.
+- Ensure `FLAG_SECURE` is active for the export viewer dialog to prevent screenshots of plaintext seeds.
+- In `SettingsBackupsScreen.kt`, wire the "Import from File" action to a real SAF `ActivityResultContracts.OpenDocument()` launcher, piping the `Uri` stream into `MultiFormatMigrationEngine` and launching the Preview Dialog.
+
+Verify QR exports are locked behind step-up auth and that imports route directly to local persistence while the worker gracefully manages the gateway sync!
 ```
 
 ---

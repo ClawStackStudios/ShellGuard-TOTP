@@ -18,8 +18,8 @@ android {
     applicationId = "com.clawstack.shellguard.totp"
     minSdk = 24
     targetSdk = 36
-    versionCode = 16
-    versionName = "0.0.2.3"
+    versionCode = 17
+    versionName = "0.0.3.0"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -55,6 +55,9 @@ android {
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
       signingConfigs.findByName("release")?.let {
         signingConfig = it
+      }
+      ndk {
+        debugSymbolLevel = "SYMBOL_TABLE"
       }
     }
     debug {
@@ -155,6 +158,8 @@ dependencies {
   implementation(libs.androidx.biometric)
   implementation(libs.androidx.security.crypto)
   implementation(libs.androidx.work.runtime.ktx)
+
+  implementation(libs.zxing.core)
 
   // Testing
   testImplementation(libs.androidx.compose.ui.test.junit4)

@@ -6,7 +6,7 @@
 
 ### Secure, offline-first 2FA authenticator with hardware-encrypted vault storage.
 
-[![Version](https://img.shields.io/badge/version-v0.0.2.3%20(Build%2016)-E4048A?style=for-the-badge&logo=android&logoColor=white)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-v0.0.3.0%20(Build%2017)-E4048A?style=for-the-badge&logo=android&logoColor=white)](CHANGELOG.md)
 [![CI](https://github.com/ClawStackStudios/ShellGuard-TOTP/actions/workflows/ci.yml/badge.svg)](https://github.com/ClawStackStudios/ShellGuard-TOTP/actions/workflows/ci.yml)
 [![Android](https://img.shields.io/badge/Android-API%2024%E2%80%9336-3DDC84?style=for-the-badge&logo=android&logoColor=white)](app/build.gradle.kts)
 [![Security](https://img.shields.io/badge/Storage-SQLCipher%20AES--256-00BCD4?style=for-the-badge&logo=shield&logoColor=white)](project/crypto-and-keystore.md)

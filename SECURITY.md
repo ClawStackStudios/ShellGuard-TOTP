@@ -10,8 +10,8 @@ Only the latest release milestone and actively maintained branches receive secur
 
 | Version | Build | Android Target | Support Status |
 | :--- | :--- | :--- | :--- |
-| **`v0.0.2.3`** | **Build 16** | **Android 14–16 (API 24–36)** | :white_check_mark: **Actively Supported (Latest)** |
-| `v0.0.2.2` | Build 15 | Android 14–16 (API 24–36) | :x: Superseded (Hotfix) |
+| **`v0.0.3.0`** | **Build 17** | **Android 14–16 (API 24–36)** | :white_check_mark: **Actively Supported (Latest)** |
+| `v0.0.2.3` | Build 16 | Android 14–16 (API 24–36) | :x: Superseded |
 | `v0.0.2.1` | Build 14 | Android 14–16 (API 24–36) | :x: Superseded |
 | `v0.0.2.0` | Build 10 | Android 14–16 (API 24–36) | :x: Superseded (Milestone 2) |
 | `< v0.0.2.0` | Build 1–9 | Android 14–16 (API 24–36) | :x: Unsupported |
