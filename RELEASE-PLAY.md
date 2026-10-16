@@ -3,6 +3,20 @@
 > **Single Source of Truth for Google Play Store What's New Notes**  
 > *Google Play enforces a strict 500-character limit per localized language block.*
 
+## `v0.0.3.0` — Advanced Vault Import & Google Authenticator Export (Build 17)
+
+```xml
+<en-US>
+• Multi-Format Vault Import: Ingest Bitwarden, Aegis, 2FAS, and Steam Guard with zero password or personal note leakage.
+• Google Authenticator Migration: Export 2FA accounts to scannable 10-token QR code carousels.
+• Hardware Step-Up Security: Biometric and PIN verification guard vault exports under FLAG_SECURE window protection.
+• Offline-First Sync: Background sync queue prioritizes local database speed and battery life.
+• Android 16 (API 36) & 16 KB page-aligned.
+</en-US>
+```
+
+---
+
 ## `v0.0.2.3` — Security Suite, Panic Purge & Server Parity (Build 16)
 
 ```xml

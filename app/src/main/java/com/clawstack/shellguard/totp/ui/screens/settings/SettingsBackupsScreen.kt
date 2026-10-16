@@ -105,6 +105,8 @@ fun SettingsBackupsScreen(
         )
     }
 
+    var showPinDialog by remember { mutableStateOf(false) }
+
     if (requireStepUpAuth) {
         val activity = context as? androidx.fragment.app.FragmentActivity
         LaunchedEffect(Unit) {
@@ -117,19 +119,60 @@ fun SettingsBackupsScreen(
                         }
                     }
                 } else {
-                    // Fallback mock since PIN isn't easily promptable standalone right here in this specific stub.
-                    // But adhering to the instruction: "Or fallback to PIN verification via AuthRepository.unlockWithSecret(pin)".
-                    // The simplest path for this demo is just trigger BiometricPrompt or assume PIN verification flow is triggered.
-                    // For the sake of the prompt's instruction: "Trigger BiometricPrompt" or fallback to PIN.
-                    // If biometrics are enrolled/enabled: Trigger BiometricPrompt with title "Authenticate to Export Vault".
                     requireStepUpAuth = false
-                    loadAndLaunchExport()
+                    showPinDialog = true
                 }
             } else {
                 requireStepUpAuth = false
-                loadAndLaunchExport()
+                showPinDialog = true
             }
         }
+    }
+
+    if (showPinDialog) {
+        var inputPin by remember { mutableStateOf("") }
+        var errorMessage by remember { mutableStateOf<String?>(null) }
+
+        AlertDialog(
+            onDismissRequest = { showPinDialog = false },
+            title = { Text("Authentication Required") },
+            text = {
+                Column {
+                    Text("Please enter your Master PIN/Password to export 2FA accounts.")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = inputPin,
+                        onValueChange = {
+                            inputPin = it
+                            errorMessage = null
+                        },
+                        singleLine = true,
+                        isError = errorMessage != null
+                    )
+                    if (errorMessage != null) {
+                        Text(
+                            text = errorMessage!!,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    if (authViewModel?.unlockWithSecret(inputPin) == true) {
+                        showPinDialog = false
+                        loadAndLaunchExport()
+                    } else {
+                        errorMessage = "Incorrect PIN/Password."
+                    }
+                }) { Text("Verify") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showPinDialog = false }) { Text("Cancel") }
+            }
+        )
     }
 
     if (showExportDialog) {

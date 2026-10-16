@@ -80,6 +80,7 @@ object MultiFormatMigrationEngine {
             }
         }
 
+        // TODO(icon-packs): Compound title normalization is ready for Phase 14 IconPackManager matching.
         val normalizedItems = parsedItems.map { normalizeCompoundTitle(it) }
 
         return MigrationParseResult(normalizedItems, schemaType, warnings)
