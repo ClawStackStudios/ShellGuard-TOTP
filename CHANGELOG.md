@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Headless Debug Keystore Fallback**: Conditioned `debugConfig` in `app/build.gradle.kts` on the presence of local `debug.keystore`, enabling AGP to fall back cleanly to its built-in debug keystore in headless CI environments.
 
 
-## [0.0.3.0] - 2026-10-15 (Build 17) — Phase 13 & 13.5: Advanced Import/Export, Migration Polish & OWASP Step-Up Auth
+## [0.0.3.0] - 2026-10-17 (Build 17) — Phase 13 & 13.5: Advanced Import/Export, Migration Polish & OWASP Step-Up Auth
 ### Added
 - **Multi-Format Import Engine**: Unified ingestion parser (`MultiFormatMigrationEngine`) supporting Bitwarden Vault JSON, Bitwarden Authenticator JSON, Aegis JSON, and 2FAS JSON.
 - **Zero-Knowledge Memory Sanitizer**: Secure memory parsing strictly stripping passwords, secure notes, and non-2FA identities during imports to enforce zero credential leakage into the database.
