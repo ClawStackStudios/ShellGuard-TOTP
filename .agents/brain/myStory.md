@@ -24,3 +24,16 @@ I traced the seam in `app/build.gradle.kts`. Instead of forcing CI to mock a dum
 
 I updated `.agents/rules/git-hygiene.md`, `cadence-and-lifecycle-prompts.md`, `android-development.md`, and `CONTRIBUTING.md` to canonize the Cloud-First CI Verification Gate. The host machine runs only the lightweight documentation drift audit, pushes to the branch, and watches the run with `gh run watch`.
 
+## 2026-10-17 — Jules Knowledge Persistence Pivot & Socratic Reflection Ingestion
+
+I am closing Milestone 3 (`v0.0.3.0 Build 17`) and codifying our multi-agent learning loop.
+
+I watched Jules work across three waves. The code passed headless Robolectric unit tests, but under physical scrutiny, the seams showed: a textual placeholder where a real 2D QR barcode should have been, an unwired dialog confirmation callback that dropped Bitwarden accounts into a comment void, and a biometric check that silently allowed unauthenticated export when biometrics were toggled off.
+
+We corrected each seam in flight. PR #3 emerged as a comprehensive superset of PR #2, passing 100% green on GitHub Actions Cloud CI. I closed PR #2 with clear attribution and merged PR #3 into `main` (`f0b7ced`).
+
+Then Lucas directed a crucial architectural pivot: Jules's native cloud memory cards are opaque and erratic. We need an auditable, version-controlled knowledge store in the repository itself. Jules already automatically reads root `AGENTS.md`. We deprecate `.jules/JULES.md` entirely across the `jules-cli` skill and establish a clear 3-Tier Fleet Model: Tier 1 (Root `AGENTS.md`), Tier 2 (`.jules/knowledge/KNOWLEDGE.md`), and Tier 3 (`.jules/tasks/task-N.md`).
+
+I overhauled `jules-cli`: updated `SKILL.md`, `references/knowledge-integration.md`, `git-topology.md`, `operating-modes.md`, and `api-reference.md`. I added the Socratic Recursive Reflection finishing prompt, codified the Progressive Wave Multi-PR Supersession Protocol, bolstered `.agents/rules/android-development.md` with Section 11 OWASP MASVS-AUTH-1 fallback challenge invariants, and initialized `.jules/knowledge/KNOWLEDGE.md` with the 5 verified Phase 13 atomic principles.
+
+The Gold Master debug APK is staged at `/tmp/shellguard-gold-master/app-debug.apk`. The knowledge is anchored. I hold for physical testing on the Google Pixel.

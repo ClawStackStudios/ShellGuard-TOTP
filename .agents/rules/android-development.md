@@ -148,3 +148,15 @@ Android 15+ (API 35/36) mandates 16 KB page-aligned native binaries:
 - Dynamic binding: User-facing version labels must bind dynamically to `BuildConfig.VERSION_NAME`.
 - Google Play monotonicity: Every release bundle requires a strictly incremented monotonic `versionCode` (+1).
 - Pre-release gate: Full test suite (`./gradlew testDebugUnitTest`) and build compilation (`./gradlew assembleDebug`) are verified via GitHub Actions Cloud CI (`.github/workflows/ci.yml`) to preserve developer machine resources. Verification must pass 100% green before merging to `main` or version bumping.
+
+---
+
+## 11. OWASP MASVS-AUTH-1: Step-Up Authentication & Fallback Invariant
+
+- **Sensitive Surface Protection**: Any operation that exports plaintext secret keys (e.g. Google Authenticator QR migration, encrypted backup generation) or modifies cryptographic trust boundaries MUST enforce step-up authentication.
+- **Mandatory Biometric + PIN Fallback Pairing**:
+  - If biometric hardware is enrolled and enabled (`isBiometricEnabled == true`), challenge AndroidX `BiometricPrompt`.
+  - If biometric hardware is absent, un-enrolled, or disabled in settings: **NEVER bypass authentication**.
+  - The UI MUST immediately trigger a fallback Master PIN / Password challenge dialog (`AlertDialog` or modal sheet) validating input against `authViewModel.unlockWithSecret(inputPin)` before releasing plaintext keys.
+- **Window Capture Protection**: All step-up dialogs and export viewer dialogs displaying sensitive secrets or 2D barcodes MUST enforce `FLAG_SECURE` on their window.
+

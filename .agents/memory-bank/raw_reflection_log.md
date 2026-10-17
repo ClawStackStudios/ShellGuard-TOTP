@@ -144,6 +144,26 @@ Successes:
 - Achieved 100% green verification in GitHub Actions CI run `38278380245` with zero local host machine load.
 - Codified Cloud-First CI Verification Gate across all agent governance rules and `CONTRIBUTING.md`.
 ---
+Date: 2026-10-17
+TaskRef: "Phase 13 Milestone 3 Delivery, Jules Orchestration & Socratic Knowledge Integration (/learn)"
+
+Learnings:
+- External Knowledge Persistence (.jules/knowledge/KNOWLEDGE.md): Jules's native cloud memory system (purple cards 🐙) is currently opaque and unreliable. Transitioning persistent agent knowledge to an auditable, version-controlled markdown file (.jules/knowledge/KNOWLEDGE.md) alongside root AGENTS.md (auto-read by Jules) provides full git history auditability, allows lead architects to seed and review invariants in PR diffs, and establishes a clear 3-Tier Fleet Model: Tier 1 (Root AGENTS.md), Tier 2 (.jules/knowledge/KNOWLEDGE.md), and Tier 3 (.jules/tasks/task-N.md).
+- Socratic Recursive Inward Reflection Protocol: Concluding deep pair-programming or co-pilot milestones with 5 recursive inward reflection questions (Physical Reality vs Virtual Mock, Offline-First vs Premature Network, Unwired Seam vs Illusion of Execution, MASVS-AUTH-1 Security Fallback Void, and Docs Bow to Code SSoT) causes the agent to develop an internal mental model of the codebase's grain rather than mechanically applying patches.
+- Progressive Wave Multi-PR Supersession: When an autonomous agent creates sequential branches/PRs across development waves (e.g. PR #2 followed by PR #3), forensic diffing (git diff --stat) verifies whether the successor is a strict superset. Intermediate obsolete PRs must never be merged into main; closing them with explicit attribution comments keeps open PR debt at zero.
+- OWASP MASVS-AUTH-1 Complete Step-Up Fallback Invariant: When biometrics are absent, un-enrolled, or disabled in app settings, sensitive export surfaces must NEVER default to unauthenticated access; a Master PIN/Password fallback challenge dialog must be strictly triggered before releasing plaintext cryptographic secrets.
+- Headless vs Physical Glass Gap: Headless unit and Robolectric test runners only assert that composables exist in the virtual semantic tree; rendering text stubs (like placeholder QR text) passes headless tests but completely breaks real-world physical usage. Real 2D barcodes wrapped in high-contrast containers are mandatory.
+
+Difficulties:
+- Jules initially left an unwired dialog confirmation seam in SettingsBackupsScreen.kt (comment only) and an insecure biometric fallback bypass in SettingsExportScreen.kt. Detected during forensic PR review, rectified through proactive review guidance, and codified into android-development.md and .jules/knowledge/KNOWLEDGE.md.
+
+Successes:
+- Landed Milestone 3 (v0.0.3.0 Build 17) via PR #3 with 100% green Cloud CI runs, zero doc drift, and staged Gold Master debug APK.
+- Deprecated JULES.md across jules-cli skill in favor of root AGENTS.md and .jules/knowledge/KNOWLEDGE.md.
+- Bolstered jules-cli references with Progressive Wave Multi-PR Supersession and Socratic Recursive Inward Reflection protocols.
+- Updated android-development.md with Section 11 OWASP MASVS-AUTH-1 Complete Step-Up Invariant.
+- Initialized .jules/knowledge/KNOWLEDGE.md with verified Phase 13 atomic invariants.
+---
 
 
 
