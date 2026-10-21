@@ -44,10 +44,9 @@ import com.clawstack.shellguard.totp.ui.viewmodels.AuthViewModel
 /**
  * Phase 11.5 / Task 22d — "🛠️ Import & Export" hub sub-screen.
  *
- * Restores the v0.0.1.3 basic Encrypted Backup & Restore flows (.sgtotp.bak)
- * with a semantic home in the Categorized Settings Hub. Scope boundary:
- * automatic backups, cloud-backup toggles, and the multi-format migration
- * wizard arrive in Phase 13 (Tasks 25/26).
+ * Provides Encrypted Backup & Restore flows (.sgtotp.bak) for Local Vault codes.
+ * Multi-format migration (Bitwarden, Aegis, 2FAS) and Google Authenticator export
+ * are hosted in the Backups & Migration Hub ("☁️ Backups" category).
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -174,7 +173,7 @@ fun SettingsImportExportScreen(
                 }
             }
 
-            // ── Phase 13 preview ──
+            // ── External Migrations & Backups Pointer ──
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(14.dp),
@@ -182,14 +181,14 @@ fun SettingsImportExportScreen(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "🚧 Arriving in Phase 13 (v0.0.3.0)",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        text = "☁️ External Migrations & Multi-QR Export",
+                        color = MaterialTheme.colorScheme.primary,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Bitwarden / Aegis / 2FAS migration wizard, Google Authenticator multi-QR export, and automatic backup schedules.",
+                        text = "To import from Bitwarden, Aegis, or 2FAS, or to export to Google Authenticator QR carousels, open Backups in the Settings Hub.",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 12.sp
                     )

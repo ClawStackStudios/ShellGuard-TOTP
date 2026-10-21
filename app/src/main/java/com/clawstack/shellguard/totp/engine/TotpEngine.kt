@@ -140,6 +140,8 @@ object TotpEngine {
 
     /**
      * Computes remaining progress ratio (1.0f down to 0.0f) in current TOTP cycle.
+     *
+     * TODO(jules-phase-14): Provide split-digit formatting helper (e.g. '123 456' or '1234 5678') for Glance AppWidgets.
      */
     fun getProgressRatio(
         timestampMillis: Long = System.currentTimeMillis(),

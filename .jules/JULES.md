@@ -44,18 +44,26 @@ You are running in an isolated container VM equipped with JDK 17+ and the Androi
 
 ---
 
-## 🧭 Active Milestone: Phase 13 / Stage 14 — Milestone 3
+## 🧭 Completed Milestone: Phase 13 / Stage 14 — Milestone 3 [SHIPPED ✅]
 **Release Target**: `v0.0.3.0 (Build 17)`  
-**Branch**: `feat/phase-13-advanced-import-export`  
+**Release Tag**: `v0.0.3.0`  
 
-You are executing **Phase 13 (Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR)** across staged waves:
-
-- [ ] **Task 25 (`.jules/tasks/task-25.md`)**:
+- [x] **Task 25 (`.jules/tasks/task-25.md`)** [COMPLETED ✅]:
   - `MultiFormatMigrationEngine.kt` in `data/migration/`: Orchestrates Bitwarden Vault, Bitwarden Authenticator, Aegis, 2FAS, and encrypted Bitwarden JSON.
-  - `MigrationPersister.kt`: Implements `ConflictPolicy` (`SKIP_DUPLICATES`, `OVERWRITE_EXISTING`, `KEEP_BOTH`), dual routing (Local vs Gateway), and emits `IMPORT_SUCCESS` to `AuditLogDao`.
+  - `MigrationPersister.kt`: Implements `ConflictPolicy` (`SKIP_DUPLICATES`, `OVERWRITE_EXISTING`, `KEEP_BOTH`), offline-first YAGNI sync (`PENDING_SYNC`), and emits `IMPORT_SUCCESS` to `AuditLogDao`.
   - `Task 25b`: Set `ndk.debugSymbolLevel = "SYMBOL_TABLE"` in `app/build.gradle.kts` release build type.
-- [ ] **Task 26 (Wave 2-4 via PR comments)**:
+- [x] **Task 26 (`.jules/tasks/task-26.md`)** [COMPLETED ✅]:
   - Google Authenticator multi-QR Protobuf generator (`GoogleAuthMigrationEncoder.kt`).
   - `BitwardenImportPreviewDialog.kt`, `GoogleAuthExportViewerDialog.kt`, and `SettingsBackupsScreen.kt`.
+- [x] **Task 26.5**:
+  - OWASP MASVS-AUTH-1 Step-Up Biometric & Master PIN Challenge Pairing + `FLAG_SECURE` window shields.
+
+---
+
+## 🧭 Upcoming Milestone: Phase 14 / Stage 15 — Open Beta Candidate
+**Release Target**: `v0.1.0.0 (Build 18)`  
+**Tasks**:
+- [ ] **Task 27**: `[Functionality] AndroidX Glance AppWidget Engine & Custom Issuer Icon Pack Store`
+- [ ] **Task 28**: `[UI Component] Modernist Glance 2FA Widgets (2x2 & 4x2) & Icon Pack Manager Screen`
 
 **Remember**: Keep your focus strictly on 2FA TOTP accounts. Run your test gates and open your Pull Request!

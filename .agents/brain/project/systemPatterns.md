@@ -140,3 +140,21 @@ AuthRepository.hatchVault() + TotpItemDao.upsertItems() → Screen.CodeList
 - **Dynamic URI Extraction**: Incoming remote vault items may carry raw Base32 secret seeds or full `otpauth://` URIs. `TotpRepository` always delegates payload parsing through `TotpUriParser.parse(decryptedSecret)` to extract secret, algorithm, digits, and period dynamically.
 - **Pre-Upsert Identity Fast-Filter (`isContentIdentical`)**: To prevent unnecessary Room write churn and encryption cycles, remote items are compared against local cached entities using `isContentIdentical(cached, remote)`. Only altered records trigger Room updates and audit trail events.
 
+## OWASP MASVS-AUTH-1 Step-Up Authentication & Fallback Pairing
+1. **Sensitive Surface Protection**: Any operation exporting plaintext keys (QR carousels, unencrypted exports) mandates immediate step-up verification.
+2. **Fail-Closed Fallback Invariant**: If biometric hardware is absent, un-enrolled, or disabled in settings, authentication must never be bypassed. The UI strictly renders a Master PIN/Password fallback challenge `AlertDialog` validating input against `authViewModel.unlockWithSecret()`.
+3. **Window Capture Shield**: All step-up dialogs and export viewer surfaces apply `FLAG_SECURE` to the window context, blocking screen recording and Recents menu thumbnails.
+
+## Offline-First Migration Architecture (YAGNI Cut)
+1. **Local-First Ingestion**: Bulk vault imports persist records directly to SQLCipher Room with `sync_state = PENDING_SYNC`.
+2. **Background Replication**: Remote sync is offloaded to `TotpSyncWorker`, preventing UI thread hangs, partial network failures, and radio battery drain.
+3. **Summary Audit Logging**: Mass import operations emit a single summary audit log event rather than generating N+1 log rows.
+
+## Pure Kotlin Protobuf Varint Encoding
+- Google Authenticator `otpauth-migration://offline?data=...` export payloads are encoded via lightweight, pure-Kotlin varint protobuf serialization (`GoogleAuthMigrationEncoder`), avoiding heavy third-party compiler plugins or bloated runtimes. Vaults are automatically batched into 10-token chunks and rendered via ZXing in high-contrast white containers.
+
+## 3-Tier Multi-Agent Fleet Knowledge Architecture
+- **Tier 1 (Root `AGENTS.md`)**: High-level system design, persona, core operating boundaries, and global invariants (automatically ingested by Jules and coding agents).
+- **Tier 2 (`.jules/knowledge/KNOWLEDGE.md`)**: Empirical repository learnings, distilled atomic patterns, and rectified failure modes maintained and audited directly in the codebase.
+- **Tier 3 (`.jules/tasks/task-N.md`)**: Scoped, atomic work package specifications assigned to autonomous agents.
+

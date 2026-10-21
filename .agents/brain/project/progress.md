@@ -76,12 +76,20 @@
   - SSoT Documentation Mesh: Ingested `doc-automation` and `git-advanced-workflows` skills, created root `SECURITY.md`, and implemented `scripts/audit_docs_drift.py` for automated Single Source of Truth drift detection.
   - Cloud Verification Invariant: Codified in `.agents/rules/git-hygiene.md`, `cadence-and-lifecycle-prompts.md`, `android-development.md`, and `CONTRIBUTING.md` protecting local machine resources from heavy JVM test daemon exhaustion.
 
+- ✅ **Phase 13 & 13.5: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 17)]**:
+  - `MultiFormatMigrationEngine.kt`: Universal ingestion engine supporting Bitwarden Vault JSON, Bitwarden Authenticator JSON, Aegis JSON, and 2FAS JSON with zero-knowledge in-RAM sanitization (stripping passwords, cards, and secure notes).
+  - `GoogleAuthMigrationEncoder.kt`: Pure-Kotlin varint protobuf serializer chunking accounts into 10-token batches for `otpauth-migration://` URIs without external protoc dependencies.
+  - `GoogleAuthExportViewerDialog.kt`: High-contrast scannable 2D QR carousel rendered via ZXing, protected by `FLAG_SECURE` window shields.
+  - `SettingsBackupsScreen.kt`: Interactive Backups & Migration Hub with SAF `OpenDocument` launcher and `BitwardenImportPreviewDialog` supporting conflict resolution policies (`SKIP_DUPLICATES`, `OVERWRITE_EXISTING`, `KEEP_BOTH`).
+  - `MigrationPersister.kt`: Offline-first YAGNI persistence inserting records into SQLCipher Room with `syncState = PENDING_SYNC` and delegating remote sync to `TotpSyncWorker`. Single structured summary audit log emission.
+  - OWASP MASVS-AUTH-1 Compliance: Mandatory step-up authentication guarding exports; challenges `BiometricPrompt` when available and strictly falls back to Master PIN/Password `AlertDialog` when biometrics are unavailable or disabled in settings. Never fails open.
+  - Packaging Polish (Task 25b): Configured `ndk { debugSymbolLevel = "SYMBOL_TABLE" }` in `app/build.gradle.kts` extracting 16 KB-aligned `libsqlcipher.so` native debug symbol tables into the release App Bundle.
+  - Milestone 3 Release: Tagged `v0.0.3.0`, verified 100% green on GitHub Actions release pipeline run 39015584805, published release with `RELEASE-v0.0.3.0.md` body, and cleaned up retired release notes from root.
+
 ## What's Next
-- ⏳ **Phase 13: Advanced Import/Export, Bitwarden Migration & Google Authenticator Multi-QR [v0.0.3.0 (Build 17)]**:
-  - Task 25: Multi-Format Import Engine (Bitwarden Vault/Auth, Aegis, 2FAS) & Dual Vault Persister.
-  - Task 25b: Native Debug Symbol Tables Extraction (`debugSymbolLevel = "SYMBOL_TABLE"`) & Release Bundle Polish.
-  - Task 26: Import & Export Screen, Bitwarden Migration Preview Wizard & Multi-QR Viewer.
-- ⏳ **Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 18)]**
+- ⏳ **Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 18) — Open Beta Candidate]**:
+  - Task 27: [Functionality] AndroidX Glance AppWidget Engine & Custom Issuer Icon Pack Store.
+  - Task 28: [UI Component] Modernist Glance 2FA Widgets (2x2 & 4x2) & Icon Pack Manager Screen.
 - ⏳ **Phase 15: Sovereign ClawKey (`hu-`) Vault Creation & Import Integration [v0.1.1.0 (Build 19)]**
 - ⏳ **Phase 16: Encrypted Remote Credential Cache, Offline Session Persistence & Targeted Purge [v0.1.2.0 (Build 20)]**
 

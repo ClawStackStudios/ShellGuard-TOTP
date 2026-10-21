@@ -15,6 +15,26 @@ All notable changes to the ShellGuard TOTP project will be documented in this fi
 ### Fixed
 - **Headless Debug Keystore Fallback**: Conditioned `debugConfig` in `app/build.gradle.kts` on the presence of local `debug.keystore`, enabling AGP to fall back cleanly to its built-in debug keystore in headless CI environments.
 
+## [0.0.3.0] - 2026-10-17 (Build 17) — Phase 13 & 13.5: Advanced Import/Export, Migration Polish & OWASP Step-Up Auth
+### Added
+- **Multi-Format Import Engine**: Unified ingestion parser (`MultiFormatMigrationEngine`) supporting Bitwarden Vault JSON, Bitwarden Authenticator JSON, Aegis JSON, and 2FAS JSON.
+- **Zero-Knowledge Memory Sanitizer**: Secure memory parsing strictly stripping passwords, secure notes, and non-2FA identities during imports to enforce zero credential leakage into the database.
+- **Dual Vault Persister**: New `MigrationPersister` enabling `SKIP_DUPLICATES`, `OVERWRITE_EXISTING`, and `KEEP_BOTH` conflict resolution during bulk imports.
+- **Google Authenticator Export**: Native Kotlin protobuf encoder (`GoogleAuthMigrationEncoder`) generating 10-token `otpauth-migration` QR code carousel payloads.
+- **Backups & Migration Hub**: Interactive screens (`SettingsBackupsScreen`, `BitwardenImportPreviewDialog`, `GoogleAuthExportViewerDialog`) orchestrating SAF file selection, schema validation, and QR exports.
+- **Native Debug Symbols**: Extracted `libsqlcipher.so` symbol tables via `ndk { debugSymbolLevel = "SYMBOL_TABLE" }` into the release App Bundle to silence Play Console warnings.
+- **ZXing QR Integration**: Added `com.google.zxing:core` to render high-contrast scannable QR bitmaps.
+- **3-Tier Multi-Agent Fleet Architecture**: Root `AGENTS.md` + version-controlled `.jules/knowledge/KNOWLEDGE.md` capturing Jules's Socratic recursive reflection sign-off.
+
+### Security
+- **OWASP MASVS-AUTH-1 Compliance**: Google Authenticator exports are now locked behind a biometric/PIN step-up authentication challenge before rendering plaintext seeds. When biometrics are absent or disabled, the UI strictly falls back to a Master PIN/Password challenge dialog.
+- **FLAG_SECURE Protection**: The Google Authenticator QR viewer explicitly applies `FLAG_SECURE` to the window context, preventing screenshots or Recents menu thumbnail capture of the exported secrets.
+
+### Changed
+- **Offline-First Migration Sync (YAGNI)**: Removed synchronous API pushes during bulk file imports. Imported tokens are inserted immediately into Room SQLCipher with `syncState = PENDING_SYNC`, deferring upload to the `TotpSyncWorker` background queue.
+- **Refined Audit Logging**: The persister now emits a single summary event into the audit log rather than polluting the log with a row-per-token entry during mass imports.
+- **Root Release Cleanup**: Retired `RELEASE-v0.0.2.2.md` and `RELEASE-v0.0.2.3.md`, establishing `RELEASE-v0.0.3.0.md` as the sole active release document.
+
 ## [0.0.2.3] - 2026-09-22 (Build 16) — Phase 12: Security Suite, Panic Purge, Audit Logging & Web Server v0.0.2.3 Sync Parity
 ### Added
 - **Security Audit Logging Engine (Task 23)**:

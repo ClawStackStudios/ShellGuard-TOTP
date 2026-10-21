@@ -43,6 +43,7 @@ sealed class Screen(val route: String) {
     data object SettingsSecurity : Screen("settings_security")
     data object SettingsAuditLog : Screen("settings_audit_log")
     data object SettingsPlaceholder : Screen("settings_placeholder")
+    // TODO(jules-phase-14): Add data object SettingsIconPacks : Screen("settings_icon_packs") for Task 28.
 }
 
 @Composable

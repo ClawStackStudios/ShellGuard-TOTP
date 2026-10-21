@@ -136,6 +136,7 @@ fun SettingsMetaScreen(
         SettingsCategory("🎨 Appearance", "Adjust theme, language, and other appearance settings", Icons.Default.Palette, SettingsDestination.APPEARANCE),
         SettingsCategory("⚡ Behavior", "Customize behavior when interacting with entry list", Icons.Default.Speed, SettingsDestination.BEHAVIOR),
         SettingsCategory("☁️ Server & Sync", "Gateway connection, sync status, and vault link", Icons.Default.CloudSync, SettingsDestination.SERVER_SYNC),
+        // TODO(jules-phase-14): Retarget SettingsDestination.PLACEHOLDER for Icon Packs to SettingsDestination.ICON_PACKS in Task 28.
         SettingsCategory("📦 Icon packs", "Manage and import icon packs", Icons.Default.Image, SettingsDestination.PLACEHOLDER),
         SettingsCategory("🔐 Security", "Configure encryption, biometric unlock, auto lock", Icons.Default.Security, SettingsDestination.SECURITY),
         SettingsCategory("☁️ Backups", "Automatic backups & Android cloud backup system", Icons.Default.Backup, SettingsDestination.BACKUPS),

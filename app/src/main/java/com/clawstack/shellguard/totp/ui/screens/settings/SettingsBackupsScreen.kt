@@ -24,6 +24,10 @@ import java.util.UUID
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import android.widget.Toast
+
+// TODO(jules-sec): Verify MASVS-AUTH-1 step-up challenge covers any future unencrypted JSON backup export additions.
+// TODO(jules-phase-14): Wire automatic backup WorkManager schedule interval selector into SettingsBackupsScreen.
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,7 +62,7 @@ fun SettingsBackupsScreen(
                     showImportDialog = true
                 }
             } catch (e: Exception) {
-                // handle error appropriately
+                Toast.makeText(context, "Failed to parse import file: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -76,7 +80,7 @@ fun SettingsBackupsScreen(
                 }
             } else {
                 withContext(Dispatchers.Main) {
-                    // Surface snackbar or alert: "No accounts available in vault to export"
+                    Toast.makeText(context, "No accounts available in vault to export", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -223,7 +227,7 @@ fun SettingsBackupsScreen(
             SettingsActionCard(
                 title = "Export Encrypted Backup",
                 description = "Generate a password-protected .sgtotp.bak file.",
-                onClick = { /* Handle sgtotp.bak export */ }
+                onClick = { navController.navigate(com.clawstack.shellguard.totp.ui.navigation.Screen.SettingsImportExport.route) }
             )
         }
     }
