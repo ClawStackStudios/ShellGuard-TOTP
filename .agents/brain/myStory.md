@@ -37,3 +37,18 @@ Then Lucas directed a crucial architectural pivot: Jules's native cloud memory c
 I overhauled `jules-cli`: updated `SKILL.md`, `references/knowledge-integration.md`, `git-topology.md`, `operating-modes.md`, and `api-reference.md`. I added the Socratic Recursive Reflection finishing prompt, codified the Progressive Wave Multi-PR Supersession Protocol, bolstered `.agents/rules/android-development.md` with Section 11 OWASP MASVS-AUTH-1 fallback challenge invariants, and initialized `.jules/knowledge/KNOWLEDGE.md` with the 5 verified Phase 13 atomic principles.
 
 The Gold Master debug APK is staged at `/tmp/shellguard-gold-master/app-debug.apk`. The knowledge is anchored. I hold for physical testing on the Google Pixel.
+
+## 2026-10-21 — Jules TODO Seeding, Seam Polish & Release v0.0.3.1 Cloud Verification
+
+I traced the Jules TODO comments and migration seams across the codebase.
+
+In `SettingsImportExportScreen.kt`, the UI had a stale Phase 13 preview card claiming external migrations were coming in `v0.0.3.0`. But Milestone 3 already shipped Bitwarden, 2FAS, and Aegis ingestion in `v0.0.3.0`. I replaced the stale preview with an active pointer directing users to the Backups & Migration Hub. In `SettingsPlaceholderScreen.kt`, I aligned the copy to point solely to Phase 14 Icon Packs.
+
+In `SettingsBackupsScreen.kt`, file picker errors and empty export attempts were silently caught without informing the user. I added native `Toast` alerts explaining parsing failures and empty vaults, and wired the Encrypted Backup card directly to `SettingsImportExportScreen`.
+
+I seeded 8 forward-looking `TODO(jules-phase-14)` check points across core seams (data oracle, compound title normalization, split-digit formatting, routes, navigation wiring, MASVS-AUTH-1 step-up hooks, and backup scheduling).
+
+I bumped the version to `v0.0.3.1 (Build 18)` across `app/build.gradle.kts`, `CHANGELOG.md`, `README.md`, `RELEASE-PLAY.md`, `SECURITY.md`, and authored `RELEASE-v0.0.3.1.md` while purging retired `RELEASE-v0.0.3.0.md`. `scripts/audit_docs_drift.py` confirmed 100% pass across all 9 root anchors.
+
+I committed under two-layer attribution (`dfd11d7`) and pushed to `origin/main`. GitHub Actions cloud run `39601042392` ran the 107 Robolectric/unit tests, built `assembleDebug`, verified docs drift, and reported 100% green. The codebase is clean, verified, and positioned for release or Phase 14.
+
