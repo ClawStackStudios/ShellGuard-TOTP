@@ -3,6 +3,20 @@
 > **Single Source of Truth for Google Play Store What's New Notes**  
 > *Google Play enforces a strict 500-character limit per localized language block.*
 
+## `v0.0.3.1` — Post-Milestone 3 Polish & Migration Wiring (Build 18)
+
+```xml
+<en-US>
+• Migration UI Polish: Clear error notifications on invalid backup file imports and empty vault exports.
+• Encrypted Backup Hub: Direct routing to password-protected .sgtotp.bak exports from the Backups Hub.
+• External Migration Guidance: Instant access to Bitwarden, Aegis, 2FAS, and Google Authenticator wizards.
+• Security Hardening: OWASP MASVS-AUTH-1 step-up authentication with Master PIN fallback.
+• Platform: Android 16 (API 36) & 16 KB memory page-aligned.
+</en-US>
+```
+
+---
+
 ## `v0.0.3.0` — Advanced Vault Import & Google Authenticator Export (Build 17)
 
 ```xml

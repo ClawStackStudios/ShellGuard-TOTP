@@ -19,6 +19,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Headless Debug Keystore Fallback**: Conditioned `debugConfig` in `app/build.gradle.kts` on the presence of local `debug.keystore`, enabling AGP to fall back cleanly to its built-in debug keystore in headless CI environments.
 
 
+## [0.0.3.1] - 2026-10-21 (Build 18) — Post-Milestone 3 Polish & Migration Wiring
+### Added
+- **UI Error Feedback**: Integrated user-visible `Toast` notifications on import parsing failures and empty vault export attempts within `SettingsBackupsScreen`.
+- **Phase 14 Seeding**: Codified 8 proactive autonomous check points (`TODO(jules-phase-14)`) across key architectural seams (`TotpItemDao`, `MultiFormatMigrationEngine`, `TotpEngine`, `TotpNavHost`, `SettingsMetaScreen`, `SettingsPlaceholderScreen`, `SettingsBackupsScreen`).
+
+### Changed
+- **Encrypted Backup Navigation**: Wired the "Export Encrypted Backup" action card in `SettingsBackupsScreen` to navigate directly to `SettingsImportExportScreen` for `.sgtotp.bak` generation.
+- **Migration Discovery Card**: Replaced the stale Phase 13 preview card in `SettingsImportExportScreen` with an active pointer card directing users to the Backups & Migration Hub.
+- **Placeholder Spec Alignment**: Updated `SettingsPlaceholderScreen` copy and KDoc to focus exclusively on Phase 14 Icon Packs.
+- **Agent Governance**: Updated `.jules/JULES.md` marking Milestone 3 tasks as completed/shipped and setting targets for Phase 14 (`v0.1.0.0 Build 18`).
+
 ## [0.0.3.0] - 2026-10-17 (Build 17) — Phase 13 & 13.5: Advanced Import/Export, Migration Polish & OWASP Step-Up Auth
 ### Added
 - **Multi-Format Import Engine**: Unified ingestion parser (`MultiFormatMigrationEngine`) supporting Bitwarden Vault JSON, Bitwarden Authenticator JSON, Aegis JSON, and 2FAS JSON.
@@ -146,7 +157,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **Core Base**: Initial project setup, 16 KB page size alignment for Android 15, SQLCipher 4.6.1 integration.
 
-[Unreleased]: https://github.com/ClawStackStudios/ShellGuard-TOTP/compare/v0.0.3.0...HEAD
+[Unreleased]: https://github.com/ClawStackStudios/ShellGuard-TOTP/compare/v0.0.3.1...HEAD
+[0.0.3.1]: https://github.com/ClawStackStudios/ShellGuard-TOTP/compare/v0.0.3.0...v0.0.3.1
 [0.0.3.0]: https://github.com/ClawStackStudios/ShellGuard-TOTP/compare/v0.0.2.3...v0.0.3.0
 [0.0.2.3]: https://github.com/ClawStackStudios/ShellGuard-TOTP/compare/v0.0.2.2...v0.0.2.3
 [0.0.2.2]: https://github.com/ClawStackStudios/ShellGuard-TOTP/compare/v0.0.2.1...v0.0.2.2
