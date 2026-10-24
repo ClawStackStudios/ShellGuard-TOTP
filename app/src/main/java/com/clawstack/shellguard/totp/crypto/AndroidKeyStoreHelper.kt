@@ -104,6 +104,10 @@ object AndroidKeyStoreHelper {
             keyGenerator.init(specBuilder.build())
             return keyGenerator.generateKey()
         } catch (e: Throwable) {
+            if (!com.clawstack.shellguard.totp.BuildConfig.DEBUG) {
+                throw SecurityException("AndroidKeyStore biometric/PIN wrapper key failed: hardware-backed keystore required in production", e)
+            }
+            android.util.Log.w("AndroidKeyStoreHelper", "AndroidKeyStore unavailable; using fallback key in DEBUG test mode for alias: $alias", e)
             // Fallback for headless JVM / Robolectric unit test environments where AndroidKeyStore provider is absent
             val fallbackSeed = "clawstack_keystore_fallback_$alias".toByteArray(java.nio.charset.StandardCharsets.UTF_8)
             val keyBytes = ClawCrypto.hmac("HmacSHA256", fallbackSeed, "android_keystore_helper_key".toByteArray(java.nio.charset.StandardCharsets.UTF_8))

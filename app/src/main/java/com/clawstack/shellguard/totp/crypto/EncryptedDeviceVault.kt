@@ -72,6 +72,10 @@ object EncryptedDeviceVault {
             keyGenerator.init(keyGenSpec)
             return keyGenerator.generateKey()
         } catch (e: Throwable) {
+            if (!com.clawstack.shellguard.totp.BuildConfig.DEBUG) {
+                throw SecurityException("AndroidKeyStore master key operation failed: hardware-backed keystore required in production", e)
+            }
+            android.util.Log.w("EncryptedDeviceVault", "AndroidKeyStore unavailable; using fallback key in DEBUG test mode", e)
             // Fallback for Robolectric / headless JVM test environments where AndroidKeyStore provider is absent
             val fallbackSeed = "clawstack_dev_vault_fallback_${contextSeed()}".toByteArray(StandardCharsets.UTF_8)
             val keyBytes = ClawCrypto.hmac("HmacSHA256", fallbackSeed, "device_vault_key".toByteArray(StandardCharsets.UTF_8))
