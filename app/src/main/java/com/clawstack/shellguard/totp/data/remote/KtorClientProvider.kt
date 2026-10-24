@@ -12,12 +12,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
-import java.security.SecureRandom
-import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
 
 /**
  * Security helper to configure OkHttp and Ktor for cleartext HTTP traffic,
@@ -25,18 +20,6 @@ import javax.net.ssl.X509TrustManager
  * and self-signed certificate environments.
  */
 object NetworkSecurityHelper {
-
-    val relaxedTrustManager = object : X509TrustManager {
-        override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
-        override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
-        override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
-    }
-
-    val relaxedSslContext: SSLContext by lazy {
-        SSLContext.getInstance("TLS").apply {
-            init(null, arrayOf<TrustManager>(relaxedTrustManager), SecureRandom())
-        }
-    }
 
     fun configureOkHttpClient(builder: OkHttpClient.Builder) {
         builder.connectionSpecs(
@@ -46,8 +29,6 @@ object NetworkSecurityHelper {
                 ConnectionSpec.CLEARTEXT
             )
         )
-        builder.sslSocketFactory(relaxedSslContext.socketFactory, relaxedTrustManager)
-        builder.hostnameVerifier { _, _ -> true }
         builder.connectTimeout(15, TimeUnit.SECONDS)
         builder.readTimeout(20, TimeUnit.SECONDS)
         builder.writeTimeout(20, TimeUnit.SECONDS)
