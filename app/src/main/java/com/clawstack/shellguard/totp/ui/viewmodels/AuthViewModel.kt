@@ -1,6 +1,7 @@
 package com.clawstack.shellguard.totp.ui.viewmodels
 
 import android.app.Application
+import android.net.Uri
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
@@ -16,6 +17,7 @@ import com.clawstack.shellguard.totp.data.repository.UserSession
 import com.clawstack.shellguard.totp.data.repository.VaultProtectionMode
 import com.clawstack.shellguard.totp.ui.theme.AppThemeMode
 import com.clawstack.shellguard.totp.ui.theme.ThemeAccent
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -23,6 +25,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.crypto.Cipher
 
 sealed interface AuthState {
@@ -73,28 +76,40 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     fun logout() = authRepository.logout()
 
-    /** Phase 11.5 / Task 22d — ViewModel-first backup export/restore (no secret handling in UI layer). */
+    /** Phase 11.5 / Task 22d — ViewModel-first backup export/restore (stream owned by coroutine to prevent premature close). */
     fun exportVaultBackup(
-        outputStream: java.io.OutputStream,
+        destinationUri: Uri,
         onResult: (Result<Int>) -> Unit
     ) {
         viewModelScope.launch {
             val session = authRepository.currentSession.value
-            val rawKey = authRepository.getVaultSecret() ?: session?.rawHuKey ?: "shellguard_default_master_key"
+            val rawKey = authRepository.getVaultSecret() ?: session?.rawHuKey
+            if (rawKey.isNullOrBlank()) {
+                onResult(Result.failure(IllegalStateException("Vault key unavailable. Unlock vault before exporting.")))
+                return@launch
+            }
             val ownerUuid = session?.userUuid ?: "local"
             val mode = authRepository.vaultMode.value
-            val result = app.backupManager.exportEncryptedBackup(
-                outputStream = outputStream,
-                rawKey = rawKey,
-                ownerUuid = ownerUuid,
-                protectionMode = mode.name,
-                isBiometricEnabled = authRepository.isBiometricEnabled.value,
-                pinLength = if (mode == VaultProtectionMode.PIN) rawKey.length else null
-            )
+            val result = withContext(Dispatchers.IO) {
+                runCatching {
+                    val outputStream = app.contentResolver.openOutputStream(destinationUri)
+                        ?: throw IllegalStateException("Unable to open destination file for writing.")
+                    outputStream.use { out ->
+                        app.backupManager.exportEncryptedBackup(
+                            outputStream = out,
+                            rawKey = rawKey,
+                            ownerUuid = ownerUuid,
+                            protectionMode = mode.name,
+                            isBiometricEnabled = authRepository.isBiometricEnabled.value,
+                            pinLength = if (mode == VaultProtectionMode.PIN) rawKey.length else null
+                        ).getOrThrow()
+                    }
+                }
+            }
             if (result.isSuccess) {
                 app.securityPreferenceController.recordAuditEvent(
                     SecurityPreferenceController.EVENT_BACKUP_CREATED,
-                    "Encrypted backup exported (${result.getOrNull()} tokens)"
+                    "Encrypted JSON backup exported (${result.getOrNull()} tokens)"
                 )
             }
             onResult(result)
@@ -102,14 +117,26 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun importVaultBackup(
-        inputStream: java.io.InputStream,
+        sourceUri: Uri,
         onResult: (Result<Int>) -> Unit
     ) {
         viewModelScope.launch {
             val session = authRepository.currentSession.value
-            val rawKey = authRepository.getVaultSecret() ?: session?.rawHuKey ?: "shellguard_default_master_key"
+            val rawKey = authRepository.getVaultSecret() ?: session?.rawHuKey
+            if (rawKey.isNullOrBlank()) {
+                onResult(Result.failure(IllegalStateException("Vault key unavailable. Unlock vault before restoring.")))
+                return@launch
+            }
             val ownerUuid = session?.userUuid ?: "local"
-            val result = app.backupManager.importEncryptedBackup(inputStream, rawKey, ownerUuid)
+            val result = withContext(Dispatchers.IO) {
+                runCatching {
+                    val inputStream = app.contentResolver.openInputStream(sourceUri)
+                        ?: throw IllegalStateException("Unable to open selected backup file.")
+                    inputStream.use { input ->
+                        app.backupManager.importEncryptedBackup(input, rawKey, ownerUuid).getOrThrow()
+                    }
+                }
+            }
             if (result.isSuccess) {
                 app.securityPreferenceController.recordAuditEvent(
                     "BACKUP_RESTORED",

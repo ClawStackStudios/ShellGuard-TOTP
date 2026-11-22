@@ -177,4 +177,44 @@ class BackupManagerTest {
         // Only the 1 local item should be exported
         assertEquals(1, exportResult.getOrNull())
     }
+
+    @Test
+    fun testJsonEnvelopeFormatAndLegacySgtotpBakImport() = runBlocking {
+        val dao = database.totpItemDao()
+        val ownerUuid = "user-json"
+        val masterKey = "hu-json-secret-key-12345678"
+
+        val item = TotpItemEntity(
+            id = "json-1",
+            ownerUuid = ownerUuid,
+            title = "Cloudflare",
+            secret = "JBSWY3DPEHPK3PXP",
+            isLocalOnly = true,
+            syncState = "LOCAL"
+        )
+        dao.upsertItem(item)
+
+        val outputStream = ByteArrayOutputStream()
+        val exportResult = backupManager.exportEncryptedBackup(outputStream, masterKey, ownerUuid)
+        assertTrue(exportResult.isSuccess)
+
+        val exportedJson = outputStream.toString(Charsets.UTF_8.name())
+        assertTrue(exportedJson.contains("\"type\": \"shellguard-totp-backup-v1\""))
+        assertTrue(exportedJson.contains("\"format\": \"shellguard-totp-backup-v1.json\""))
+
+        // Simulate legacy .sgtotp.bak envelope format field and verify import still succeeds
+        val legacyJson = exportedJson.replace("shellguard-totp-backup-v1.json", "sgtotp.bak")
+        dao.clearVault(ownerUuid)
+        assertEquals(0, dao.getItemCount(ownerUuid))
+
+        val importResult = backupManager.importEncryptedBackup(
+            ByteArrayInputStream(legacyJson.toByteArray(Charsets.UTF_8)),
+            masterKey,
+            ownerUuid
+        )
+        assertTrue(importResult.isSuccess)
+        assertEquals(1, importResult.getOrNull())
+        val restored = dao.observeAllTotpItems(ownerUuid).first()
+        assertEquals("Cloudflare", restored.single().title)
+    }
 }

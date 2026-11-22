@@ -64,3 +64,9 @@ I executed the `git-review-pr` protocol, testing the diffs as a unified suite. A
 
 Lucas approved the review artifact. I pulled the trigger, landing both PRs into `main` using two-layer squashed attribution: PR #4 as `e8c4c09` (Closes #4) and PR #5 as `f992fba` (Closes #5), deleting both remote task branches. `scripts/audit_docs_drift.py` confirmed 100% pass across all root anchors.
 
+## 2026-11-21 — Fixing `Stream closed` in Backup Export/Restore & Migrating `.sgtotp.bak` to `.json`
+
+Lucas reported `Export failed: Stream closed` when exporting the vault. I traced the seam from `SettingsImportExportScreen.kt` into `AuthViewModel.kt`: the Composable opened `ContentResolver.openOutputStream(destUri)?.use { out -> ... }` and called `authViewModel.exportVaultBackup(out)`, which immediately returned after launching a `viewModelScope.launch` coroutine. `.use` closed the stream before `BackupManager` ever ran on `Dispatchers.IO`. The exact same bug lived in `importVaultBackup` on restore.
+
+I moved `Uri` stream ownership into `AuthViewModel.kt` so `app.contentResolver.openOutputStream`/`openInputStream` is opened and `.use`-closed inside `withContext(Dispatchers.IO)`, and removed the insecure `"shellguard_default_master_key"` fallback in favor of failing closed if no vault/session key exists. Per Lucas's direction, I switched `CreateDocument` to `"application/json"` (`"shellguard-totp-backup.json"`), updated `BackupEnvelope.format` to `"shellguard-totp-backup-v1.json"`, updated UI copy in `SettingsImportExportScreen.kt`, `SettingsBackupsScreen.kt`, `SettingsMetaScreen.kt`, and `README.md`, and added `testJsonEnvelopeFormatAndLegacySgtotpBakImport` to `BackupManagerTest.kt` to verify backward compatibility with legacy `.sgtotp.bak` files. `scripts/audit_docs_drift.py` passed 100%. I'm holding for Lucas to confirm committing and pushing `fix/json-backup-and-stream-lifecycle` to run Cloud CI.
+
