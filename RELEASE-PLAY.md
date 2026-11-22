@@ -3,6 +3,19 @@
 > **Single Source of Truth for Google Play Store What's New Notes**  
 > *Google Play enforces a strict 500-character limit per localized language block.*
 
+## `v0.0.3.2` — Encrypted JSON Backup Hotfix (Build 19)
+
+```xml
+<en-US>
+• Backup Export & Restore Fix: Resolved a stream lifecycle issue that caused "Stream closed" errors during encrypted vault exports and restores.
+• Standard .json Backups: Encrypted vault backups now export as standard .json files (shellguard-totp-backup.json) for seamless sharing and web import.
+• Legacy Compatibility: Previous .sgtotp.bak backups continue to restore cleanly.
+• Security: Vault backup export/restore now fails closed if no unlock key is active.
+</en-US>
+```
+
+---
+
 ## `v0.0.3.1` — Post-Milestone 3 Polish & Migration Wiring (Build 18)
 
 ```xml
