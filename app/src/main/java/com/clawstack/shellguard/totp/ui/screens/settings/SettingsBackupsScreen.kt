@@ -226,7 +226,7 @@ fun SettingsBackupsScreen(
 
             SettingsActionCard(
                 title = "Export Encrypted Backup",
-                description = "Generate a password-protected .sgtotp.bak file.",
+                description = "Generate an encrypted .json backup file.",
                 onClick = { navController.navigate(com.clawstack.shellguard.totp.ui.navigation.Screen.SettingsImportExport.route) }
             )
         }

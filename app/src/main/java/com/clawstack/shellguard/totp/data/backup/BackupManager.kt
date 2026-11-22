@@ -35,7 +35,7 @@ data class BackupItemDto(
 data class BackupEnvelope(
     val version: Int = 1,
     val type: String = "shellguard-totp-backup-v1",
-    val format: String = "sgtotp.bak",
+    val format: String = "shellguard-totp-backup-v1.json",
     val protectionMode: String = "PIN",
     val isBiometricEnabled: Boolean = false,
     val pinLength: Int? = null,
@@ -111,7 +111,7 @@ class BackupManager(
             val backupEnvelope = BackupEnvelope(
                 version = 1,
                 type = "shellguard-totp-backup-v1",
-                format = "sgtotp.bak",
+                format = "shellguard-totp-backup-v1.json",
                 protectionMode = protectionMode,
                 isBiometricEnabled = isBiometricEnabled,
                 pinLength = pinLength,

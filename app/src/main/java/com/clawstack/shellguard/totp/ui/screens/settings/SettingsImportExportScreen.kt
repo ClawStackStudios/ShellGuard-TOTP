@@ -44,9 +44,9 @@ import com.clawstack.shellguard.totp.ui.viewmodels.AuthViewModel
 /**
  * Phase 11.5 / Task 22d — "🛠️ Import & Export" hub sub-screen.
  *
- * Provides Encrypted Backup & Restore flows (.sgtotp.bak) for Local Vault codes.
- * Multi-format migration (Bitwarden, Aegis, 2FAS) and Google Authenticator export
- * are hosted in the Backups & Migration Hub ("☁️ Backups" category).
+ * Provides Encrypted Backup & Restore flows (.json, with legacy .sgtotp.bak restore support)
+ * for Local Vault codes. Multi-format migration (Bitwarden, Aegis, 2FAS) and Google Authenticator
+ * export are hosted in the Backups & Migration Hub ("☁️ Backups" category).
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,44 +56,32 @@ fun SettingsImportExportScreen(
 ) {
     val context = LocalContext.current
 
-    // Export Document Launcher (legacy parity)
+    // Export Document Launcher
     val exportLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CreateDocument("application/octet-stream")
+        contract = ActivityResultContracts.CreateDocument("application/json")
     ) { uri: Uri? ->
         uri?.let { destUri ->
-            try {
-                context.contentResolver.openOutputStream(destUri)?.use { out ->
-                    authViewModel.exportVaultBackup(out) { result ->
-                        if (result.isSuccess) {
-                            Toast.makeText(context, "Exported ${result.getOrNull()} items securely (.sgtotp.bak).", Toast.LENGTH_LONG).show()
-                        } else {
-                            Toast.makeText(context, "Export failed: ${result.exceptionOrNull()?.message}", Toast.LENGTH_LONG).show()
-                        }
-                    }
+            authViewModel.exportVaultBackup(destUri) { result ->
+                if (result.isSuccess) {
+                    Toast.makeText(context, "Exported ${result.getOrNull()} items securely (.json).", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(context, "Export failed: ${result.exceptionOrNull()?.message}", Toast.LENGTH_LONG).show()
                 }
-            } catch (e: Exception) {
-                Toast.makeText(context, "Export error: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
     }
 
-    // Import Document Launcher (legacy parity)
+    // Import Document Launcher (supports .json and legacy .sgtotp.bak)
     val importLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
     ) { uri: Uri? ->
         uri?.let { srcUri ->
-            try {
-                context.contentResolver.openInputStream(srcUri)?.use { input ->
-                    authViewModel.importVaultBackup(input) { result ->
-                        if (result.isSuccess) {
-                            Toast.makeText(context, "Restored ${result.getOrNull()} items successfully.", Toast.LENGTH_LONG).show()
-                        } else {
-                            Toast.makeText(context, "Restore failed: ${result.exceptionOrNull()?.message}", Toast.LENGTH_LONG).show()
-                        }
-                    }
+            authViewModel.importVaultBackup(srcUri) { result ->
+                if (result.isSuccess) {
+                    Toast.makeText(context, "Restored ${result.getOrNull()} items successfully.", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(context, "Restore failed: ${result.exceptionOrNull()?.message}", Toast.LENGTH_LONG).show()
                 }
-            } catch (e: Exception) {
-                Toast.makeText(context, "Restore error: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -120,7 +108,7 @@ fun SettingsImportExportScreen(
         ) {
             Spacer(modifier = Modifier.height(8.dp))
 
-            // ── Encrypted Backup & Restore (legacy parity) ──
+            // ── Encrypted Backup & Restore ──
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(14.dp),
@@ -135,7 +123,7 @@ fun SettingsImportExportScreen(
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = "Export your Local Vault codes to an encrypted .sgtotp.bak file, or restore from a previous export. Synced mirror items are never exported.",
+                        text = "Export your Local Vault codes to an encrypted .json file, or restore from a previous .json or .sgtotp.bak export. Synced mirror items are never exported.",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 12.sp
                     )
@@ -145,7 +133,7 @@ fun SettingsImportExportScreen(
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         OutlinedButton(
-                            onClick = { exportLauncher.launch("shellguard-totp-backup.sgtotp.bak") },
+                            onClick = { exportLauncher.launch("shellguard-totp-backup.json") },
                             shape = RoundedCornerShape(12.dp),
                             border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                             modifier = Modifier

@@ -86,7 +86,7 @@ Captured natively from physical Google Pixel hardware running Android 16 (API 36
 - **CameraX QR Scanner**: Sub-100ms camera viewfinder scanner for standard `otpauth://` QR codes.
 - **Image Gallery QR Decoder**: Import QR codes directly from screenshots stored in your device gallery using Google ML Kit.
 - **Steam Guard Support**: Native generation for Steam's 5-character alphanumeric TOTP codes and `steam://` URIs.
-- **Habitat Export/Import**: Full backup creation and restore supporting `.sgtotp.bak` encrypted archives.
+- **Habitat Export/Import**: Full backup creation and restore supporting `.json` encrypted archives (with legacy `.sgtotp.bak` restore compatibility).
 
 ### 🎨 Reef Modernist Design System
 - **Curated Marine Accent Palettes**: 6 custom theme accents inspired by deep-sea bioluminescence (Reef Pink default, Electric Cyan, Imperial Gold, Emerald, Solar, Minimalist).
