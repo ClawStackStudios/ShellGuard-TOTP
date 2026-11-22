@@ -3,6 +3,18 @@
 > **Single Source of Truth for Google Play Store What's New Notes**  
 > *Google Play enforces a strict 500-character limit per localized language block.*
 
+## `v0.0.3.3` — Opt-In Self-Signed HTTPS & TOFU Pinning (Build 20)
+
+```xml
+<en-US>
+• Self-Signed HTTPS Gateway: Added an opt-in checkbox on the Auth Gateway to connect with self-hosted ShellGuard servers using self-signed TLS certificates.
+• TOFU Certificate Pinning: Automatically pins the server certificate SHA-256 fingerprint on first connect and blocks unexpected certificate changes.
+• Host-Scoped Verification: Strict platform TLS remains the default for all other connections.
+</en-US>
+```
+
+---
+
 ## `v0.0.3.2` — Encrypted JSON Backup Hotfix (Build 19)
 
 ```xml

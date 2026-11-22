@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **Headless Debug Keystore Fallback**: Conditioned `debugConfig` in `app/build.gradle.kts` on the presence of local `debug.keystore`, enabling AGP to fall back cleanly to its built-in debug keystore in headless CI environments.
 
+## [0.0.3.3] - 2026-11-22 (Build 20) — Opt-In Self-Signed HTTPS & TOFU Pinning
+### Added
+- **Auth Gateway Self-Signed HTTPS Toggle**: Added an opt-in *"Allow self-signed HTTPS certificates"* checkbox to `GatewayScreen` (visible for `https://`, unchecked by default) wired through `GatewayViewModel` and persisted in `AuthRepository`.
+- **TOFU SHA-256 Certificate Pinning**: Added Trust-On-First-Use (TOFU) leaf X.509 SHA-256 fingerprint pinning and host-scoped `HostnameVerifier` in `KtorClientProvider`, failing closed on any subsequent fingerprint mismatch.
+- **Client Cache Invalidation**: Updated `ApiClient.getClient` to invalidate and recreate `ShellGuardTotpClient` whenever `baseUrl` or `allowSelfSigned` changes, and added `SelfSignedTlsGatewayTest`.
+
 ## [0.0.3.2] - 2026-11-21 (Build 19) — Encrypted JSON Backup Hotfix & Stream Lifecycle Fix
 ### Fixed
 - **Backup Export & Restore `Stream closed` Error**: Fixed a stream lifecycle race in `SettingsImportExportScreen` and `AuthViewModel` where `ContentResolver` `.use` blocks closed `OutputStream`/`InputStream` instances before `viewModelScope.launch` executed `BackupManager` on `Dispatchers.IO`.
@@ -166,7 +172,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **Core Base**: Initial project setup, 16 KB page size alignment for Android 15, SQLCipher 4.6.1 integration.
 
-[Unreleased]: https://github.com/ClawStackStudios/ShellGuard-TOTP/compare/v0.0.3.2...HEAD
+[Unreleased]: https://github.com/ClawStackStudios/ShellGuard-TOTP/compare/v0.0.3.3...HEAD
+[0.0.3.3]: https://github.com/ClawStackStudios/ShellGuard-TOTP/compare/v0.0.3.2...v0.0.3.3
 [0.0.3.2]: https://github.com/ClawStackStudios/ShellGuard-TOTP/compare/v0.0.3.1...v0.0.3.2
 [0.0.3.1]: https://github.com/ClawStackStudios/ShellGuard-TOTP/compare/v0.0.3.0...v0.0.3.1
 [0.0.3.0]: https://github.com/ClawStackStudios/ShellGuard-TOTP/compare/v0.0.2.3...v0.0.3.0

@@ -1,7 +1,7 @@
 ---
 roadmap_version: 2.5.1
 last_updated: 2026-10-17
-current_position: "v0.0.3.2 (Build 19) — Encrypted JSON Backup Hotfix & Stream Lifecycle Fix; next Phase 14: Home Screen Interactive Glance Widgets & Icon Packs (v0.1.0.0)"
+current_position: "v0.0.3.3 (Build 20) — Opt-In Self-Signed HTTPS & TOFU Pinning; next Phase 14: Home Screen Interactive Glance Widgets & Icon Packs (v0.1.0.0)"
 statistics:
   description: "Deterministic build roadmap for ShellGuard-TOTP Android Authenticator application. Engineered strictly in synergistic 2-task phases where Task A delivers core functionality and Task B delivers the corresponding UI/UX component."
   features_completed: "██████████████░ 92%"
@@ -452,7 +452,7 @@ Description: Implement:
 
 ---
 
-## Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 20) — Open Beta Candidate]
+## Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 21) — Open Beta Candidate]
 
 > Phase Feature Set Overview:
 > Delivers Android Glance Compose home screen widgets for fast 2FA access with live countdown progress arcs, and a custom SVG/Vector Icon Pack management engine for branded account icons.
@@ -475,7 +475,7 @@ Description: Implement:
 
 
 
-## Phase 15: ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 21)]
+## Phase 15: ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 22)]
 
 > Phase Feature Set Overview:
 > Introduces the ShellGuard sovereign `hu-` ClawKey as a third vault creation and import authentication method, bringing the Android identity model into parity with the ShellGuard web platform. Delivers a reusable dual-tab `ClawKeyInputForm` (Paste / Upload), consistent format validation, correct lock screen branching, proper export envelope stamping, and a pre-import duplicate resolution engine.
@@ -507,7 +507,7 @@ Description: Implement all user-facing surfaces for the ClawKey mode:
 
 ---
 
-## Phase 16: Encrypted Remote Credential Cache, Offline Session Persistence & Targeted Purge [v0.1.2.0 (Build 22)]
+## Phase 16: Encrypted Remote Credential Cache, Offline Session Persistence & Targeted Purge [v0.1.2.0 (Build 23)]
 
 > Phase Feature Set Overview:
 > Delivers an encrypted on-device caching system for synced remote credentials within the SQLCipher Room database. Eliminates mandatory full sync on every application launch, allowing the user to operate completely offline with previously synced credentials while strictly preserving read-only protection. Periodic updates follow the existing background sync schedule from settings, delta sync skips re-decryption of unchanged records, and cached credentials persist until the user explicitly disconnects the server or logs out to authenticate as a new user.

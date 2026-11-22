@@ -91,11 +91,16 @@
   - `BackupManager.kt`: Switched canonical encrypted export to `application/json` (`shellguard-totp-backup.json`, `format = "shellguard-totp-backup-v1.json"`) while preserving legacy `.sgtotp.bak` restore compatibility.
   - `BackupManagerTest.kt`: Added `testJsonEnvelopeFormatAndLegacySgtotpBakImport`.
 
+- ✅ **v0.0.3.3 (Build 20) — Opt-In Self-Signed HTTPS & TOFU Pinning**:
+  - `GatewayScreen.kt` & `GatewayViewModel.kt`: Added opt-in *"Allow self-signed HTTPS certificates"* checkbox (default `false`) for `https://` servers.
+  - `KtorClientProvider.kt`, `ShellGuardTotpClient.kt`, `ApiClient.kt`, & `AuthRepository.kt`: Implemented Trust-On-First-Use (TOFU) SHA-256 certificate pinning, host-scoped `HostnameVerifier`, client cache invalidation, and cold-restart persistence.
+  - `SelfSignedTlsGatewayTest.kt`: Added Robolectric unit tests for TOFU pinning, mismatch rejection, `ApiClient` cache invalidation, and `AuthRepository` cold-restart persistence.
+
 ## What's Next
-- ⏳ **Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 20) — Open Beta Candidate]**:
+- ⏳ **Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 21) — Open Beta Candidate]**:
   - Task 27: [Functionality] AndroidX Glance AppWidget Engine & Custom Issuer Icon Pack Store.
   - Task 28: [UI Component] Modernist Glance 2FA Widgets (2x2 & 4x2) & Icon Pack Manager Screen.
-- ⏳ **Phase 15: Sovereign ClawKey (`hu-`) Vault Creation & Import Integration [v0.1.1.0 (Build 21)]**
-- ⏳ **Phase 16: Encrypted Remote Credential Cache, Offline Session Persistence & Targeted Purge [v0.1.2.0 (Build 22)]**
+- ⏳ **Phase 15: Sovereign ClawKey (`hu-`) Vault Creation & Import Integration [v0.1.1.0 (Build 22)]**
+- ⏳ **Phase 16: Encrypted Remote Credential Cache, Offline Session Persistence & Targeted Purge [v0.1.2.0 (Build 23)]**
 
 

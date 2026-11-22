@@ -44,6 +44,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -102,11 +104,13 @@ fun GatewayScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val savedServerUrl by viewModel.savedServerUrl.collectAsStateWithLifecycle(initialValue = null)
     val savedKey by viewModel.savedKey.collectAsStateWithLifecycle(initialValue = null)
+    val savedAllowSelfSigned by viewModel.savedAllowSelfSigned.collectAsStateWithLifecycle(initialValue = false)
 
     var isUploadMode by remember { mutableStateOf(false) }
     var protocol by remember { mutableStateOf("https") }
     var serverHost by remember { mutableStateOf("") }
     var serverPort by remember { mutableStateOf("") }
+    var allowSelfSignedCerts by remember { mutableStateOf(savedAllowSelfSigned) }
     var isUrlValid by remember { mutableStateOf(true) }
     var urlErrorMessage by remember { mutableStateOf("") }
     var isProtocolDropdownExpanded by remember { mutableStateOf(false) }
@@ -181,6 +185,10 @@ fun GatewayScreen(
         savedServerUrl?.let { url ->
             if (serverHost.isEmpty() && url.isNotEmpty()) parseAndSetUrl(url)
         }
+    }
+
+    LaunchedEffect(savedAllowSelfSigned) {
+        allowSelfSignedCerts = savedAllowSelfSigned
     }
 
     LaunchedEffect(savedKey) {
@@ -499,7 +507,49 @@ fun GatewayScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(10.dp))
+
+        AnimatedVisibility(
+            visible = protocol == "https",
+            enter = expandVertically() + fadeIn(),
+            exit = shrinkVertically() + fadeOut()
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(10.dp))
+                    .clickable { allowSelfSignedCerts = !allowSelfSignedCerts }
+                    .padding(vertical = 4.dp, horizontal = 2.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = allowSelfSignedCerts,
+                    onCheckedChange = { allowSelfSignedCerts = it },
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = MaterialTheme.colorScheme.primary,
+                        uncheckedColor = MaterialTheme.colorScheme.outline,
+                        checkmarkColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    modifier = Modifier.testTag("gateway_self_signed_checkbox")
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Allow self-signed HTTPS certificates",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Text(
+                        text = "Pins the server certificate fingerprint on first connect (LAN / Homelab)",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 11.sp
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         // Mode Toggles: Upload File vs Paste Key
         Row(
@@ -597,7 +647,11 @@ fun GatewayScreen(
                     }
                 }
                 val targetKey = cleanAndExtractKey(if (isUploadMode) uploadedKey.orEmpty() else keyText)
-                viewModel.login(finalUrl, targetKey)
+                viewModel.login(
+                    serverUrl = finalUrl,
+                    rawHuKey = targetKey,
+                    allowSelfSignedCerts = if (protocol == "https") allowSelfSignedCerts else false
+                )
             },
             enabled = uiState !is GatewayUiState.Loading && isFormValid,
             modifier = Modifier
