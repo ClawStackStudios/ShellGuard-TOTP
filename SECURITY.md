@@ -10,7 +10,8 @@ Only the latest release milestone and actively maintained branches receive secur
 
 | Version | Build | Android Target | Support Status |
 | :--- | :--- | :--- | :--- |
-| **`v0.0.3.2`** | **Build 19** | **Android 14–16 (API 24–36)** | :white_check_mark: **Actively Supported (Latest)** |
+| **`v0.0.3.3`** | **Build 20** | **Android 14–16 (API 24–36)** | :white_check_mark: **Actively Supported (Latest)** |
+| `v0.0.3.2` | Build 19 | Android 14–16 (API 24–36) | :x: Superseded |
 | `v0.0.3.1` | Build 18 | Android 14–16 (API 24–36) | :x: Superseded |
 | `v0.0.3.0` | Build 17 | Android 14–16 (API 24–36) | :x: Superseded (Milestone 3) |
 | `v0.0.2.3` | Build 16 | Android 14–16 (API 24–36) | :x: Superseded |
@@ -41,6 +42,10 @@ ShellGuard-TOTP is designed to withstand local device theft, untrusted host envi
 
 ### 5. Cloud Backup Exclusion
 - `res/xml/backup_rules.xml` and `res/xml/data_extraction_rules.xml` explicitly exclude encrypted Room databases (`shellguard_totp.db*`) and KeyStore preferences from unencrypted Android cloud backups, preventing Google Drive extraction while supporting encrypted device-to-device transfers.
+
+### 4. Transport & Self-Signed LAN TLS
+- **Strict Platform TLS Default**: All HTTPS requests enforce system and user CA validation (`network_security_config.xml`) by default.
+- **Opt-In Self-Signed Mode (TOFU Pinning)**: When a user explicitly enables *"Allow self-signed HTTPS certificates"* on the Auth Gateway for a self-hosted `TLS_ENABLED=true` server, `KtorClientProvider` pins the leaf X.509 certificate's SHA-256 fingerprint on first connect (Trust On First Use), verifies the peer hostname matches the configured gateway host, and fails closed on any subsequent fingerprint mismatch.
 
 ---
 

@@ -27,12 +27,14 @@ class GatewayViewModel(
 
     val savedServerUrl = MutableStateFlow(authRepository.getSavedServerUrl())
     val savedKey = MutableStateFlow(authRepository.getSavedKey())
+    val savedAllowSelfSigned = MutableStateFlow(authRepository.getAllowSelfSignedCerts())
 
-    fun login(serverUrl: String, rawHuKey: String) {
+    fun login(serverUrl: String, rawHuKey: String, allowSelfSignedCerts: Boolean = false) {
         viewModelScope.launch {
             _uiState.value = GatewayUiState.Loading
-            authRepository.login(serverUrl, rawHuKey)
+            authRepository.login(serverUrl, rawHuKey, allowSelfSignedCerts)
                 .onSuccess { session ->
+                    savedAllowSelfSigned.value = allowSelfSignedCerts
                     // Trigger initial delta sync
                     totpRepository.syncRemoteVault(session.serverUrl, session.rawHuKey, session.userUuid)
                     _uiState.value = GatewayUiState.Success(session)

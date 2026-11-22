@@ -48,10 +48,16 @@ suspend fun handleNetworkDiagnostics(response: HttpResponse) {
 
 class ShellGuardTotpClient(
     private val baseUrl: String, // e.g. http://192.168.1.50:6464, http://unraid.local:6464, or https://vault.example.com
+    private val allowSelfSignedCerts: Boolean = false,
+    private val getPinnedFingerprint: (() -> String?)? = null,
+    private val onPinCertificate: ((String) -> Unit)? = null,
     private val onUnauthorized: (() -> Unit)? = null
 ) {
     private val client: HttpClient = KtorClientProvider.createClient(
         baseUrl = baseUrl,
+        allowSelfSignedCerts = allowSelfSignedCerts,
+        getPinnedFingerprint = getPinnedFingerprint,
+        onPinCertificate = onPinCertificate,
         onUnauthorized = onUnauthorized
     )
 

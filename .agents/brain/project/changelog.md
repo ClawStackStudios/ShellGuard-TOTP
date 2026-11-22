@@ -15,6 +15,12 @@ All notable changes to the ShellGuard TOTP project will be documented in this fi
 ### Fixed
 - **Headless Debug Keystore Fallback**: Conditioned `debugConfig` in `app/build.gradle.kts` on the presence of local `debug.keystore`, enabling AGP to fall back cleanly to its built-in debug keystore in headless CI environments.
 
+## [0.0.3.3] - 2026-11-22 (Build 20) — Opt-In Self-Signed HTTPS & TOFU Pinning
+### Added
+- **Auth Gateway Self-Signed HTTPS Toggle**: Added an opt-in *"Allow self-signed HTTPS certificates"* checkbox to `GatewayScreen` (visible for `https://`, unchecked by default) wired through `GatewayViewModel` and persisted in `AuthRepository`.
+- **TOFU SHA-256 Certificate Pinning**: Added Trust-On-First-Use (TOFU) leaf X.509 SHA-256 fingerprint pinning and host-scoped `HostnameVerifier` in `KtorClientProvider`, failing closed on any subsequent fingerprint mismatch.
+- **Client Cache Invalidation**: Updated `ApiClient.getClient` to invalidate and recreate `ShellGuardTotpClient` whenever `baseUrl` or `allowSelfSigned` changes, and added `SelfSignedTlsGatewayTest`.
+
 ## [0.0.3.2] - 2026-11-21 (Build 19) — Encrypted JSON Backup Hotfix & Stream Lifecycle Fix
 ### Fixed
 - **Backup Export & Restore `Stream closed` Error**: Moved `ContentResolver` stream ownership into `AuthViewModel` inside `withContext(Dispatchers.IO)` so streams are not prematurely closed by Compose `.use` blocks before `BackupManager` runs.

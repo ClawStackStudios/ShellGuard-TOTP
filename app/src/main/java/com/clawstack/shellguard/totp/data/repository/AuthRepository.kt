@@ -109,6 +109,16 @@ class AuthRepository(
         // Restore sensitive credentials from EncryptedDeviceVault with legacy migration
         val savedToken = getSecureStringWithMigration("saved_token")
         val savedKey = getSecureStringWithMigration("saved_raw_key")
+        val allowSelfSigned = prefs.getBoolean("pref_allow_self_signed_tls", false)
+        val pinnedSha256 = prefs.getString("pref_pinned_cert_sha256", null)
+
+        ApiClient.configureTls(
+            allowSelfSigned = allowSelfSigned,
+            pinnedSha256 = pinnedSha256,
+            onPinCertificate = { fp ->
+                prefs.edit().putString("pref_pinned_cert_sha256", fp).apply()
+            }
+        )
 
         if (!savedServerUrl.isNullOrBlank() && !savedUserUuid.isNullOrBlank() && !savedToken.isNullOrBlank() && !savedKey.isNullOrBlank()) {
             _currentSession.value = UserSession(
@@ -141,14 +151,28 @@ class AuthRepository(
         return getSecureStringWithMigration("pref_vault_secret_hash")
     }
 
-    suspend fun login(serverUrl: String, rawHuKey: String): Result<UserSession> = withContext(Dispatchers.IO) {
+    suspend fun login(
+        serverUrl: String,
+        rawHuKey: String,
+        allowSelfSignedCerts: Boolean = false
+    ): Result<UserSession> = withContext(Dispatchers.IO) {
         mutex.withLock {
             runCatching {
                 val cleanUrl = serverUrl.trim().removeSuffix("/")
                 val cleanKey = rawHuKey.trim()
                 val keyHash = ClawCrypto.hashHumanKey(cleanKey)
 
-                val client = ApiClient.getClient(cleanUrl)
+                // Clear any stale pin on explicit user login so TOFU pins the current server cert
+                prefs.edit().remove("pref_pinned_cert_sha256").apply()
+                ApiClient.configureTls(
+                    allowSelfSigned = allowSelfSignedCerts,
+                    pinnedSha256 = null,
+                    onPinCertificate = { fp ->
+                        prefs.edit().putString("pref_pinned_cert_sha256", fp).apply()
+                    }
+                )
+
+                val client = ApiClient.getClient(cleanUrl, allowSelfSigned = allowSelfSignedCerts)
                 val sessionData: SessionData = client.authenticate(keyHash).getOrThrow()
 
                 val session = UserSession(
@@ -167,6 +191,7 @@ class AuthRepository(
                 // Persist non-sensitive metadata in SharedPreferences
                 prefs.edit()
                     .putString("saved_server_url", cleanUrl)
+                    .putBoolean("pref_allow_self_signed_tls", allowSelfSignedCerts)
                     .putString("saved_user_uuid", session.userUuid)
                     .putString("saved_username", session.username)
                     .putString("saved_display_name", session.displayName)
@@ -418,12 +443,15 @@ class AuthRepository(
             .remove("saved_token")
             .remove("saved_raw_key")
             .remove("saved_expires_at")
+            .remove("pref_pinned_cert_sha256")
             .apply()
         EncryptedDeviceVault.removeSecureString(context, "saved_token")
         EncryptedDeviceVault.removeSecureString(context, "saved_raw_key")
     }
 
     fun getSavedServerUrl(): String? = prefs.getString("saved_server_url", null)
+    fun getAllowSelfSignedCerts(): Boolean = prefs.getBoolean("pref_allow_self_signed_tls", false)
+    fun getPinnedCertFingerprint(): String? = prefs.getString("pref_pinned_cert_sha256", null)
     fun getSavedKey(): String? = getSecureStringWithMigration("saved_raw_key")
     fun clearSavedKey() {
         prefs.edit().remove("saved_raw_key").apply()
