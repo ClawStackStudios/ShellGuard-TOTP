@@ -830,9 +830,9 @@ Verify QR exports are locked behind step-up auth and that imports route directly
 
 ---
 
-## 📱 Stage 15: Phase 14 Prompt — Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 18) — Open Beta Candidate]
+## 📱 Stage 15: Phase 14 Prompt — Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 20) — Open Beta Candidate]
 
-> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-14-home-screen-interactive-glance-widgets--icon-pack-manager-v0100-build-18--open-beta-candidate) for complete specifications on **Task 27** and **Task 28**.  
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-14-home-screen-interactive-glance-widgets--icon-pack-manager-v0100-build-20--open-beta-candidate) for complete specifications on **Task 27** and **Task 28**.  
 > **📖 Required Context Files for Phase 14**:  
 > 1. [`totp-engine-spec.md`](./totp-engine-spec.md) — Background TOTP calculation.  
 > 2. [`DESIGN.md`](../DESIGN.md) — Section 4 (Widget Modernist Layout).  
@@ -840,7 +840,7 @@ Verify QR exports are locked behind step-up auth and that imports route directly
 Copy and paste this prompt to execute **Phase 14 (Tasks 27 & 28)**:
 
 ```markdown
-# PHASE 14 EXECUTION: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 18)]
+# PHASE 14 EXECUTION: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 20)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:
@@ -868,9 +868,9 @@ Verify widgets update reliably on home screens with tap-to-copy responsiveness, 
 
 ---
 
-## 📱 Stage 16: Phase 15 Prompt — ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 19)]
+## 📱 Stage 16: Phase 15 Prompt — ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 21)]
 
-> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-15-clawkey-vault-creation-import-authentication--duplicate-resolution-v0110-build-19) for complete specifications on **Task 29** and **Task 30**.
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-15-clawkey-vault-creation-import-authentication--duplicate-resolution-v0110-build-21) for complete specifications on **Task 29** and **Task 30**.
 > **📖 Required Context Files for Phase 15**:
 > 1. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — Section 2 (AndroidKeyStoreHelper patterns).
 > 2. [`room-storage-schema.md`](./room-storage-schema.md) — Section 6 (BackupManager.kt import/export).
@@ -880,7 +880,7 @@ Verify widgets update reliably on home screens with tap-to-copy responsiveness, 
 Copy and paste this prompt to execute **Phase 15 (Tasks 29 & 30)**:
 
 ```markdown
-# PHASE 15 EXECUTION: ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 19)]
+# PHASE 15 EXECUTION: ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 21)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:
@@ -921,14 +921,14 @@ Execute Phase 15 adhering to the Functionality + UI Component pairing:
   - On `onKeyResolved`, call `backupManager.importEncryptedBackup(input, huKey, ownerUuid)`.
   - On decryption failure, surface sanitized error: *"Invalid ClawKey — vault could not be decrypted."*
 
-Verify: A user can create a ClawKey vault (paste or upload), be correctly prompted for their ClawKey on lock/restart, export a `.sgtotp.bak` with `protectionMode = "CLAWKEY"` stamped in the envelope, re-import on another device using their ClawKey, and duplicate TOTP entries are silently skipped during all import flows.
+Verify: A user can create a ClawKey vault (paste or upload), be correctly prompted for their ClawKey on lock/restart, export a `.json` backup with `protectionMode = "CLAWKEY"` stamped in the envelope, re-import on another device using their ClawKey, and duplicate TOTP entries are silently skipped during all import flows.
 ```
 
 ---
 
-## 💾 Stage 17: Phase 16 Prompt — Encrypted Remote Credential Cache, Offline Session Persistence & Targeted Purge [v0.1.2.0 (Build 20)]
+## 💾 Stage 17: Phase 16 Prompt — Encrypted Remote Credential Cache, Offline Session Persistence & Targeted Purge [v0.1.2.0 (Build 22)]
 
-> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-16-encrypted-remote-credential-cache-offline-session-persistence--targeted-purge-v0120-build-20) for complete specifications on **Task 31** and **Task 32**.  
+> 🗺️ **Master Roadmap Reference**: See [`ROADMAP.md`](../ROADMAP.md#phase-16-encrypted-remote-credential-cache-offline-session-persistence--targeted-purge-v0120-build-22) for complete specifications on **Task 31** and **Task 32**.  
 > **📖 Required Context Files for Phase 16**:  
 > 1. [`room-storage-schema.md`](./room-storage-schema.md) — Section 1 (`TotpItemEntity`), Section 2 (`TotpItemDao`), and Section 7 (`AuditLogDao`).  
 > 2. [`crypto-and-keystore.md`](./crypto-and-keystore.md) — Section 2 (`EncryptedDeviceVault` secure key/session caching).  
@@ -937,7 +937,7 @@ Verify: A user can create a ClawKey vault (paste or upload), be correctly prompt
 Copy and paste this prompt to execute **Phase 16 (Tasks 31 & 32)**:
 
 ```markdown
-# PHASE 16 EXECUTION: Encrypted Remote Credential Cache, Offline Session Persistence & Targeted Purge [v0.1.2.0 (Build 20)]
+# PHASE 16 EXECUTION: Encrypted Remote Credential Cache, Offline Session Persistence & Targeted Purge [v0.1.2.0 (Build 22)]
 
 ## 📖 Reference Documentation & Roadmap
 Before writing code, inspect:

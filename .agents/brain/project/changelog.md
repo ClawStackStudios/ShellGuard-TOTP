@@ -15,6 +15,16 @@ All notable changes to the ShellGuard TOTP project will be documented in this fi
 ### Fixed
 - **Headless Debug Keystore Fallback**: Conditioned `debugConfig` in `app/build.gradle.kts` on the presence of local `debug.keystore`, enabling AGP to fall back cleanly to its built-in debug keystore in headless CI environments.
 
+## [0.0.3.2] - 2026-11-21 (Build 19) — Encrypted JSON Backup Hotfix & Stream Lifecycle Fix
+### Fixed
+- **Backup Export & Restore `Stream closed` Error**: Moved `ContentResolver` stream ownership into `AuthViewModel` inside `withContext(Dispatchers.IO)` so streams are not prematurely closed by Compose `.use` blocks before `BackupManager` runs.
+
+### Changed
+- **Canonical `.json` Encrypted Backups**: Switched encrypted vault exports in `SettingsImportExportScreen` (`CreateDocument("application/json")`, `shellguard-totp-backup.json`) and `BackupEnvelope.format` (`shellguard-totp-backup-v1.json`) from `.sgtotp.bak` to `.json`, preserving `.sgtotp.bak` restore compatibility.
+
+### Security
+- **Fail-Closed Vault Backup Key Check**: Removed the static `"shellguard_default_master_key"` fallback in `AuthViewModel.exportVaultBackup` and `importVaultBackup`; operations now fail closed if no vault or session key is active.
+
 ## [0.0.3.1] - 2026-10-21 (Build 18) — Post-Milestone 3 Polish & Migration Wiring
 ### Added
 - **UI Error Feedback**: Integrated user-visible `Toast` notifications on import parsing failures and empty vault export attempts within `SettingsBackupsScreen`.

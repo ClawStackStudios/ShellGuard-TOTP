@@ -86,11 +86,16 @@
   - Packaging Polish (Task 25b): Configured `ndk { debugSymbolLevel = "SYMBOL_TABLE" }` in `app/build.gradle.kts` extracting 16 KB-aligned `libsqlcipher.so` native debug symbol tables into the release App Bundle.
   - Milestone 3 Release: Tagged `v0.0.3.0`, verified 100% green on GitHub Actions release pipeline run 39015584805, published release with `RELEASE-v0.0.3.0.md` body, and cleaned up retired release notes from root.
 
+- ✅ **v0.0.3.2 (Build 19) — Encrypted JSON Backup Hotfix & Stream Lifecycle Fix**:
+  - `AuthViewModel.kt` & `SettingsImportExportScreen.kt`: Moved `ContentResolver` stream lifecycle inside `withContext(Dispatchers.IO)` to fix `Stream closed` on both export and restore, and removed the static `"shellguard_default_master_key"` fallback in favor of failing closed.
+  - `BackupManager.kt`: Switched canonical encrypted export to `application/json` (`shellguard-totp-backup.json`, `format = "shellguard-totp-backup-v1.json"`) while preserving legacy `.sgtotp.bak` restore compatibility.
+  - `BackupManagerTest.kt`: Added `testJsonEnvelopeFormatAndLegacySgtotpBakImport`.
+
 ## What's Next
-- ⏳ **Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 18) — Open Beta Candidate]**:
+- ⏳ **Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 20) — Open Beta Candidate]**:
   - Task 27: [Functionality] AndroidX Glance AppWidget Engine & Custom Issuer Icon Pack Store.
   - Task 28: [UI Component] Modernist Glance 2FA Widgets (2x2 & 4x2) & Icon Pack Manager Screen.
-- ⏳ **Phase 15: Sovereign ClawKey (`hu-`) Vault Creation & Import Integration [v0.1.1.0 (Build 19)]**
-- ⏳ **Phase 16: Encrypted Remote Credential Cache, Offline Session Persistence & Targeted Purge [v0.1.2.0 (Build 20)]**
+- ⏳ **Phase 15: Sovereign ClawKey (`hu-`) Vault Creation & Import Integration [v0.1.1.0 (Build 21)]**
+- ⏳ **Phase 16: Encrypted Remote Credential Cache, Offline Session Persistence & Targeted Purge [v0.1.2.0 (Build 22)]**
 
 

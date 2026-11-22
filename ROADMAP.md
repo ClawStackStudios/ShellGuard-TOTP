@@ -1,7 +1,7 @@
 ---
 roadmap_version: 2.5.1
 last_updated: 2026-10-17
-current_position: "v0.0.3.0 (Build 17) — Phase 13.5: Migration Polish, OWASP Step-Up Auth & Offline-First YAGNI Sync; next Phase 14: Home Screen Interactive Glance Widgets & Icon Packs (v0.1.0.0)"
+current_position: "v0.0.3.2 (Build 19) — Encrypted JSON Backup Hotfix & Stream Lifecycle Fix; next Phase 14: Home Screen Interactive Glance Widgets & Icon Packs (v0.1.0.0)"
 statistics:
   description: "Deterministic build roadmap for ShellGuard-TOTP Android Authenticator application. Engineered strictly in synergistic 2-task phases where Task A delivers core functionality and Task B delivers the corresponding UI/UX component."
   features_completed: "██████████████░ 92%"
@@ -452,7 +452,7 @@ Description: Implement:
 
 ---
 
-## Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 18) — Open Beta Candidate]
+## Phase 14: Home Screen Interactive Glance Widgets & Icon Pack Manager [v0.1.0.0 (Build 20) — Open Beta Candidate]
 
 > Phase Feature Set Overview:
 > Delivers Android Glance Compose home screen widgets for fast 2FA access with live countdown progress arcs, and a custom SVG/Vector Icon Pack management engine for branded account icons.
@@ -475,7 +475,7 @@ Description: Implement:
 
 
 
-## Phase 15: ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 19)]
+## Phase 15: ClawKey Vault Creation, Import Authentication & Duplicate Resolution [v0.1.1.0 (Build 21)]
 
 > Phase Feature Set Overview:
 > Introduces the ShellGuard sovereign `hu-` ClawKey as a third vault creation and import authentication method, bringing the Android identity model into parity with the ShellGuard web platform. Delivers a reusable dual-tab `ClawKeyInputForm` (Paste / Upload), consistent format validation, correct lock screen branching, proper export envelope stamping, and a pre-import duplicate resolution engine.
@@ -503,11 +503,11 @@ Description: Implement all user-facing surfaces for the ClawKey mode:
 - **`LockScreen.kt`**: Add `VaultProtectionMode.CLAWKEY` branch: render `ClawKeyInputForm` as the unlock form. On `onKeyResolved`, call `onUnlockWithSecret(huKey)`.
 - **`SettingsScreen.kt` — Import Flow**: After `MultiVaultBackupPreValidator` resolves the backup file, inspect `protectionMode`. If `"CLAWKEY"`, show a `ModalBottomSheet` hosting `ClawKeyInputForm` before calling `importEncryptedBackup()`. On wrong key, surface a sanitized error: *"Invalid ClawKey — vault could not be decrypted."*
 
-> Success Criteria: A user can create a vault secured by their `hu-` ClawKey (paste or upload), be correctly prompted for their ClawKey on app lock/restart, export a `.sgtotp.bak` with `protectionMode = "CLAWKEY"` stamped in the envelope, and re-import that backup on another device using only their ClawKey. Duplicate TOTP entries are silently skipped during all import flows.
+> Success Criteria: A user can create a vault secured by their `hu-` ClawKey (paste or upload), be correctly prompted for their ClawKey on app lock/restart, export a `.json` backup with `protectionMode = "CLAWKEY"` stamped in the envelope, and re-import that backup on another device using only their ClawKey. Duplicate TOTP entries are silently skipped during all import flows.
 
 ---
 
-## Phase 16: Encrypted Remote Credential Cache, Offline Session Persistence & Targeted Purge [v0.1.2.0 (Build 20)]
+## Phase 16: Encrypted Remote Credential Cache, Offline Session Persistence & Targeted Purge [v0.1.2.0 (Build 22)]
 
 > Phase Feature Set Overview:
 > Delivers an encrypted on-device caching system for synced remote credentials within the SQLCipher Room database. Eliminates mandatory full sync on every application launch, allowing the user to operate completely offline with previously synced credentials while strictly preserving read-only protection. Periodic updates follow the existing background sync schedule from settings, delta sync skips re-decryption of unchanged records, and cached credentials persist until the user explicitly disconnects the server or logs out to authenticate as a new user.
